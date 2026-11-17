@@ -6,27 +6,37 @@
 <title>Batalhas Filosóficas — protótipo</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,500;0,700;0,900;1,500;1,700&family=Alegreya+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
-<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}</script>
 <style>
 /* ============================================================
-   BATALHAS FILOSÓFICAS — rodada visual 3 (mesa em Three.js)
-   Arquivos: index.html (HTML + CSS) · mesa3d.js (cena 3D) · materiais.js (texturas e materiais)
-             ui.js (interface) · coreo.js (cenas) · bonecos.js (marionetes) · engine.js (regras) · falas_*.js
+   BATALHAS FILOSÓFICAS — rodada visual 1 (Ágora)
+   Layout: página ao anoitecer; no centro, a Ágora no fim da tarde. Piso de mármore inclinado
+   (CSS 3D, sem biblioteca): oponentes ao fundo, tribunas no meio, o jogador na frente.
+   Cartas e tribunas ficam de pé sobre o piso. A mão fica fora do piso, plana, como painel.
 
    PALETA
-   --marmore / --marmore2 / --veio   pedra clara
-   --tinta / --tinta2                texto sobre claro
+   --marmore / --marmore2 / --veio   piso, lápides, plintos
+   --tinta / --tinta2                texto sobre mármore
    --ouro / --ouro2                  vitória, linha do valor, louros
    --egeu                            destaque frio: seleção e alvos
    --vinho                           carimbo de falácia
+   --ceu1..4                         céu, do horizonte ao alto
    --pc                              cor do jogador (vem do motor): livros, pontos, contornos
-   As variáveis --ink, --mute, --gold… valem nas telas escuras (diário, telas centrais).
+   As variáveis antigas (--ink, --mute, --gold…) seguem valendo nas telas escuras (diário, telas centrais).
 
    MOVIMENTO  (nas cenas, toda duração passa por T() de coreo.js; "Ritmo: rápido" divide por 2)
-   micro 140ms · curto 280ms · médio 520ms · longo 900ms+ (cerimônias)
-   --saida  chegar e assentar (padrão) · --tranco  pouso com peso · --queda  cair, sair de cena
-   Regras: uma coisa grande por vez; nada encosta num filósofo (o alvo de um golpe é torre,
-   espantalho ou estela); prefers-reduced-motion corta tudo.
+   micro 140ms   passar o mouse, acender alvo
+   curto 280ms   livro que cai na torre, balão que entra
+   médio 520ms   voo de carta ou de livro, carimbo
+   longo 900ms+  cerimônias (louros, placa que vai para a prateleira)
+   --saida   cubic-bezier(.16,1,.3,1)    chegar e assentar (padrão)
+   --tranco  cubic-bezier(.3,1.6,.5,1)   pouso com peso, carimbo, pulo do coro
+   --queda   cubic-bezier(.6,0,.9,.3)    cair, sair de cena
+   Regras: uma coisa grande por vez; tremor da mesa de no máximo 6px e 320ms; nada encosta num
+   filósofo (o alvo de um golpe é torre, espantalho ou lápide); prefers-reduced-motion corta tudo.
+
+   3D  --tilt é a inclinação do piso. Tudo que fica de pé (.seat, .trib) desfaz a inclinação com
+   rotateX(calc(-1*var(--tilt))) pela base. Não ponha overflow, filter ou opacity nos elementos entre
+   .plano e eles: isso achata a cena.
    ============================================================ */
 :root{
   color-scheme:light;
@@ -47,7 +57,11 @@ button{font-family:inherit;font-size:inherit;color:inherit;cursor:pointer}
 button:disabled{cursor:not-allowed;opacity:.45}
 :focus-visible{outline:2px solid var(--egeu);outline-offset:2px}
 
-
+header{display:flex;align-items:center;gap:16px;padding:9px 20px;flex-wrap:wrap}
+header h1{font-family:var(--serif);font-weight:900;font-size:26px;margin:0;letter-spacing:.4px;color:#f6d98a}
+header h1 small{font-family:var(--sans);font-weight:700;font-size:11px;color:var(--mute);margin-left:10px;text-transform:uppercase;letter-spacing:1.4px}
+.hstat{margin-left:auto;display:flex;gap:12px;align-items:center;color:var(--mute);font-size:14px;flex-wrap:wrap}
+.hstat b{color:var(--ink)}
 .pips{display:flex;gap:3px}
 .pips i{width:9px;height:9px;border-radius:50%;background:#30375e;border:1px solid #515a88}
 .pips i.on{background:var(--gold);border-color:#fff3c4}
@@ -58,7 +72,69 @@ button:disabled{cursor:not-allowed;opacity:.45}
 .btn.pri{background:linear-gradient(180deg,#f3cf6c,#d6a430);color:#221a05;border-color:#b98a1e;border-bottom-color:var(--ouro2)}
 .btn.sm{padding:4px 9px;font-size:13px;border-bottom-width:2px}
 
+main{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:14px;padding:4px 18px 18px;max-width:1540px;margin:0 auto}
+@media(max-width:1060px){main{grid-template-columns:1fr}}
 
+/* ---------- a Ágora ---------- */
+.mesa{position:relative;min-width:0;border-radius:20px;overflow:hidden;border:3px solid #b98a1e;color:var(--tinta);
+  background:linear-gradient(180deg,var(--ceu4) 0,var(--ceu3) 52px,var(--ceu2) 112px,var(--ceu1) var(--hz),#c9b78f var(--hz),#b7a47d 46%,#a8956f 100%);
+  box-shadow:0 14px 40px rgba(0,0,0,.55),inset 0 0 0 2px rgba(255,236,170,.25)}
+.fundo{position:absolute;inset:0 0 auto 0;height:calc(var(--hz) + 120px);pointer-events:none}
+.sol{position:absolute;left:68%;top:calc(var(--hz) - 62px);width:92px;height:92px;border-radius:50%;background:radial-gradient(circle,#fff6d8 0,#ffd98a 38%,rgba(255,190,110,.35) 60%,transparent 72%)}
+.monte{position:absolute;left:0;right:0;top:calc(var(--hz) - 34px);height:36px;background:#8b7797;clip-path:polygon(0 100%,0 70%,9% 40%,18% 62%,30% 18%,41% 58%,52% 34%,63% 66%,74% 30%,86% 60%,94% 44%,100% 64%,100% 100%)}
+.degraus{position:absolute;left:9%;right:9%;top:calc(var(--hz) - 30px);height:46px;border-radius:50% 50% 0 0/100% 100% 0 0;
+  background:repeating-linear-gradient(180deg,#e9e2d2 0 10px,#cfc6b2 10px 12px,#ddd5c3 12px 22px,#bfb59f 22px 24px)}
+.coluna{position:absolute;top:22px;width:38px;height:calc(var(--hz) + 78px);border-radius:3px;
+  background:linear-gradient(90deg,#b9b09c 0,#f4efe5 18%,#d9d2c2 34%,#f6f2e9 50%,#d3cbb9 66%,#efe9dd 82%,#a79e8a 100%);box-shadow:4px 0 10px rgba(60,40,20,.25)}
+.coluna::before,.coluna::after{content:"";position:absolute;left:-8px;right:-8px;height:12px;border-radius:3px;background:linear-gradient(180deg,#faf7f0,#cfc7b5);box-shadow:0 2px 0 #a79e8a}
+.coluna::before{top:-8px}.coluna::after{bottom:-6px}
+.coluna.e{left:22px}.coluna.d{right:22px}
+/* coro grego */
+.coro{position:absolute;left:12%;right:12%;top:calc(var(--hz) - 44px);height:50px;display:flex;justify-content:center;align-items:flex-end;gap:6px}
+.corista{position:relative;width:15px;height:25px;border-radius:7px 7px 2px 2px;background:#4a3024;flex:none;transform-origin:50% 100%}
+.corista::before{content:"";position:absolute;left:50%;top:-10px;width:10px;height:10px;margin-left:-5px;border-radius:50%;background:inherit}
+.corista:nth-child(2n){height:30px;background:#5d3b28}.corista:nth-child(3n){background:#3a251d;height:27px}.corista:nth-child(5n){background:#70472f}
+.coro.aplauso .corista{animation:coroPula .34s var(--tranco) infinite alternate;animation-delay:calc(var(--i)*-70ms)}
+.coro.vaia .corista{animation:coroNega .2s linear infinite alternate;animation-delay:calc(var(--i)*-45ms)}
+.coro.murmurio .corista{animation:coroBalanca .7s ease-in-out infinite alternate;animation-delay:calc(var(--i)*-130ms)}
+@keyframes coroPula{from{transform:translateY(0)}to{transform:translateY(-9px) scaleY(1.06)}}
+@keyframes coroNega{from{transform:rotate(-10deg)}to{transform:rotate(10deg)}}
+@keyframes coroBalanca{from{transform:rotate(-4deg)}to{transform:rotate(4deg)}}
+.coro-fala{position:absolute;left:50%;bottom:calc(100% + 2px);transform:translateX(-50%);background:#fffdf5;color:var(--tinta);border:2px solid #4a3024;border-radius:14px;padding:2px 14px 3px;font-family:var(--serif);font-style:italic;font-weight:700;font-size:16px;white-space:nowrap;opacity:0;pointer-events:none}
+.coro-fala::before{content:"Coro";font-family:var(--sans);font-style:normal;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--tinta2);margin-right:8px;vertical-align:1px}
+.coro.falando .coro-fala{opacity:1;animation:coroFala .28s var(--tranco)}
+@keyframes coroFala{from{opacity:0;transform:translateX(-50%) translateY(8px) scale(.8)}}
+
+/* piso em perspectiva */
+.cena3d{position:relative;perspective:1500px;perspective-origin:50% 0;padding:0 46px;margin-top:calc(var(--hz) - 52px)}
+.plano{position:relative;transform:rotateX(var(--tilt));transform-origin:50% 100%;transform-style:preserve-3d;display:flex;flex-direction:column;gap:14px;padding:16px 14px 18px}
+.plano .opps,.plano .panel,.plano .group,.plano .agora{transform-style:preserve-3d}
+.piso{position:absolute;inset:0;border-radius:10px;box-shadow:0 0 0 3px #cfc6b2,0 0 0 9px #a89f8c,0 30px 40px rgba(60,40,20,.35);
+  background:
+    linear-gradient(115deg,transparent 0 46%,rgba(150,140,120,.2) 46.2%,transparent 46.9%),
+    linear-gradient(68deg,transparent 0 71%,rgba(150,140,120,.16) 71.2%,transparent 71.7%),
+    linear-gradient(152deg,transparent 0 23%,rgba(150,140,120,.14) 23.2%,transparent 23.6%),
+    repeating-linear-gradient(0deg,transparent 0 129px,rgba(120,110,90,.28) 129px 130px),
+    repeating-linear-gradient(90deg,transparent 0 129px,rgba(120,110,90,.28) 129px 130px),
+    radial-gradient(ellipse at 50% 48%,#fbf8f1 0,var(--marmore) 46%,var(--marmore2) 100%)}
+.orquestra{position:absolute;left:8%;right:8%;top:24%;bottom:26%;border-radius:50%;border:3px solid rgba(200,150,42,.55);box-shadow:inset 0 0 0 10px rgba(200,150,42,.1),inset 0 0 60px rgba(200,150,42,.12)}
+.veu{position:absolute;inset:0;border-radius:10px;background:rgba(30,26,40,.5);pointer-events:none;opacity:0;transition:opacity .14s;transform:translateZ(1px)}
+body.escolhendo .veu{opacity:1}
+
+.panel{position:relative;background:rgba(255,255,255,.34);border:1px solid rgba(120,110,90,.35);border-radius:12px;padding:8px 12px 9px}
+.opps{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:780px){.opps{grid-template-columns:1fr}}
+.ptitle{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-family:var(--serif);font-weight:900;font-size:18px;letter-spacing:.3px}
+.ptitle .dot{width:14px;height:14px;border-radius:50%;background:var(--pc);box-shadow:0 0 0 2px #fff,0 0 0 3px rgba(0,0,0,.25)}
+.ptitle .pts{margin-left:auto;font-family:var(--serif);font-size:24px;font-weight:900;line-height:1;border-bottom:4px solid var(--pc);padding:0 2px}
+.ptitle .pts small{font-family:var(--sans);font-size:11px;color:var(--tinta2);font-weight:700;margin-left:3px}
+.pmeta{color:var(--tinta2);font-size:13px;font-weight:500;font-family:var(--sans);letter-spacing:0}
+.pmeta.rodape{margin-top:6px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.panel.vez{border-color:var(--pc);box-shadow:0 0 0 3px var(--pc),0 0 34px 2px var(--pc)}
+.group{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;min-height:60px;border-radius:12px;padding:3px}
+.me .group{justify-content:center;gap:16px}
+.vazio{--w:100px;border:2px dashed rgba(90,80,60,.4);border-radius:10px;width:var(--w);height:calc(var(--w)*.8);display:flex;align-items:center;justify-content:center;color:rgba(60,50,35,.55);font-size:12px;text-align:center;font-weight:700}
+.opp .vazio{--w:78px}
 .trofeus{display:inline-flex;gap:4px;align-items:center;margin-left:auto}
 .ptitle .trofeus{margin-left:6px}
 .trofeus .tl{font-size:11px;text-transform:uppercase;letter-spacing:1px;font-weight:800;color:var(--tinta2);margin-right:2px}
@@ -68,7 +144,9 @@ button:disabled{cursor:not-allowed;opacity:.45}
 .trofeu.chegou{animation:trofeu .5s var(--tranco)}
 @keyframes trofeu{from{transform:scale(2.6)}}
 
-
+/* cartas de pé */
+.seat{display:flex;flex-direction:column;align-items:center;gap:3px;--w:100px;transform:rotateX(calc(-1*var(--tilt)));transform-origin:50% 100%}
+.opp .seat{--w:78px}
 .mini{position:relative;width:var(--w);height:calc(var(--w)*1.38);border-radius:10px;border:2px solid var(--e2,#444);background:var(--paper);color:var(--paperink);padding:0;overflow:hidden;text-align:left;flex:none;touch-action:none;
   transform:perspective(520px) translateY(var(--up,0)) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform .14s var(--saida),box-shadow .14s;
   box-shadow:0 2px 0 #d8d0be,0 4px 0 #b9af9a,0 5px 0 #8f8674,0 12px 14px rgba(40,25,10,.4)}
@@ -95,23 +173,87 @@ button:disabled{cursor:not-allowed;opacity:.45}
 .backs{display:flex;gap:3px;align-items:center}
 .back{width:13px;height:18px;border-radius:3px;background:repeating-linear-gradient(45deg,#7a2f2f,#7a2f2f 3px,#5c2020 3px,#5c2020 6px);border:1px solid #c9a24a}
 
-
+/* livros = ideias (junto ao filósofo) */
 .liv{display:inline-block;width:5px;height:14px;border-radius:1.5px 1.5px 0 0;background:var(--pc);box-shadow:inset -1.5px 0 rgba(0,0,0,.32),inset 0 2px rgba(255,255,255,.4);flex:none}
 .liv:nth-child(3n){height:12px}.liv:nth-child(4n+1){height:15px}.liv:nth-child(5n){margin-right:4px}
+.pilha{display:flex;align-items:flex-end;gap:1px;height:20px;width:var(--w);padding:0 4px 2px;border-bottom:4px solid var(--wood);border-radius:0 0 3px 3px;box-shadow:0 2px 0 var(--wood2)}
+.pilha b{margin-left:auto;font-family:var(--serif);font-weight:900;font-size:15px;line-height:1;color:var(--tinta);align-self:center}
+.pilha .mais{font-size:11px;color:var(--tinta2);align-self:center;margin-left:2px}
+.pilha.zero b{color:rgba(60,50,35,.4)}
+.quick{display:flex;gap:4px;height:26px}
 
+/* tribunas: lápide com a pergunta e uma torre de livros por jogador */
+.ag-h{position:relative;text-align:center;font-size:12.5px;color:var(--tinta2);margin:-4px 0 -6px;letter-spacing:.2px}
+.ag-h b{font-family:var(--serif);font-size:15px;color:var(--ouro2);letter-spacing:2px;text-transform:uppercase;margin-right:8px}
+.agora{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;align-items:end;padding:0 10px}
+@media(max-width:780px){.agora{grid-template-columns:1fr}}
+.trib{transform:rotateX(calc(-1*var(--tilt)));transform-origin:50% 100%;--pe:42px}
+.deb{position:relative;display:flex;flex-direction:column;border-radius:10px;transition:box-shadow .14s,filter .14s}
+.lapide{position:relative;border-radius:10px 10px 3px 3px;border-top:7px solid var(--c);background:linear-gradient(180deg,#fdfbf6,#e9e2d3);padding:6px 56px 9px 11px;min-height:74px;
+  box-shadow:0 2px 0 #cfc6b2,0 5px 0 #a89f8c,0 10px 16px rgba(40,25,10,.3)}
+.lapide .area{color:var(--c);font-weight:800;font-size:11px;text-transform:uppercase;letter-spacing:.9px;filter:brightness(.8)}
+.lapide .valor{position:absolute;right:8px;top:7px;width:42px;height:42px;border-radius:50%;background:#fff;border:3px solid var(--c);font-family:var(--serif);font-weight:900;font-size:21px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 4px rgba(0,0,0,.25)}
+.lapide .q{font-family:var(--serif);font-weight:700;font-size:17.5px;line-height:1.1;margin-top:2px;text-wrap:balance}
+.torres{position:relative;display:grid;grid-template-columns:repeat(3,1fr);padding:16px 6px 0;margin:0 6px;background:linear-gradient(180deg,rgba(255,255,255,.0) 0,rgba(255,255,255,.5) 100%);border-radius:0 0 8px 8px}
+.linha{position:absolute;left:0;right:0;height:0;border-top:2px dashed var(--ouro);pointer-events:none}
+.linha.vence{bottom:calc(var(--pe) + var(--v)*var(--bh))}
+.linha.topo{bottom:calc(var(--pe) + 2*var(--v)*var(--bh));border-top:2px solid var(--ouro2)}
+.linha em{position:absolute;right:0;bottom:1px;font-style:normal;font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--ouro2);background:rgba(255,252,244,.85);padding:0 4px;border-radius:3px 3px 0 0;white-space:nowrap}
+.est{display:flex;flex-direction:column;align-items:center;border-radius:8px;padding:0 2px 2px}
+.torre{position:relative;width:54px;height:calc(2*var(--v)*var(--bh));display:flex;flex-direction:column-reverse;align-items:center;border-bottom:5px solid #cfc6b2;box-shadow:0 3px 0 #9a917f;box-sizing:content-box}
+.lv{position:relative;flex:none;width:44px;height:var(--bh);border-radius:1.5px;background:var(--pc);box-shadow:inset 0 -1.5px rgba(0,0,0,.28),inset 0 1px rgba(255,255,255,.45),inset 7px 0 rgba(0,0,0,.12)}
+.lv::after{content:"";position:absolute;right:-5px;top:1px;bottom:1px;width:5px;background:repeating-linear-gradient(180deg,#fffaf0 0 1px,#d9cfb8 1px 2px);border-radius:0 1px 1px 0}
+.lv:nth-child(3n+1){transform:translateX(-3px)}.lv:nth-child(4n+2){transform:translateX(3px) rotate(.8deg)}.lv:nth-child(5n){width:40px}.lv:nth-child(7n+3){transform:translateX(-1px) rotate(-1.2deg);width:46px}
+.lv:last-child::before{content:"";position:absolute;left:3px;right:-2px;top:-4px;height:4px;background:var(--pc);filter:brightness(1.25);transform:skewX(-40deg);transform-origin:0 100%;border-radius:1px}
+.lv.porvir{visibility:hidden}
+.lv.cai{animation:caiLv .28s var(--tranco) backwards}
+@keyframes caiLv{from{translate:0 -70px;opacity:0}}
+.torre.lider{filter:drop-shadow(0 0 5px var(--ouro))}
+.est .n{font-family:var(--serif);font-size:18px;font-weight:900;line-height:1;margin-top:6px}
+.est .n.lead{color:var(--ouro2)}
+.est .quem{font-size:11.5px;font-weight:800;line-height:1.1;display:flex;align-items:center;gap:4px;white-space:nowrap}
+.est .quem::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--pc);box-shadow:0 0 0 1px rgba(0,0,0,.3)}
+.deb.vago{border:2px dashed rgba(90,80,60,.4);color:rgba(60,50,35,.6);align-items:center;justify-content:center;min-height:120px;font-size:13px;font-weight:700}
+
+/* painel do jogador: Biblioteca, botões e mão (plano, fora do piso) */
+.hud{position:relative;z-index:3;margin:0 10px 10px;padding:9px 12px 12px;border-radius:14px;background:linear-gradient(180deg,#f8f4ec,#e5ded0);border:1px solid #a89f8c;box-shadow:0 -8px 22px rgba(50,30,10,.3),inset 0 1px 0 #fff}
+.barra{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:8px}
+.barra .txt{flex:1;min-width:200px;font-size:14px}
+.barra .txt b{color:var(--ouro2)}
+.bib{display:flex;align-items:flex-end;gap:8px;padding:5px 10px 4px;border-radius:9px;background:linear-gradient(180deg,#5a3d22,#3f2a16);border:1px solid #8a6a40;touch-action:none;cursor:grab;min-width:150px}
+.bib .lv{display:flex;align-items:flex-end;gap:2px;height:34px;min-width:76px;width:auto;border-bottom:3px solid #2a1b0d;background:none;box-shadow:none;border-radius:0}
+.bib .lv{transform:none}
+.bib .lv::after{display:none}
+.bib .lv i{width:8px;height:28px;border-radius:2px 2px 0 0;background:var(--gold);box-shadow:inset -2px 0 rgba(0,0,0,.3),inset 0 3px rgba(255,255,255,.45)}
+.bib .lv i:nth-child(2n){height:24px;background:#f0c85a}.bib .lv i:nth-child(3n){height:31px;background:#d9a52c}
+.bib.chegou .lv i{animation:cai .5s var(--tranco) backwards}
+.bib.chegou .lv i:nth-child(2){animation-delay:.07s}.bib.chegou .lv i:nth-child(3){animation-delay:.14s}.bib.chegou .lv i:nth-child(4){animation-delay:.21s}.bib.chegou .lv i:nth-child(5){animation-delay:.28s}.bib.chegou .lv i:nth-child(6){animation-delay:.35s}.bib.chegou .lv i:nth-child(7){animation-delay:.42s}.bib.chegou .lv i:nth-child(8){animation-delay:.49s}
+@keyframes cai{from{transform:translateY(-46px);opacity:0}}
+.bib .t{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:#e6d3a8;line-height:1.1}
+.bib .t b{display:block;font-family:var(--serif);font-size:24px;color:#fff;letter-spacing:0}
 .lab{font-size:11px;text-transform:uppercase;letter-spacing:1.2px;color:var(--tinta2);font-weight:800;margin-bottom:5px}
 .box .lab{color:var(--mute)}
-
 .hand{display:flex;flex-wrap:wrap;padding-left:10px;row-gap:8px}
 .hand .mini{margin-left:-10px}
 .hand .mini:hover{z-index:5;--up:-12px}
 
-
+/* arrastar e soltar; seleção na mesa */
 .fantasma{position:fixed;left:0;top:0;z-index:60;pointer-events:none;opacity:.92;transform-origin:50% 50%;filter:drop-shadow(0 14px 14px rgba(0,0,0,.55))}
-
+.alvo{outline:3px dashed var(--egeu);outline-offset:3px;animation:pulsa 1s ease-in-out infinite;cursor:pointer}
+.alvo.sobre{outline-style:solid;outline-color:#fff;box-shadow:0 0 30px 6px rgba(31,111,143,.7)}
+@keyframes pulsa{50%{outline-color:#7fd0ea}}
+.origem{opacity:.35}
+body.escolhendo .group.alvo{transform:translateZ(2px);background:rgba(255,255,255,.75)}
+body.escolhendo .plano .mini:not(.alvo):not(.selecionado){filter:brightness(.62) saturate(.6)}
+body.escolhendo .deb:not(.alvo):not(:has(.alvo)) .lapide,body.escolhendo .deb:not(.alvo):not(:has(.alvo)) .torres{filter:brightness(.62) saturate(.6)}
+body.escolhendo .hud .mini:not(.selecionado){opacity:.6}
+body.escolhendo .est.alvo{background:#fffaf0}
+body.escolhendo .selecionado{box-shadow:0 0 0 3px var(--egeu),0 0 26px 4px rgba(31,111,143,.7)}
+body.escolhendo .seat .quick{visibility:hidden}
+.dica{position:fixed;left:50%;top:10px;transform:translateX(-50%);z-index:45;display:none;align-items:center;gap:10px;background:#fbf8f1;color:var(--tinta);border:2px solid var(--egeu);border-radius:12px;padding:8px 10px 8px 14px;box-shadow:0 10px 30px rgba(0,0,0,.5);max-width:min(760px,94vw)}
+body.escolhendo .dica{display:flex}
 .dica .t{font-size:14.5px}
 .dica .t b{color:var(--egeu)}
-
 
 /* ---------- camada de efeitos ---------- */
 #fx{position:fixed;inset:0;pointer-events:none;z-index:30;overflow:hidden}
@@ -127,12 +269,12 @@ button:disabled{cursor:not-allowed;opacity:.45}
 .faixa small{display:block;font-family:var(--sans);font-weight:500;font-size:15px;color:var(--tinta2);margin-top:2px}
 .faixa.topo{top:96px;font-size:22px;padding:7px 24px 9px}
 @keyframes fx{0%{opacity:0;transform:translate(-50%,-50%) scale(.8)}14%{opacity:1;transform:translate(-50%,-50%) scale(1)}84%{opacity:1}100%{opacity:0;transform:translate(-50%,-56%) scale(1)}}
-
+.fantasma-fx{position:absolute;left:0;top:0;margin:0;transform-origin:50% 100%;z-index:2;transition:none}
 .po{position:absolute;width:16px;height:16px;border-radius:50%;background:radial-gradient(circle,#fff 0,rgba(255,255,255,.75) 50%,transparent 72%)}
 .carimbo{position:absolute;border:5px double var(--vinho);color:var(--vinho);font-family:var(--sans);font-weight:800;font-size:30px;letter-spacing:4px;text-transform:uppercase;padding:2px 16px 4px;border-radius:8px;background:rgba(255,248,240,.72);white-space:nowrap;z-index:4}
 .pagina{position:absolute;width:15px;height:20px;background:repeating-linear-gradient(180deg,#fffdf5 0 3px,#e4dcc8 3px 4px);border:1px solid #d3c9b0;border-radius:1px;box-shadow:0 2px 3px rgba(0,0,0,.2)}
 .palha{position:absolute;width:15px;height:2.5px;border-radius:2px;background:#d9b24a}
-
+.espantalho{position:absolute;left:0;top:0;transform-origin:50% 100%;filter:drop-shadow(0 6px 5px rgba(40,25,10,.4));z-index:1}
 .placa{position:absolute;left:0;top:0;width:320px;border-radius:12px;border-top:9px solid var(--c);background:linear-gradient(180deg,#fdfbf6,#e9e2d3);color:var(--tinta);text-align:center;padding:40px 18px 14px;box-shadow:0 3px 0 #cfc6b2,0 7px 0 #a89f8c,0 0 0 4px var(--ouro),0 20px 50px rgba(0,0,0,.5);z-index:5}
 .placa .lr{position:absolute;left:50%;top:-50px;transform:translate(-50%,0)}
 .placa .pa{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--tinta2)}
@@ -168,7 +310,10 @@ button:disabled{cursor:not-allowed;opacity:.45}
 @keyframes tempo{from{width:0}to{width:100%}}
 @media(max-width:700px){.cena{flex-direction:column}.fala::before{display:none}}
 
-
+/* diário */
+.log{height:calc(100vh - 86px);min-height:420px;position:sticky;top:8px;display:flex;flex-direction:column;background:rgba(18,22,46,.92);border:1px solid #3a4272;border-radius:14px;padding:10px 12px}
+@media(max-width:1060px){.log{height:320px;position:static}}
+.log h2{font-family:var(--serif);font-size:17px;margin:0 0 6px;font-weight:900}
 .logbody{overflow:auto;flex:1;font-size:13.5px;display:flex;flex-direction:column;gap:5px;padding-right:4px;-webkit-user-select:text;user-select:text}
 .le{padding-left:9px;border-left:3px solid var(--pc,#444)}
 .le.turno{border:0;padding:0;margin-top:8px;font-weight:800;color:var(--pc,var(--mute));text-transform:uppercase;font-size:11px;letter-spacing:1px}
@@ -178,7 +323,6 @@ button:disabled{cursor:not-allowed;opacity:.45}
 .le.cita,.le.rel,.le.pos{background:#f5efe2;color:#23201a;border-radius:6px;border-left:4px solid var(--pc,#888);padding:6px 9px;font-family:var(--serif);font-size:14.5px;line-height:1.25}
 .le.cita{font-style:italic}
 .le .tag{display:block;font-family:var(--sans);font-style:normal;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.9px;color:#7a6a45;margin-bottom:2px}
-
 
 /* modal */
 .ov{position:fixed;inset:0;background:rgba(6,8,10,.8);display:none;align-items:center;justify-content:center;padding:16px;z-index:50;overflow:auto}
@@ -256,14 +400,55 @@ button:disabled{cursor:not-allowed;opacity:.45}
 .fala .refl .peq{font-size:13px;color:#6d6657}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;transition:none!important}}
 
-
+/* ===== rodada visual 2: uma só luz (sol poente, à direita), materiais, cerâmica, câmera, marionetes ===== */
+.mesa{--mx:0}
+.sol{transform:translateX(calc(var(--mx)*-16px))}
+.monte{transform:translateX(calc(var(--mx)*-9px))}
+.degraus,.coro{transform:translateX(calc(var(--mx)*-4px))}
+.coluna{transform:translateX(calc(var(--mx)*10px));background:linear-gradient(90deg,#8f8674 0,#b9b09c 14%,#d9d2c2 34%,#efe9dd 58%,#fbf8f1 78%,#fff 88%,#e9e2d3 100%);box-shadow:-10px 6px 14px rgba(60,40,20,.28)}
+.mini{box-shadow:-1px 2px 0 #d8d0be,-2px 4px 0 #b9af9a,-3px 5px 0 #8f8674,-12px 12px 14px rgba(40,25,10,.38)}
+.mini:hover{box-shadow:-1px 2px 0 #d8d0be,-2px 4px 0 #b9af9a,-3px 5px 0 #8f8674,-18px 20px 20px rgba(40,25,10,.34)}
+.lapide{box-shadow:-1px 2px 0 #cfc6b2,-3px 5px 0 #a89f8c,-12px 10px 16px rgba(40,25,10,.3)}
+.piso{box-shadow:0 0 0 3px #f6f2e9,0 0 0 8px #cfc6b2,0 0 0 11px #9a917f,-14px 34px 40px rgba(60,40,20,.4)}
+.piso::after{content:"";position:absolute;inset:7px;border-radius:6px;border:2px solid #a8782a;box-shadow:inset 0 0 0 1px rgba(255,236,170,.6),0 0 0 1px rgba(90,60,10,.3)}
+.orquestra{border:2px solid rgba(168,120,42,.7);box-shadow:inset 0 0 0 7px rgba(239,234,224,.5),inset 0 0 0 9px rgba(168,120,42,.45),inset 0 0 70px rgba(200,150,42,.1)}
+.bib{border:3px solid #6b4a2a;box-shadow:inset 0 0 0 2px #2a1b0d,-3px 4px 6px rgba(40,25,10,.35)}
+.torre{transform-origin:50% 100%}
+.torre.lider{filter:none}
+.torre.lider::before{content:"";position:absolute;left:-12px;right:-12px;bottom:0;height:200px;background:linear-gradient(180deg,rgba(255,224,140,0) 0,rgba(255,224,140,.42) 100%);clip-path:polygon(30% 0,100% 0,100% 100%,0 100%);transform:skewX(-16deg);transform-origin:50% 100%;pointer-events:none}
+.focoveu{position:absolute;inset:0;pointer-events:none;z-index:2;opacity:0;transition:opacity .5s var(--saida);background:radial-gradient(circle at var(--fx,50%) var(--fy,50%),transparent 0,transparent 170px,rgba(24,18,34,.5) 400px)}
+.focoveu.on{opacity:1}
+/* oponentes: busto e placa de bronze; clepsidra */
+.busto{display:inline-flex;filter:drop-shadow(-2px 2px 1px rgba(40,25,10,.35))}
+.placa-nome{background:linear-gradient(180deg,#c9973a,#8f6a16);color:#fff8e0;border:1px solid #6b4d0c;border-radius:3px;padding:0 10px 1px;font-size:15px;letter-spacing:.6px;text-shadow:0 1px 0 rgba(0,0,0,.4);box-shadow:inset 0 1px 0 rgba(255,236,170,.6)}
+.btn.clep{display:inline-flex;align-items:center;gap:7px;background:linear-gradient(180deg,#d9a94a,#a8782a);border-color:#6b4d0c;border-bottom-color:#4f3808;color:#241803;box-shadow:inset 0 1px 0 rgba(255,236,170,.7)}
+/* efeitos em pergaminho e cerâmica: sem estouros, o humor fica no ritmo */
 .estouro{position:absolute;font-family:var(--serif);font-style:italic;font-weight:700;font-size:16px;color:#2a1a14;white-space:nowrap;z-index:3;background:linear-gradient(180deg,#f6ecd2,#ead9b0);padding:3px 20px 4px;border-radius:2px;box-shadow:0 3px 8px rgba(40,25,10,.3)}
 .estouro::before,.estouro::after{content:"";position:absolute;top:-3px;bottom:-3px;width:9px;border-radius:5px;background:linear-gradient(90deg,#c9b27a,#f3e6c0 45%,#b89a5c);box-shadow:0 1px 3px rgba(0,0,0,.3)}
 .estouro::before{left:-5px}.estouro::after{right:-5px}
 .estouro.medio{font-size:17px}
 .estouro.escrachado{font-size:18px;font-style:normal;font-weight:900;font-variant:small-caps;letter-spacing:.8px}
 .carimbo{border:3px double var(--vinho);font-family:var(--serif);font-size:21px;letter-spacing:3px;font-variant:small-caps;text-transform:none;border-radius:4px;background:rgba(255,248,240,.82);padding:1px 14px 3px}
-
+.corista{background:#1e130e}.corista:nth-child(2n){background:#2a1a14}.corista:nth-child(3n){background:#1e130e}.corista:nth-child(5n){background:#3a2418}
+.coro-fala{background:#d98a52;color:#1e130e;border:2px solid #1e130e;border-radius:3px;box-shadow:0 0 0 2px #d98a52,0 0 0 3px #1e130e}
+.coro-fala::before{color:#1e130e;opacity:.75}
+.papiro{position:absolute;left:0;top:0;width:18px;height:9px;margin:-4px 0 0 -9px;border-radius:4px;background:linear-gradient(180deg,#f6ecd2,#d9c48f);border:1px solid #8a6a3a;box-shadow:inset 4px 0 0 -1px #c9b27a,inset -4px 0 0 -1px #c9b27a;z-index:3}
+/* marionete no pedestal */
+.mini.boneco{background:none;border:0;box-shadow:none;overflow:visible;height:auto;display:flex;flex-direction:column;align-items:center}
+.mini.boneco:hover{box-shadow:none}
+.mini.boneco .fig{width:100%;margin-bottom:-5px;position:relative;z-index:1;filter:drop-shadow(-5px 4px 3px rgba(40,25,10,.35))}
+.mini.boneco .fig svg{display:block;width:100%;height:auto;overflow:visible}
+.mini.boneco .pedestal{position:relative;width:100%;border-radius:4px;background:linear-gradient(90deg,#b9b09c,#efe9dd 30%,#fbf8f1 75%,#e2dbcc);border:1px solid #9a917f;box-shadow:0 -3px 0 #fbf8f1,0 -4px 0 #9a917f,-2px 3px 0 #9a917f,-8px 8px 10px rgba(40,25,10,.3);padding:5px 4px 4px;text-align:center}
+.mini.boneco .pn{display:block;font-family:var(--serif);font-weight:900;font-size:calc(var(--w)*.13);color:var(--tinta);line-height:1.1}
+.mini.boneco .custo{left:-5px;top:-10px;min-width:20px;height:20px;font-size:13px}
+.mini.boneco .vals{position:static;height:auto;background:none;padding:3px 0 0;grid-template-columns:repeat(4,1fr);gap:2px}
+.mini.boneco .vals span{height:calc(var(--w)*.16);font-size:calc(var(--w)*.105)}
+.mini.boneco .sel{top:44%}
+.mini.boneco.acted .fig{filter:grayscale(.7) drop-shadow(-5px 4px 3px rgba(40,25,10,.3))}
+.mini.boneco.ausente{opacity:1}
+.mini.boneco.ausente .bn .figura{opacity:0}
+.fantasma-fx.boneco .pedestal,.fantasma-fx.boneco .sel{visibility:hidden}
+.fantasma-fx.boneco .bn .animal{display:none}
 /* motor de marionetes: o desenho é fixo, o programa só gira e desloca as partes */
 .bn g,.bn .palpebra{transform-box:view-box}
 .bn .corpo{animation:bnResp 3.2s ease-in-out infinite alternate}
@@ -286,176 +471,42 @@ button:disabled{cursor:not-allowed;opacity:.45}
 @keyframes bnPasso{from{transform:rotate(-17deg)}to{transform:rotate(17deg)}}
 @keyframes bnBob{to{transform:translateY(-2.6px)}}
 @keyframes bnLanca{0%,100%{transform:rotate(0deg)}45%{transform:rotate(-105deg)}}
-
-/* ============================================================
-   RODADA 3 — MESA EM THREE.JS
-   A mesa (plataforma, estelas, torres, pedestais, bancos, estantes, árvores, fundo, luz) é o canvas #gl,
-   desenhado por mesa3d.js com os materiais de materiais.js. Tudo o que é texto ou carta fica em HTML,
-   por cima: mão em leque, Biblioteca, botões, telas centrais, balões, faixas e diário.
-   Os elementos com data-anc são ÂNCORAS: invisíveis, postos a cada quadro sobre o objeto 3D que
-   representam (mesa3d.js, função ancora). Servem de alvo para clique e arrasto e levam os mesmos
-   data-atributos de sempre. .alvo / .sobre / .selecionado numa âncora acendem o objeto 3D.
-   ============================================================ */
-html,body{height:100%;overflow:hidden}
-body{background:#f1cfa6}
-#gl{position:fixed;inset:0;width:100vw;height:100vh;display:block;z-index:0}
-#mesa{position:fixed;inset:0;z-index:1;pointer-events:none}
-#mesa [data-anc],#hud [data-anc]{position:fixed;margin:0;pointer-events:auto}
-body.sem3d::before{content:"Este navegador não abriu a cena 3D (WebGL). Tente outro navegador ou atualize o driver de vídeo.";position:fixed;left:50%;top:40%;transform:translate(-50%,-50%);z-index:60;background:#20264a;color:#fff;padding:16px 22px;border-radius:12px;max-width:420px;text-align:center}
-
-/* cabeçalho: uma linha fina */
-header{position:fixed;left:0;right:0;top:0;z-index:8;height:30px;display:flex;align-items:center;gap:12px;padding:0 10px;background:linear-gradient(180deg,rgba(24,22,38,.78),rgba(24,22,38,.5));color:#f1ead9;font-size:13px;backdrop-filter:blur(3px)}
-header h1{font-family:var(--serif);font-weight:900;font-size:16px;margin:0;letter-spacing:.3px;color:#f6d98a;white-space:nowrap}
-header h1 small{font-family:var(--sans);font-weight:700;font-size:9.5px;color:#c9c3b4;margin-left:6px;text-transform:uppercase;letter-spacing:1.2px}
-header .vez{flex:1;min-width:0;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#e8e0cc}
-header .vez b{color:#f6d98a}
-.hstat{display:flex;gap:8px;align-items:center;color:#c9c3b4;white-space:nowrap}
-.hstat b{color:#fff}
-header .btn.sm{padding:1px 8px;font-size:12px;border-bottom-width:1px;border-radius:6px;background:rgba(255,255,255,.14);color:#f1ead9;border-color:rgba(255,255,255,.3)}
-header .btn.sm:hover{background:rgba(255,255,255,.28)}
-@media(max-width:820px){header h1 small,.pips{display:none}}
-
-/* ---------- âncoras sobre a cena ---------- */
-.deb,.est,.torre{background:none;border:0}
-.deb.alvo,.est.alvo,#megrupo.alvo,.bib.alvo,#mesa .mini.alvo{cursor:pointer}
-.est .torre{position:absolute;inset:0}
-.est .n{position:absolute;left:50%;top:100%;transform:translate(-50%,-45%);min-width:26px;padding:0 5px 1px;text-align:center;font-family:var(--serif);font-weight:900;font-size:16px;line-height:19px;color:#fff8e0;white-space:nowrap;
-  background:linear-gradient(180deg,#4a3826,#2a1e12);border:1.5px solid var(--pc);border-radius:5px;box-shadow:0 2px 5px rgba(0,0,0,.45);pointer-events:none}
-.est .n.zero{opacity:.55;font-weight:700;font-size:13px;line-height:16px;min-width:20px}
-.est .n.lead{background:linear-gradient(180deg,#f3cf6c,#c8962a);color:#241803;border-color:#fff3c4;box-shadow:0 0 12px rgba(255,220,120,.9),0 2px 5px rgba(0,0,0,.45)}
-.est .quem{display:none}
-.rl{transform:translate(7px,-50%);font-size:10.5px;font-weight:700;letter-spacing:.3px;color:#fff8e0;background:rgba(42,30,18,.78);border:1px solid rgba(233,185,63,.8);border-radius:9px;padding:0 5px;white-space:nowrap;line-height:15px}
-.rl b{font-family:var(--serif);font-weight:900;font-size:12.5px}
-.rl i{font-style:normal;display:none}
-.deb:hover~.rl i,.rl:hover i,body.escolhendo .rl i{display:inline}
-.rl.t{color:#f6d98a;border-color:rgba(233,185,63,.45);background:rgba(42,30,18,.6)}
-.vago{transform:translate(-50%,-50%);max-width:170px;text-align:center;font-size:12.5px;font-weight:700;color:#fff8e0;background:rgba(42,30,18,.62);border-radius:8px;padding:4px 10px;pointer-events:none!important}
-
-/* assentos: a âncora cobre pedestal e figura; por dentro só a etiqueta de estado e, se houver, o boneco */
-#mesa .mini{background:none;border:0;box-shadow:none;border-radius:0;overflow:visible;transform:none;transition:none;padding:0}
-#mesa .mini:hover{box-shadow:none}
-#mesa .mini.novo,#mesa .mini.ausente{opacity:1;filter:none}
-#mesa .mini .sel{position:absolute;left:50%;top:30%;right:auto;transform:translateX(-50%);padding:1px 8px;border-radius:5px;white-space:nowrap;font-size:10px;line-height:14px;background:rgba(20,16,12,.78);color:#fff;letter-spacing:.8px;pointer-events:none}
-#mesa .mini .sel.libr{background:#7a4f0c;color:#ffe9a6}
-#mesa .opp-seat .mini .sel{display:none}
-#mesa .opp-seat .pilha.libp b{font-size:9px;line-height:13px}
-/* boneco: .fig é o encaixe da figura (hoje o SVG de recorte; depois, um canvas do Rive por boneco) */
-.mini.boneco .fig{pointer-events:none!important;filter:drop-shadow(-4px 3px 2px rgba(40,25,10,.4))}
-.fig svg{position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible}
-.mini.boneco.acted .fig{filter:grayscale(.7) drop-shadow(-4px 3px 2px rgba(40,25,10,.3))}
-.mini.boneco.novo .fig{opacity:.6;filter:grayscale(.75)}
-.mini.boneco.ausente .bn .figura{opacity:0}
-#mesa .mini.ausente .sel{display:none}
-.fig-fx::after{content:"";position:absolute;left:14%;right:22%;bottom:-3%;height:9%;border-radius:50%;background:radial-gradient(ellipse,rgba(40,25,10,.45),transparent 70%);z-index:-1}
-.fig-fx{position:fixed;left:0;top:0;z-index:4;pointer-events:none;filter:drop-shadow(-4px 3px 2px rgba(40,25,10,.4))}
-.fig-fx .bn .animal{display:none}
-/* ideias junto ao filósofo: número sobre a pilha de livros 3D */
-.pilha{transform:translate(-50%,-100%);display:flex;align-items:center;gap:3px;pointer-events:none!important}
-.pilha b{min-width:22px;padding:0 5px 1px;text-align:center;font-family:var(--serif);font-weight:900;font-size:15px;line-height:18px;color:#fff8e0;background:linear-gradient(180deg,#4a3826,#2a1e12);border:1.5px solid var(--pc);border-radius:5px;box-shadow:0 2px 5px rgba(0,0,0,.45)}
-.pilha.zero b{opacity:.5}
-.pilha.libp b{font-family:var(--sans);font-size:11px;font-weight:800;background:#7a4f0c;border-color:#ffe9a6;color:#ffe9a6}
-.pilha .mais1{pointer-events:auto;width:20px;height:20px;border-radius:50%;padding:0;line-height:16px;font-weight:900;font-size:15px;background:linear-gradient(180deg,#f3cf6c,#d6a430);color:#221a05;border:1px solid #8a6510;box-shadow:0 2px 4px rgba(0,0,0,.4)}
-.pilha .mais1:hover:not(:disabled){transform:scale(1.15)}
-#mesa .opp-seat .pilha b{font-size:12px;line-height:15px;min-width:18px;padding:0 4px}
-body.escolhendo .pilha .mais1{visibility:hidden}
-
-/* placa dos oponentes, sobre o banco: nome, pontos, troféus, mão */
-.panel.opp{transform:translate(-50%,-100%);display:flex;align-items:center;gap:8px;padding:3px 10px 4px;border-radius:8px;white-space:nowrap;color:#fff8e0;font-size:12.5px;
-  background:linear-gradient(180deg,rgba(58,44,30,.92),rgba(34,24,14,.92));border:1.5px solid var(--pc);box-shadow:0 4px 12px rgba(0,0,0,.45)}
-.panel.opp.vez{box-shadow:0 0 0 2px var(--pc),0 0 26px 4px var(--pc)}
-.panel.opp .nome{font-family:var(--serif);font-weight:900;font-size:16px;letter-spacing:.3px}
-.panel.opp .pts{font-family:var(--serif);font-weight:900;font-size:19px;line-height:1;color:#fff;border-bottom:3px solid var(--pc)}
-.panel.opp .pts small,.eu .pts small{font-family:var(--sans);font-size:10px;font-weight:700;opacity:.75;margin-left:2px}
-.panel.opp .trofeus .tl,.eu .trofeus .tl{display:none}
-.panel.opp .trofeus .tv{display:none}
-.panel.opp .trofeus{margin-left:0}
-.panel.opp .jog{font-style:italic;opacity:.85}
-.bibop{transform:translate(-50%,-100%);font-family:var(--serif);font-weight:900;font-size:14px;line-height:17px;color:#fff8e0;padding:0 7px 1px;border-radius:5px;background:linear-gradient(180deg,#4a3826,#2a1e12);border:1.5px solid var(--pc);box-shadow:0 2px 5px rgba(0,0,0,.45);pointer-events:none!important;white-space:nowrap}
-.bibop small{font-family:var(--sans);font-weight:700;font-size:9.5px;letter-spacing:.8px;text-transform:uppercase;opacity:.8;margin-right:5px}
-
-/* coro: só a fala fica em HTML */
-.coro{width:0;height:0;pointer-events:none!important}
-.coro-fala{position:absolute;left:0;bottom:0;transform:translateX(-50%);background:#d98a52;color:#1e130e;border:2px solid #1e130e;border-radius:3px;box-shadow:0 0 0 2px #d98a52,0 0 0 3px #1e130e;padding:2px 14px 3px;font-family:var(--serif);font-style:italic;font-weight:700;font-size:16px;white-space:nowrap;opacity:0;pointer-events:none}
-.coro-fala::before{content:"Coro";font-family:var(--sans);font-style:normal;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:#1e130e;opacity:.75;margin-right:8px;vertical-align:1px}
-.coro.falando .coro-fala{opacity:1;animation:coroFala .28s var(--tranco)}
-@keyframes coroFala{from{opacity:0;transform:translateX(-50%) translateY(8px) scale(.8)}}
-.focoveu{position:fixed;inset:0;pointer-events:none;z-index:2;opacity:0;transition:opacity .6s var(--saida);background:radial-gradient(ellipse at 50% 46%,transparent 0,transparent 30%,rgba(20,14,30,.55) 78%)}
-.focoveu.on{opacity:1}
-
-/* ---------- painel do jogador sobre a cena ---------- */
-#hud{position:fixed;inset:0;z-index:5;pointer-events:none}
-#hud>*{pointer-events:auto}
-/* Biblioteca: âncora sobre a estante 3D da frente, à direita */
-.bib{cursor:grab;touch-action:none}
-.bib .t{position:absolute;left:50%;top:-6px;transform:translate(-50%,-100%);display:flex;align-items:center;gap:7px;padding:2px 10px 3px;border-radius:7px;white-space:nowrap;font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:#e6d3a8;
-  background:linear-gradient(180deg,#5a3d22,#3f2a16);border:1.5px solid #c8962a;box-shadow:0 4px 10px rgba(0,0,0,.45)}
-.bib .t b{font-family:var(--serif);font-size:22px;line-height:1;color:#fff;letter-spacing:0}
-.bib.chegou .t{animation:trofeu .5s var(--tranco)}
-/* canto inferior esquerdo: placar do jogador e botões */
-.canto{position:fixed;left:10px;bottom:10px;display:flex;flex-direction:column;gap:6px;align-items:flex-start;max-width:230px}
-.eu{display:flex;align-items:center;gap:8px;padding:3px 10px 4px;border-radius:8px;color:#fff8e0;font-size:12.5px;background:linear-gradient(180deg,rgba(58,44,30,.92),rgba(34,24,14,.92));border:1.5px solid var(--pc);box-shadow:0 4px 12px rgba(0,0,0,.45);flex-wrap:wrap}
-.eu.vez{box-shadow:0 0 0 2px var(--pc),0 0 22px 3px var(--pc)}
-.eu .nome{font-family:var(--serif);font-weight:900;font-size:16px}
-.eu .pts{font-family:var(--serif);font-weight:900;font-size:21px;line-height:1;color:#fff;border-bottom:3px solid var(--pc)}
-.eu .trofeus{margin-left:0;flex-wrap:wrap}
-.eu .trofeus .tv{display:none}
-.canto .btn{box-shadow:0 3px 8px rgba(0,0,0,.35)}
-.canto .btn.clep{font-size:16px;padding:8px 14px}
-/* mão em leque, sobrepondo a borda de baixo; a carta sobe ao passar o mouse */
-.hand.leque{position:fixed;left:50%;bottom:0;transform:translateX(-50%);display:flex;flex-wrap:nowrap;justify-content:center;padding:0;--w:118px;height:104px;pointer-events:none!important;z-index:1}
-.hand.leque .mini{pointer-events:auto;margin:0 -15px;transform-origin:50% 320%;
-  transform:rotate(calc(var(--k,0)*3.6deg)) translateY(var(--up,0px)) perspective(520px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform .16s var(--saida),box-shadow .14s}
-.hand.leque .mini:hover,.hand.leque .mini.selecionado{z-index:5;--up:-74px}
-.hand.leque .vaziaM{color:#fff8e0;background:rgba(42,30,18,.6);padding:2px 10px;border-radius:6px;align-self:center;pointer-events:none}
-@media(max-height:620px){.hand.leque{--w:96px;height:86px}}
-
-/* seleção e arrasto: o objeto 3D acende (mesa3d.js); aqui, só o que é HTML */
-.alvo.sobre{cursor:pointer}
-.origem{opacity:.35}
-body.escolhendo .hand.leque .mini:not(.selecionado){filter:brightness(.6) saturate(.6)}
-body.escolhendo .hand.leque .selecionado,body.escolhendo .btn.selecionado{box-shadow:0 0 0 3px var(--egeu),0 0 26px 4px rgba(31,111,143,.8)}
-body.escolhendo .bib.alvo .t,.bib.selecionado .t{border-color:#7fd0ea;box-shadow:0 0 0 2px #1f6f8f,0 0 22px 4px rgba(79,195,238,.8)}
-.dica{position:fixed;left:50%;top:38px;transform:translateX(-50%);z-index:45;display:none;align-items:center;gap:10px;background:#fbf8f1;color:var(--tinta);border:2px solid var(--egeu);border-radius:12px;padding:6px 10px 6px 14px;box-shadow:0 10px 30px rgba(0,0,0,.5);max-width:min(760px,94vw)}
-body.escolhendo .dica{display:flex}
-
-/* diário: painel lateral que se recolhe */
-.log{position:fixed;right:0;top:36px;bottom:120px;width:310px;z-index:20;display:flex;flex-direction:column;background:rgba(18,22,46,.94);border:1px solid #3a4272;border-right:0;border-radius:14px 0 0 14px;padding:10px 12px;color:var(--ink);transform:translateX(102%);transition:transform .3s var(--saida);box-shadow:-10px 0 30px rgba(0,0,0,.4)}
-body.diario .log{transform:none}
-.log h2{font-family:var(--serif);font-size:17px;margin:0 0 6px;font-weight:900;display:flex;align-items:center}
-.log h2 button{margin-left:auto}
-@media(max-width:700px){.log{width:86vw}}
-.espantalho{display:none}
-/* uma só luz (sol poente, à direita): sombras das cartas HTML caem para a esquerda */
-.mini{box-shadow:-1px 2px 0 #d8d0be,-2px 4px 0 #b9af9a,-3px 5px 0 #8f8674,-12px 12px 14px rgba(40,25,10,.38)}
-.mini:hover{box-shadow:-1px 2px 0 #d8d0be,-2px 4px 0 #b9af9a,-3px 5px 0 #8f8674,-18px 20px 20px rgba(40,25,10,.34)}
-.btn.clep{display:inline-flex;align-items:center;gap:7px;background:linear-gradient(180deg,#d9a94a,#a8782a);border-color:#6b4d0c;border-bottom-color:#4f3808;color:#241803;box-shadow:inset 0 1px 0 rgba(255,236,170,.7)}
 </style>
 </head>
 <body>
-<canvas id="gl" aria-hidden="true"></canvas>
 <header>
   <h1>Batalhas Filosóficas <small>protótipo · nível 2</small></h1>
-  <div class="hstat"><span id="hround"></span><span class="pips" id="pips"></span></div>
-  <div class="vez" id="hvez"></div>
   <div class="hstat">
+    <span id="hround"></span><span class="pips" id="pips"></span>
     <button class="btn sm" id="bveloc">Ritmo: normal</button>
     <button class="btn sm" id="bregras">Como jogar</button>
-    <button class="btn sm" id="bdiario">Diário</button>
     <button class="btn sm" id="bnova">Nova partida</button>
   </div>
 </header>
-<div id="mesa">
-  <div id="opps"></div>
-  <div id="agora"></div>
-  <div id="me"></div>
-  <div class="coro" id="coro" data-anc="coro"></div>
-</div>
-<div class="focoveu" id="focoveu"></div>
-<div id="hud"></div>
-<aside class="log" aria-label="Diário da Ágora">
-  <h2>Diário da Ágora <button class="btn sm" id="bdiario2">Recolher</button></h2>
-  <div class="logbody" id="log"></div>
-</aside>
+<main>
+  <div class="mesa" id="mesa">
+    <div class="fundo" aria-hidden="true">
+      <div class="sol"></div><div class="monte"></div><div class="degraus"></div>
+      <div class="coluna e"></div><div class="coluna d"></div>
+      <div class="coro" id="coro"></div>
+    </div>
+    <div class="cena3d">
+      <div class="plano" id="plano">
+        <div class="piso"></div><div class="orquestra"></div><div class="veu"></div>
+        <div class="opps" id="opps"></div>
+        <div class="ag-h"><b>Ágora</b>Cada livro é uma ideia. A linha tracejada marca o valor do debate; torre até o topo é vitória imediata.</div>
+        <div class="agora" id="agora"></div>
+        <div class="panel me" id="me" style="--pc:#e9b93f"></div>
+      </div>
+    </div>
+    <div class="focoveu" id="focoveu"></div>
+    <div class="hud" id="hud"></div>
+  </div>
+  <div class="log">
+    <h2>Diário da Ágora</h2>
+    <div class="logbody" id="log"></div>
+  </div>
+</main>
 
 <div class="dica" id="dica"></div>
 <div id="fx"></div>
@@ -470,6 +521,5 @@ body.diario .log{transform:none}
 <script src="coreo.js"></script>
 <script src="bonecos.js"></script>
 <script src="ui.js"></script>
-<script type="module" src="mesa3d.js"></script>
 </body>
 </html>
