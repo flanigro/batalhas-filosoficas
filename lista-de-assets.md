@@ -14,7 +14,7 @@ Acompanha a mesa em Three.js (rodadas 3 a 5). Na rodada 5 a mesa virou uma arena
 
 ### 1.1 Bonecos dos filósofos (Rive)
 
-- O que é: a figura de cada filósofo, de corpo inteiro, animada. Hoje só o Diógenes tem boneco (SVG de recorte, provisório, em bonecos.js); os outros 19 aparecem como busto (o retrato num nicho em arco) sobre o pedestal.
+- O que é: a figura de cada filósofo, de corpo inteiro, animada. Hoje só o Diógenes tem boneco (SVG de recorte, provisório, em bonecos.js), desligado nesta etapa; todos os 20 aparecem como a imagem da carta atrás do púlpito.
 - Onde aparece: atrás do púlpito do jogador (só cabeça, ombros e peito à vista) e, na etapa de animação, saltando do púlpito até a faixa livre diante das placas, depositando os livros e voltando. Na tela, a figura tem de 110 a 170 px de altura no pedestal e diminui ao se afastar.
 - Quantos: 20 nesta fase (as três escolas e os dois livres-pensadores); 38 no jogo completo.
 - Formato: um arquivo .riv por filósofo (ou um só com 20 pranchetas). Prancheta de 520 × 600 px, fundo transparente, pés apoiados na borda de baixo, figura centrada. O pedestal NÃO entra no desenho: é da cena.
