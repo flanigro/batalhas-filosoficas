@@ -14,7 +14,7 @@ Acompanha a mesa em Three.js (rodadas 3 e 4). Hoje tudo o que se vê na mesa é 
 
 ### 1.1 Bonecos dos filósofos (Rive)
 
-- O que é: a figura de cada filósofo, de corpo inteiro, animada. Hoje só o Diógenes tem boneco (SVG de recorte, provisório, em bonecos.js); os outros 19 aparecem como carta de retrato em pé sobre o pedestal.
+- O que é: a figura de cada filósofo, de corpo inteiro, animada. Hoje só o Diógenes tem boneco (SVG de recorte, provisório, em bonecos.js); os outros 19 aparecem como busto (o retrato num nicho em arco) sobre o pedestal.
 - Onde aparece: sobre o pedestal do jogador (frente da mesa) e andando pela plataforma na entrada em debate. Na tela, a figura tem de 110 a 170 px de altura no pedestal e diminui ao se afastar.
 - Quantos: 20 nesta fase (as três escolas e os dois livres-pensadores); 38 no jogo completo.
 - Formato: um arquivo .riv por filósofo (ou um só com 20 pranchetas). Prancheta de 520 × 600 px, fundo transparente, pés apoiados na borda de baixo, figura centrada. O pedestal NÃO entra no desenho: é da cena.
@@ -29,7 +29,7 @@ Acompanha a mesa em Three.js (rodadas 3 e 4). Hoje tudo o que se vê na mesa é 
 - O companheiro que fica no pedestal (o cachorro do Diógenes) deve ser uma prancheta à parte ou uma camada que o programa possa manter no pedestal enquanto a figura anda.
 - Vista: de frente ou três quartos. A figura anda para o fundo da cena e volta; uma vista só basta para começar. Uma segunda vista, de costas em três quartos, deixaria a ida mais convincente (decidir depois).
 - Estilo: o traço do esboço do Flavio; contorno escuro, cores chapadas com uma sombra simples do lado esquerdo (a luz vem da direita). Sem sombra no chão.
-- Substitui: BF_BONECOS.diogenes (bonecos.js) e, para os outros 19, a carta em pé sobre o pedestal.
+- Substitui: BF_BONECOS.diogenes (bonecos.js) e, para os outros 19, o busto em nicho sobre o pedestal.
 
 ### 1.2 Retratos (mão, carta ampliada, telas centrais, galeria dos adversários, bustos dos pedestais)
 
@@ -61,7 +61,7 @@ Acompanha a mesa em Three.js (rodadas 3 e 4). Hoje tudo o que se vê na mesa é 
 ### 1.5 Peças das cenas de falácia
 
 - O que são: os objetos das nove cenas (roteiros em rodada-visual-2.md). Hoje só o Espantalho existe, montado com formas simples em 3D.
-- Lista: espantalho; busto solene com louros e placa "Magister dixit" (Autoridade); dedo de cerâmica (Ad Hominem); pano e três copos (Sofisma); cisne negro de cerâmica (Falseabilidade). As outras cenas usam só livros, torre e estela.
+- Lista: espantalho; busto solene com louros e placa "Magister dixit" (Autoridade); dedo de cerâmica (Ad Hominem); pano e três copos (Sofisma); cisne negro de cerâmica (Falseabilidade). As outras cenas usam só livros, prateleiras e a própria placa.
 - Formato: PNG com transparência, 512 × 512 px cada, vista de frente, ou modelo 3D simples (seção 4). Luz da direita.
 - Substitui: a função espantalho de mesa3d.js; as demais ainda não existem.
 
@@ -90,10 +90,10 @@ Para cada material, baixar em 2K (2048 × 2048 px) os mapas de cor, normal (Open
 
 - marmore: mármore branco de veios cinzentos, pouco contraste. Onde: pilastras e cornijas das placas, cornija da plataforma, tampo do tablado e da galeria, lajes do piso. Escala: 3,2 unidades por repetição. Substitui o gerador "marmore" (512 px). Buscar por "white marble", "marble 01".
 - calcario: calcário poroso bege (poros), fosco. Onde: degraus da plataforma, muro do fundo da arquibancada. Escala: 3. Substitui "calcario". Buscar por "limestone", "sandstone plain".
-- silhar: parede de blocos de calcário com juntas, fiadas de cerca de 0,65 unidade. Onde: estrado dos oponentes e degraus da arquibancada. Escala: 2,6 (quatro fiadas por repetição). Substitui "silhar". Buscar por "stone block wall", "sandstone blocks".
+- silhar: parede de blocos de calcário com juntas, fiadas de cerca de 0,65 unidade. Onde: muro da galeria dos adversários, frente do tablado das placas, arquibancada do coro. Escala: 2,6 (quatro fiadas por repetição). Substitui "silhar". Buscar por "stone block wall", "sandstone blocks".
 - madeira: nogueira ou carvalho escuro, veio ao comprido. Onde: moldura e prateleiras das placas, beirais; em tom claro, as três Bibliotecas e o verso das cartas em pé. Escala: 2,2. Substitui "madeira". Buscar por "dark wood", "walnut".
 - bronze: bronze envelhecido com um pouco de pátina; precisa também do mapa de metal. Onde: hoje, só detalhes (pouco uso depois da rodada 4). Escala: 1,2. Substitui "bronze". Buscar por "bronze", "brass worn".
-- ouro: dourado liso, pouco riscado, com mapa de metal. Onde: corda do valor e remates dos postes. 1K (1024 px) basta. Substitui "ouro".
+- ouro: dourado liso, pouco riscado, com mapa de metal. Onde: hoje, só detalhes. 1K (1024 px) basta. Substitui "ouro".
 - couro: couro claro e neutro (o programa tinge na cor de cada jogador), grão fino. Onde: capa dos livros. 1K basta. Substitui "couro". Buscar por "leather white", "leather plain".
 - paginas: corte de páginas de livro fechado. Onde: três lados de cada livro. 512 px basta. Substitui "paginas". Difícil de achar pronto; pode ficar o gerado.
 - pergaminho: pergaminho ou papel antigo. Onde: papiros lançados e páginas da chuva da vitória. 1K. Substitui "pergaminho". Buscar por "parchment", "old paper".
@@ -106,7 +106,7 @@ Para cada material, baixar em 2K (2048 × 2048 px) os mapas de cor, normal (Open
 
 - (Adiado: o céu e a serra não aparecem na composição da rodada 4.) Céu do poente. Onde: todo o fundo, atrás de tudo. Formato: JPG, 4096 × 2048 px, sem transparência; horizonte a 76% da altura a partir do topo, sol fora do quadro à direita (só o clarão), nuvens finas. Substitui o degradê de criarFundo.
 - Serra distante. Onde: faixa no horizonte, de ponta a ponta. Formato: PNG com transparência, 4096 × 512 px, silhueta lilás que se desfaz em névoa embaixo. Substitui a serra de criarFundo.
-- Piso da plataforma (opcional). Hoje o piso é composto por código: lajes de mármore de 1,3 unidade, juntas, faixa de borda com meandro e círculo da orquestra. Para trocar por uma peça única: cor, normal e rugosidade em 4096 × 3200 px (a plataforma tem 16,1 × 12,6 unidades), sem repetir, vista de cima, sem luz pintada. O meandro da borda e o círculo podem ser desenhados pelo Flavio em vetor e aplicados sobre o mármore de banco: nesse caso basta um PNG com transparência, 4096 × 3200 px, só com as incrustações. Substitui criarPiso (mesa3d.js).
+- Piso da plataforma (opcional). Hoje o piso é composto por código: lajes de mármore de 1,3 unidade, juntas, faixa de borda com meandro e círculo da orquestra. Para trocar por uma peça única: cor, normal e rugosidade em 4096 × 3200 px (a plataforma tem 22,3 × 9 unidades), sem repetir, vista de cima, sem luz pintada. O meandro da borda e o círculo podem ser desenhados pelo Flavio em vetor e aplicados sobre o mármore de banco: nesse caso basta um PNG com transparência, 4096 × 3200 px, só com as incrustações. Substitui criarPiso (mesa3d.js).
 - Faixa de caneluras da frente da plataforma. Formato: cor, normal e rugosidade, 1024 × 1024 px, repetindo só na horizontal, quatro caneluras por repetição, cobrindo 1,3 × 0,9 unidade. O mapa normal é o que dá o relevo; pode ser gerado a partir de um desenho em tons de cinza. Substitui "caneluras".
 - Retratos dos filósofos (item 1.2), se o Flavio preferir gerar a partir de um estilo de referência. Vale a restrição do projeto: nada de imagem de banco ou de obra protegida na versão publicada.
 
@@ -127,7 +127,7 @@ Se o Flavio quiser trocar a geometria, o formato é glTF binário (.glb), com os
 ## 6. Ordem sugerida
 
 1. Texturas de banco (seção 2): troca rápida, uma linha por material, e muda a cena inteira.
-2. Céu, serra e morro (itens 3 e 1.4).
+2. Bustos recortados (1.2), enquanto não houver bonecos.
 3. Bonecos no Rive, começando pelo Diógenes (item 1.1), e o coro (1.3).
 4. Retratos (1.2), molduras (1.7) e fundos da carta grande (1.8).
 5. Peças das falácias (1.5), conforme as cenas forem programadas.
