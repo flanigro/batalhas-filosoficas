@@ -5,7 +5,7 @@ Acompanha a mesa em Three.js (rodadas 3 a 5). Na rodada 5 a mesa virou uma arena
 ## Convenções
 
 - Luz: uma só, sol poente, vindo da direita de quem olha, baixo (cerca de 30° acima do horizonte) e um pouco pela frente. Tom quente. Nas texturas de material (mármore, madeira, bronze) NÃO pintar luz nem sombra: a cena ilumina. Em tudo o que é desenho plano (bonecos, coro, fundo, retratos) a luz pintada deve vir da direita, e a sombra projetada no chão fica por conta do programa.
-- Unidade de cena: a placa de debate tem 3,95 unidades de largura e 3,5 de altura (com três jogadores); o púlpito do jogador, 2,3 de largura e 0,92 de altura; o púlpito compacto do adversário, 1,28 × 0,52. "Escala" abaixo diz quantas unidades de cena uma repetição da textura cobre.
+- Unidade de cena: a placa de debate tem 3,95 unidades de largura e 3,5 de altura (com três jogadores); o púlpito do jogador, 2,3 de largura e 1,22 de altura; o púlpito compacto do adversário, 1,34 × 0,64 (a faixa dos adversários é ampliada 1,24 vez na cena). "Escala" abaixo diz quantas unidades de cena uma repetição da textura cobre.
 - Mapas de um material: cor (albedo, sem luz pintada), normal (padrão OpenGL, verde para cima) e rugosidade (branco = fosco). Metais levam também o mapa de metal. Nos bancos gratuitos esses mapas já vêm prontos, com esses nomes.
 - Formatos: cor e rugosidade em JPG (qualidade 85 a 90); normal em PNG; tudo o que tem recorte (transparência) em PNG ou WebP. Lados em potência de 2 (1024, 2048, 4096) sempre que a textura repete.
 - Onde trocar: cada material tem uma linha na tabela ARQUIVOS de materiais.js (o nome do material e os três arquivos). Desenhos planos (coro, bustos) trocam em mesa3d.js, nas funções indicadas em cada item. Sugestão de pastas: tex/ (materiais), fundo/, coro/, bonecos/, img/ (retratos).
@@ -95,7 +95,7 @@ Acompanha a mesa em Three.js (rodadas 3 a 5). Na rodada 5 a mesa virou uma arena
 
 Para cada material, baixar em 2K (2048 × 2048 px) os mapas de cor, normal (OpenGL) e rugosidade; todos repetem sem emenda.
 
-- marmore: mármore branco de veios cinzentos, pouco contraste. Onde: hoje é o material principal da arena e, desde a rodada 6, dos púlpitos, módulos, Bibliotecas e prateleiras (tingido de cinza nas laterais): lajes do piso, bancos e espelhos dos degraus (tingidos um pouco mais escuros), parapeito, terraço, painel da faixa dos adversários, capitéis, cornijas e pódios das placas. Escala: 3,2 unidades por repetição. Substitui o gerador "marmore" (512 px). Buscar por "white marble", "marble 01".
+- marmore: mármore branco de veios cinzentos, pouco contraste. Onde: hoje é o material principal da arena e, desde a rodada 6, dos púlpitos, módulos, Bibliotecas e prateleiras (tingido de cinza nas laterais): lajes do piso, bancos e espelhos dos degraus (tingidos um pouco mais escuros), terraço, soleira da faixa dos adversários, bases das pilastras e pódios das placas (parapeito, painel de fundo e cornijas saíram na rodada 6). Escala: 3,2 unidades por repetição. Substitui o gerador "marmore" (512 px). Buscar por "white marble", "marble 01".
 - calcario: calcário poroso bege (poros), fosco. Onde: hoje quase não aparece (a arena da rodada 5 é toda de mármore). Escala: 3. Substitui "calcario". Buscar por "limestone", "sandstone plain".
 - silhar: não é mais usado (o Flavio pediu para tirar os tijolinhos na rodada 5).
 - madeira: desde a rodada 6 só nos adereços das cenas (rolos dos papiros, espantalho); prateleiras, púlpitos e Bibliotecas passaram a mármore e cinza. Escala: 2,2. Substitui "madeira". Buscar por "dark wood", "walnut".
@@ -121,10 +121,10 @@ Para cada material, baixar em 2K (2048 × 2048 px) os mapas de cor, normal (Open
 
 Se o Flavio quiser trocar a geometria, o formato é glTF binário (.glb), com os materiais embutidos em 1K ou 2K, origem no centro da base, eixo Y para cima, medidas em unidades de cena.
 
-- Biblioteca dos adversários (2 na cena; a do jogador agora é HTML, na faixa inferior): móvel baixo de 1,42 de largura, 0,36 de altura e 0,5 de fundo, com um degrau atrás para a segunda fileira. Os livros são do programa e precisam ficar à vista: nada de portas, vãos fundos ou topo alto.
-- Placa de debate: 3,95 de largura, 3,5 de altura (mais 0,5 por jogador além de três), 0,2 de espessura, com pilastras laterais e cornija. A face recebe cabeçalho, pergunta e fundo das prateleiras por programa; o modelo valeria pela moldura.
-- Púlpito do jogador: 2,3 × 0,92 × 0,62, com tampo e beiral da prateleira; púlpito compacto do adversário: 1,28 × 0,52 × 0,44. Nome e valores são pintados por programa na face da frente; a carta (ou o busto) fica atrás, escondida em parte pelo púlpito.
-- Arquibancada: hoje montada por código (meia elipse, cinco degraus de 0,8 × 0,3); um modelo só valeria para dar relevo às quinas e às escadinhas.
+- Biblioteca dos adversários (2 na cena; a do jogador agora é HTML, na faixa inferior): móvel baixo de 1,7 de largura, 0,36 de altura e 0,5 de fundo, com um degrau atrás para a segunda fileira. Os livros são do programa e precisam ficar à vista: nada de portas, vãos fundos ou topo alto.
+- Placa de debate: 3,95 de largura, 3,5 de altura (mais 0,5 por jogador além de três), 0,2 de espessura, com pilastras laterais finas e filete no alto, na cor da área (sem cornija desde a rodada 6). A face recebe cabeçalho, pergunta e fundo das prateleiras por programa; o modelo valeria pela moldura.
+- Púlpito do jogador: 2,3 × 1,22 × 0,62, com tampo e beiral da prateleira; púlpito compacto do adversário: 1,34 × 0,64 × 0,46. Mármore claro no tampo, cinza nas laterais. Nome e valores são pintados por programa na face da frente; a carta (ou o busto) fica atrás, escondida em parte pelo púlpito.
+- Arquibancada: hoje montada por código (meia elipse, quatro degraus de 0,8 × 0,3, sem parapeito); um modelo só valeria para dar relevo às quinas e às escadinhas.
 
 ## 5. O que continua sendo feito pelo programa (não precisa de asset)
 
