@@ -131,5 +131,5 @@ Se o Flavio quiser trocar a geometria, o formato é glTF binário (.glb), com os
 1. Texturas de banco (seção 2): troca rápida, uma linha por material, e muda a cena inteira.
 2. Céu, serra e morro (itens 3 e 1.4).
 3. Bonecos no Rive, começando pelo Diógenes (item 1.1), e o coro (1.3).
-4. Retratos (1.2) e molduras (1.7).
+4. Retratos (1.2), molduras (1.7) e fundos da carta grande (1.8).
 5. Peças das falácias (1.5), conforme as cenas forem programadas.
