@@ -44,12 +44,11 @@ Acompanha a mesa em Three.js (rodadas 3 a 5). Na rodada 5 a mesa virou uma arena
 
 - Na rodada 5 as figuras saíram da cena; fica registrado para quando houver público nas laterais da arena, se a poluição visual permitir.
 
-
 - O que é: as figuras da arquibancada, em estilo de cerâmica de figuras negras, braços erguidos.
 - Onde aparece: 19 figuras em duas fileiras, atrás do parapeito da galeria dos adversários, no alto da tela. Cada uma tem de 40 a 55 px de altura visível.
 - Formato: PNG com transparência, 256 × 384 px cada. De 3 a 5 variações (poses e túnicas diferentes); o programa distribui e anima (pula no aplauso, nega na vaia, oscila no murmúrio).
 - Estilo: silhueta preta (#1e130e) com incisões em terracota (#d98a52); nada de degradê.
-- Substitui: a função coristaTex de mesa3d.js (duas poses desenhadas por código, 128 × 192 px).
+- Substitui: as duas poses desenhadas por código da rodada 4 (a função coristaTex saiu de mesa3d.js na rodada 5).
 
 ### 1.4 Fundo: morro com templo (Acrópole) — adiado
 
@@ -97,7 +96,7 @@ Acompanha a mesa em Three.js (rodadas 3 a 5). Na rodada 5 a mesa virou uma arena
 Para cada material, baixar em 2K (2048 × 2048 px) os mapas de cor, normal (OpenGL) e rugosidade; todos repetem sem emenda.
 
 - marmore: mármore branco de veios cinzentos, pouco contraste. Onde: hoje é o material principal da arena: lajes do piso, bancos e espelhos dos degraus (tingidos um pouco mais escuros), parapeito, terraço, painel da faixa dos adversários, capitéis, cornijas e pódios das placas. Escala: 3,2 unidades por repetição. Substitui o gerador "marmore" (512 px). Buscar por "white marble", "marble 01".
-- calcario: calcário poroso bege (poros), fosco. Onde: degraus da plataforma, muro do fundo da arquibancada. Escala: 3. Substitui "calcario". Buscar por "limestone", "sandstone plain".
+- calcario: calcário poroso bege (poros), fosco. Onde: hoje quase não aparece (a arena da rodada 5 é toda de mármore). Escala: 3. Substitui "calcario". Buscar por "limestone", "sandstone plain".
 - silhar: não é mais usado (o Flavio pediu para tirar os tijolinhos na rodada 5).
 - madeira: nogueira ou carvalho escuro, veio ao comprido. Onde: moldura e prateleiras das placas, beirais; em tom claro, as três Bibliotecas e o verso das cartas em pé. Escala: 2,2. Substitui "madeira". Buscar por "dark wood", "walnut".
 - bronze: bronze envelhecido com um pouco de pátina; precisa também do mapa de metal. Onde: hoje, só detalhes (pouco uso depois da rodada 4). Escala: 1,2. Substitui "bronze". Buscar por "bronze", "brass worn".
@@ -112,10 +111,10 @@ Para cada material, baixar em 2K (2048 × 2048 px) os mapas de cor, normal (Open
 
 ## 3. O que pode ser gerado (Firefly) e depois retocado
 
-- (Adiado: o céu e a serra não aparecem na composição da rodada 4.) Céu do poente. Onde: todo o fundo, atrás de tudo. Formato: JPG, 4096 × 2048 px, sem transparência; horizonte a 76% da altura a partir do topo, sol fora do quadro à direita (só o clarão), nuvens finas. Substitui o degradê de criarFundo.
+- (Adiado: o céu e a serra não aparecem nas composições das rodadas 4 e 5.) Céu do poente. Onde: todo o fundo, atrás de tudo. Formato: JPG, 4096 × 2048 px, sem transparência; horizonte a 76% da altura a partir do topo, sol fora do quadro à direita (só o clarão), nuvens finas. Substitui o degradê de criarFundo.
 - Serra distante. Onde: faixa no horizonte, de ponta a ponta. Formato: PNG com transparência, 4096 × 512 px, silhueta lilás que se desfaz em névoa embaixo. Substitui a serra de criarFundo.
-- Piso da plataforma (opcional). Hoje o piso é composto por código: lajes de mármore de 1,3 unidade, juntas, faixa de borda com meandro e círculo da orquestra. Para trocar por uma peça única: cor, normal e rugosidade em 4096 × 3200 px (a plataforma tem 22,3 × 9 unidades), sem repetir, vista de cima, sem luz pintada. O meandro da borda e o círculo podem ser desenhados pelo Flavio em vetor e aplicados sobre o mármore de banco: nesse caso basta um PNG com transparência, 4096 × 3200 px, só com as incrustações. Substitui criarPiso (mesa3d.js).
-- Faixa de caneluras da frente da plataforma. Formato: cor, normal e rugosidade, 1024 × 1024 px, repetindo só na horizontal, quatro caneluras por repetição, cobrindo 1,3 × 0,9 unidade. O mapa normal é o que dá o relevo; pode ser gerado a partir de um desenho em tons de cinza. Substitui "caneluras".
+- Piso da arena (opcional). Hoje o piso é composto por código: lajes de mármore de 1,32 unidade, juntas, canaleta escura em meia elipse ao pé da arquibancada e faixa de borda (escondida sob a faixa inferior). Para trocar por uma peça única: cor, normal e rugosidade em 4096 × 3550 px (o piso tem 30 × 26 unidades), sem repetir, vista de cima, sem luz pintada. A canaleta e a borda podem ser desenhadas pelo Flavio em vetor e aplicados sobre o mármore de banco: nesse caso basta um PNG com transparência, 4096 × 3200 px, só com as incrustações. Substitui criarPiso (mesa3d.js).
+- (Sem uso desde a rodada 5.) Faixa de caneluras da frente da plataforma. Formato: cor, normal e rugosidade, 1024 × 1024 px, repetindo só na horizontal, quatro caneluras por repetição, cobrindo 1,3 × 0,9 unidade. O mapa normal é o que dá o relevo; pode ser gerado a partir de um desenho em tons de cinza. Substitui "caneluras".
 - Retratos dos filósofos (item 1.2), se o Flavio preferir gerar a partir de um estilo de referência. Vale a restrição do projeto: nada de imagem de banco ou de obra protegida na versão publicada.
 
 ## 4. Modelos 3D (opcionais; hoje são formas geométricas montadas por código)
@@ -129,14 +128,14 @@ Se o Flavio quiser trocar a geometria, o formato é glTF binário (.glb), com os
 
 ## 5. O que continua sendo feito pelo programa (não precisa de asset)
 
-- Texto das placas (área, medalhão do valor, pergunta, letras dos jogadores, marcas N e 2N) e dos pedestais (nome e os quatro valores em 2 × 2).
-- Livros em pé (prateleiras das placas, prateleiras dos pedestais, Bibliotecas), friso dourado da prateleira que lidera, placas de identificação dos adversários, halos de alvo, contornos, sombras.
+- Texto das placas (área, medalhão do valor, pergunta, letras dos jogadores, marcas N e 2N; versão cinza do debate a abrir) e dos púlpitos (nome e os quatro valores, 2 × 2 no do jogador, em fila no do adversário).
+- Livros em pé (prateleiras das placas, dos púlpitos e das Bibliotecas; os de Minha Biblioteca em HTML), friso dourado da prateleira que lidera, emblemas e placares, ampulheta do botão, halos de alvo, contornos, sombras.
 - Balões, faixas, telas centrais, diário, botões.
 
 ## 6. Ordem sugerida
 
 1. Texturas de banco (seção 2): troca rápida, uma linha por material, e muda a cena inteira.
 2. Bustos recortados até a cintura para trás dos púlpitos (1.2), enquanto não houver bonecos.
-3. Bonecos no Rive, começando pelo Diógenes (item 1.1), e o coro (1.3).
+3. Bonecos no Rive, começando pelo Diógenes (item 1.1); o coro (1.3) só quando houver público nas arquibancadas.
 4. Retratos (1.2), molduras (1.7) e fundos da carta grande (1.8).
 5. Peças das falácias (1.5), conforme as cenas forem programadas.
