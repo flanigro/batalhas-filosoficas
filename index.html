@@ -9,7 +9,7 @@
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}</script>
 <style>
 /* ============================================================
-   BATALHAS FILOSÓFICAS — rodada visual 3 (mesa em Three.js)
+   BATALHAS FILOSÓFICAS — mesa em Three.js (rodada 5: arena)
    Arquivos: index.html (HTML + CSS) · mesa3d.js (cena 3D) · materiais.js (texturas e materiais)
              ui.js (interface) · coreo.js (cenas) · bonecos.js (marionetes) · engine.js (regras) · falas_*.js
 
@@ -289,9 +289,9 @@ button:disabled{cursor:not-allowed;opacity:.45}
 
 /* ============================================================
    RODADA 3 — MESA EM THREE.JS
-   A mesa (plataforma, estelas, torres, pedestais, bancos, estantes, árvores, fundo, luz) é o canvas #gl,
-   desenhado por mesa3d.js com os materiais de materiais.js. Tudo o que é texto ou carta fica em HTML,
-   por cima: mão em leque, Biblioteca, botões, telas centrais, balões, faixas e diário.
+   A mesa (arena, placas, púlpitos, Bibliotecas dos adversários, luz) é o canvas #gl, desenhado por
+   mesa3d.js com os materiais de materiais.js. Tudo o que é texto ou carta fica em HTML, por cima:
+   emblemas e placares, faixa inferior (Minha Biblioteca, mão, comandos), telas centrais, balões e diário.
    Os elementos com data-anc são ÂNCORAS: invisíveis, postos a cada quadro sobre o objeto 3D que
    representam (mesa3d.js, função ancora). Servem de alvo para clique e arrasto e levam os mesmos
    data-atributos de sempre. .alvo / .sobre / .selecionado numa âncora acendem o objeto 3D.
@@ -359,19 +359,6 @@ header .btn.sm:hover{background:rgba(255,255,255,.28)}
 #mesa .opp-seat .pilha b{font-size:12px;line-height:15px;min-width:18px;padding:0 4px}
 body.escolhendo .pilha .mais1{visibility:hidden}
 
-/* placa dos oponentes, sobre o banco: nome, pontos, troféus, mão */
-.panel.opp{transform:translate(-50%,-100%);display:flex;align-items:center;gap:8px;padding:3px 10px 4px;border-radius:8px;white-space:nowrap;color:#fff8e0;font-size:12.5px;
-  background:linear-gradient(180deg,rgba(58,44,30,.92),rgba(34,24,14,.92));border:1.5px solid var(--pc);box-shadow:0 4px 12px rgba(0,0,0,.45)}
-.panel.opp.vez{box-shadow:0 0 0 2px var(--pc),0 0 26px 4px var(--pc)}
-.panel.opp .nome{font-family:var(--serif);font-weight:900;font-size:16px;letter-spacing:.3px}
-.panel.opp .pts{font-family:var(--serif);font-weight:900;font-size:19px;line-height:1;color:#fff;border-bottom:3px solid var(--pc)}
-.panel.opp .pts small,.eu .pts small{font-family:var(--sans);font-size:10px;font-weight:700;opacity:.75;margin-left:2px}
-.panel.opp .trofeus .tl,.eu .trofeus .tl{display:none}
-.panel.opp .trofeus .tv{display:none}
-.panel.opp .trofeus{margin-left:0}
-.panel.opp .jog{font-style:italic;opacity:.85}
-.bibop{transform:translate(-50%,-100%);font-family:var(--serif);font-weight:900;font-size:14px;line-height:17px;color:#fff8e0;padding:0 7px 1px;border-radius:5px;background:linear-gradient(180deg,#4a3826,#2a1e12);border:1.5px solid var(--pc);box-shadow:0 2px 5px rgba(0,0,0,.45);pointer-events:none!important;white-space:nowrap}
-.bibop small{font-family:var(--sans);font-weight:700;font-size:9.5px;letter-spacing:.8px;text-transform:uppercase;opacity:.8;margin-right:5px}
 
 /* coro: só a fala fica em HTML */
 .coro{width:0;height:0;pointer-events:none!important}
@@ -385,41 +372,15 @@ body.escolhendo .pilha .mais1{visibility:hidden}
 /* ---------- painel do jogador sobre a cena ---------- */
 #hud{position:fixed;inset:0;z-index:5;pointer-events:none}
 #hud>*{pointer-events:auto}
-/* Biblioteca: âncora sobre a estante 3D da frente, à direita */
-.bib{cursor:grab;touch-action:none}
-.bib .t{position:absolute;left:50%;top:-6px;transform:translate(-50%,-100%);display:flex;align-items:center;gap:7px;padding:2px 10px 3px;border-radius:7px;white-space:nowrap;font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:#e6d3a8;
-  background:linear-gradient(180deg,#5a3d22,#3f2a16);border:1.5px solid #c8962a;box-shadow:0 4px 10px rgba(0,0,0,.45)}
-.bib .t b{font-family:var(--serif);font-size:22px;line-height:1;color:#fff;letter-spacing:0}
-.bib.chegou .t{animation:trofeu .5s var(--tranco)}
-/* canto inferior esquerdo: placar do jogador e botões */
-.canto{position:fixed;left:10px;bottom:10px;display:flex;flex-direction:column;gap:6px;align-items:flex-start;max-width:230px}
-.eu{display:flex;align-items:center;gap:8px;padding:3px 10px 4px;border-radius:8px;color:#fff8e0;font-size:12.5px;background:linear-gradient(180deg,rgba(58,44,30,.92),rgba(34,24,14,.92));border:1.5px solid var(--pc);box-shadow:0 4px 12px rgba(0,0,0,.45);flex-wrap:wrap}
-.eu.vez{box-shadow:0 0 0 2px var(--pc),0 0 22px 3px var(--pc)}
-.eu .nome{font-family:var(--serif);font-weight:900;font-size:16px}
-.eu .pts{font-family:var(--serif);font-weight:900;font-size:21px;line-height:1;color:#fff;border-bottom:3px solid var(--pc)}
-.eu .trofeus{margin-left:0;flex-wrap:wrap}
-.eu .trofeus .tv{display:none}
-.canto .btn{box-shadow:0 3px 8px rgba(0,0,0,.35)}
-.canto .btn.clep{font-size:16px;padding:8px 14px}
-/* mão em leque, sobrepondo a borda de baixo; a carta sobe ao passar o mouse */
-.hand.leque{position:fixed;left:50%;bottom:0;transform:translateX(-50%);display:flex;flex-wrap:nowrap;justify-content:center;padding:0;--w:118px;height:104px;pointer-events:none!important;z-index:1}
-.hand.leque .mini{pointer-events:auto;margin:0 -15px;transform-origin:50% 320%;
-  transform:rotate(calc(var(--k,0)*3.6deg)) translateY(var(--up,0px)) perspective(520px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform .16s var(--saida),box-shadow .14s}
-.hand.leque .mini:hover,.hand.leque .mini.selecionado{z-index:5;--up:-74px}
-.hand.leque .vaziaM{color:#fff8e0;background:rgba(42,30,18,.6);padding:2px 10px;border-radius:6px;align-self:center;pointer-events:none}
-@media(max-height:620px){.hand.leque{--w:96px;height:86px}}
 
 /* seleção e arrasto: o objeto 3D acende (mesa3d.js); aqui, só o que é HTML */
 .alvo.sobre{cursor:pointer}
 .origem{opacity:.35}
-body.escolhendo .hand.leque .mini:not(.selecionado){filter:brightness(.6) saturate(.6)}
-body.escolhendo .hand.leque .selecionado,body.escolhendo .btn.selecionado{box-shadow:0 0 0 3px var(--egeu),0 0 26px 4px rgba(31,111,143,.8)}
-body.escolhendo .bib.alvo .t,.bib.selecionado .t{border-color:#7fd0ea;box-shadow:0 0 0 2px #1f6f8f,0 0 22px 4px rgba(79,195,238,.8)}
 .dica{position:fixed;left:50%;top:38px;transform:translateX(-50%);z-index:45;display:none;align-items:center;gap:10px;background:#fbf8f1;color:var(--tinta);border:2px solid var(--egeu);border-radius:12px;padding:6px 10px 6px 14px;box-shadow:0 10px 30px rgba(0,0,0,.5);max-width:min(760px,94vw)}
 body.escolhendo .dica{display:flex}
 
 /* diário: painel lateral que se recolhe */
-.log{position:fixed;right:0;top:36px;bottom:120px;width:310px;z-index:20;display:flex;flex-direction:column;background:rgba(18,22,46,.94);border:1px solid #3a4272;border-right:0;border-radius:14px 0 0 14px;padding:10px 12px;color:var(--ink);transform:translateX(102%);transition:transform .3s var(--saida);box-shadow:-10px 0 30px rgba(0,0,0,.4)}
+.log{position:fixed;right:0;top:36px;bottom:150px;width:310px;z-index:20;display:flex;flex-direction:column;background:rgba(18,22,46,.94);border:1px solid #3a4272;border-right:0;border-radius:14px 0 0 14px;padding:10px 12px;color:var(--ink);transform:translateX(102%);transition:transform .3s var(--saida);box-shadow:-10px 0 30px rgba(0,0,0,.4)}
 body.diario .log{transform:none}
 .log h2{font-family:var(--serif);font-size:17px;margin:0 0 6px;font-weight:900;display:flex;align-items:center}
 .log h2 button{margin-left:auto}
@@ -428,7 +389,6 @@ body.diario .log{transform:none}
 /* uma só luz (sol poente, à direita): sombras das cartas HTML caem para a esquerda */
 .mini{box-shadow:-1px 2px 0 #d8d0be,-2px 4px 0 #b9af9a,-3px 5px 0 #8f8674,-12px 12px 14px rgba(40,25,10,.38)}
 .mini:hover{box-shadow:-1px 2px 0 #d8d0be,-2px 4px 0 #b9af9a,-3px 5px 0 #8f8674,-18px 20px 20px rgba(40,25,10,.34)}
-.btn.clep{display:inline-flex;align-items:center;gap:7px;background:linear-gradient(180deg,#d9a94a,#a8782a);border-color:#6b4d0c;border-bottom-color:#4f3808;color:#241803;box-shadow:inset 0 1px 0 rgba(255,236,170,.7)}
 
 /* ============================================================
    RODADA 4 — PLACAS COM PRATELEIRAS, PEDESTAIS NOVOS, BIBLIOTECAS COMPACTAS
@@ -445,16 +405,92 @@ body.diario .log{transform:none}
 #mesa .opp-seat .pilha{transform:translate(0,-60%)}
 #mesa .opp-seat .pilha b{font-size:12.5px;line-height:16px;min-width:18px}
 .pilha.libp{transform:translate(-100%,-50%)}
-.panel.opp{transform:translate(-50%,-50%);flex-direction:row;gap:10px;padding:3px 12px 4px;align-items:center;border-width:2px}
-.panel.opp .linha{display:flex;align-items:center;gap:8px}
-.bibop{transform:translate(-50%,-100%);font-size:22px;line-height:24px;padding:1px 9px 2px;display:flex;align-items:center;gap:6px}
-.bibop small{font-size:9px}
-.bib .t{top:-4px;flex-direction:column;gap:0;padding:3px 12px 4px}
-.bib .t .q{display:flex;align-items:center;gap:7px}
-.bib .t b{font-size:28px}
-.bib .t .ger{font-size:10px;letter-spacing:.4px;text-transform:none;font-weight:700;color:#f6d98a}
 #mesa .mini .sel{top:2px;transform:translate(-50%,0)}
 #megrupo.alvo{z-index:3}
+
+/* ============================================================
+   RODADA 5 — ARENA, FAIXA DOS ADVERSÁRIOS E FAIXA INFERIOR RETANGULAR
+   No alto: para cada adversário, o bloco .ident (emblema com louros, pergaminho com o nome, placar) e
+   a Biblioteca 3D com o número (.bibop). Embaixo, fora da cena e sem perspectiva: a .rodape, com o
+   jogador e Minha Biblioteca à esquerda, a mão no centro e os comandos à direita.
+   ============================================================ */
+.vago{display:none!important}   /* o aviso do debate que vai entrar está pintado na placa cinza */
+
+/* emblema e placar: o mesmo desenho para os adversários e para o jogador (tamanhos em cqh, relativos ao bloco) */
+.ident{container-type:size;display:flex;flex-direction:column;align-items:center;pointer-events:none!important}
+.ident .emb{height:54cqh;aspect-ratio:1;flex:none;filter:drop-shadow(-1px 2px 1.5px rgba(40,25,10,.4))}
+.ident .emb svg{display:block;width:100%;height:100%}
+.ident .perg{position:relative;z-index:1;margin-top:-7cqh;padding:0 7cqh;max-width:100%;background:linear-gradient(180deg,#f8efd7,#e6d3a6);border-radius:1px;box-shadow:0 2px 3px rgba(40,25,10,.35)}
+.ident .perg::before,.ident .perg::after{content:"";position:absolute;top:-1.5cqh;bottom:-1.5cqh;width:4.6cqh;border-radius:3cqh;background:linear-gradient(90deg,#b99a5c,#f3e6c0 45%,#a8894e);box-shadow:0 1px 2px rgba(0,0,0,.3)}
+.ident .perg::before{left:-2.3cqh}.ident .perg::after{right:-2.3cqh}
+.ident .perg span{display:block;font-family:var(--serif);font-style:italic;font-weight:700;font-size:12.5cqh;line-height:1.25;color:#3a2410;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ident .linha{display:flex;align-items:center;gap:2.5cqh;margin-top:2.5cqh}
+.ident .pts{display:flex;align-items:baseline;padding:0 4.5cqh .5cqh;border-radius:5cqh;background:linear-gradient(180deg,#4a3826,#2a1e12);border:2px solid var(--pc);box-shadow:0 2px 5px rgba(0,0,0,.4);color:#fff}
+.ident .pts b{font-family:var(--serif);font-weight:900;font-size:21cqh;line-height:1.05}
+.ident .pts small{font-family:var(--sans);font-weight:800;font-size:10cqh;opacity:.8;margin-left:1cqh}
+.ident .trofeus{margin:0;gap:1.5cqh}
+.ident .trofeus .tl,.ident .trofeus .tv{display:none}
+.ident .trofeu{width:12cqh;height:12cqh;font-size:7.5cqh;border-width:1px;border-radius:2.5cqh}
+.ident .backs{gap:1cqh}
+.ident .back{width:5.5cqh;height:8cqh;border-radius:1cqh}
+.ident .jog{position:absolute;left:50%;bottom:-3px;transform:translate(-50%,100%);font-size:11px;font-weight:800;font-style:italic;color:#fff8e0;background:rgba(42,30,18,.75);border-radius:6px;padding:0 6px;white-space:nowrap}
+.ident.vez .emb{filter:drop-shadow(0 0 5px var(--pc)) drop-shadow(0 0 9px var(--pc))}
+.ident.vez .pts{box-shadow:0 0 0 2px var(--pc),0 0 14px 2px var(--pc)}
+/* número da Biblioteca do adversário, sobre o móvel 3D */
+.bibop{transform:translate(-100%,-100%);pointer-events:none!important;white-space:nowrap;font-family:var(--serif);font-weight:900;font-size:16px;line-height:18px;color:#fff8e0;padding:0 6px 1px;min-width:24px;text-align:center;border-radius:5px;
+  background:linear-gradient(180deg,#4a3826,#2a1e12);border:1.5px solid var(--pc);box-shadow:0 2px 5px rgba(0,0,0,.45)}
+.bibop b{font-weight:900}
+
+/* ---------- faixa inferior ---------- */
+.rodape{position:fixed;left:0;right:0;bottom:0;height:132px;z-index:6;display:flex;align-items:stretch;gap:16px;padding:16px 14px 8px;
+  background:linear-gradient(180deg,#56391f 0,#3b2615 55%,#2a1a0d 100%);border-top:2px solid #c8962a;box-shadow:0 -1px 0 #2a1c10,0 -8px 22px rgba(30,18,8,.35)}
+.rodape::before{content:"";position:absolute;left:0;right:0;top:2px;height:11px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='11'%3E%3Cpath d='M0 9.5h3.5V1.5h14v6h-7v-3h3.5M17.5 9.5H22' fill='none' stroke='%23d9b25a' stroke-width='1.5'/%3E%3C/svg%3E") repeat-x 0 0;opacity:.85;pointer-events:none}
+.r-esq{display:flex;align-items:stretch;gap:12px;flex:none}
+.rodape .ident{width:104px;height:106px;align-self:center}
+.rodape .ident .perg span{color:#3a2410}
+/* Minha Biblioteca: livros em pé numa estante clara (em grupos de cinco) e o número ao lado */
+.rodape .bib{display:flex;flex-direction:column;gap:3px;width:218px;padding:5px 9px 7px;border-radius:10px;cursor:grab;touch-action:none;color:#2a1c10;
+  background:linear-gradient(180deg,#f6ead0,#e4d1aa);border:2px solid #8a6510;box-shadow:inset 0 1px 0 #fffaea,0 3px 8px rgba(0,0,0,.4)}
+.rodape .bib .bt{font-family:var(--serif);font-weight:900;font-size:15px;line-height:1.1;letter-spacing:.2px}
+.rodape .bib .bcorpo{display:flex;align-items:stretch;gap:8px;flex:1;min-height:0}
+.rodape .bib .estante{flex:1;display:flex;flex-wrap:wrap;align-content:flex-start;row-gap:6px;padding:4px 5px 0;overflow:hidden;border-radius:4px;
+  background:repeating-linear-gradient(180deg,#fffaf0 0,#f7ecd4 25px,#9a6b3f 25px,#6e4626 30px);box-shadow:inset 0 0 0 1px rgba(110,70,38,.45),inset 0 6px 10px rgba(255,255,255,.6)}
+.rodape .bib .liv{width:6px;height:21px;margin:0 1px 0 0;align-self:flex-start;border-radius:1.5px 1.5px 0 0;background:var(--pc);box-shadow:inset -1.5px 0 rgba(0,0,0,.28),inset 0 2px rgba(255,255,255,.45),0 1px 0 rgba(0,0,0,.25)}
+.rodape .bib .liv:nth-child(3n){height:19px;margin-top:2px}.rodape .bib .liv:nth-child(4n+1){height:21px}
+.rodape .bib .liv:nth-child(5n){margin-right:6px}
+.rodape .bib .estante.cheia .liv{width:4px}.rodape .bib .estante.cheia .liv:nth-child(5n){margin-right:4px}
+.rodape .bib .bnum{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:none;width:52px}
+.rodape .bib .bnum b{font-family:var(--serif);font-weight:900;font-size:36px;line-height:1}
+.rodape .bib .bnum small{font-size:10.5px;font-weight:800;color:#7a5a10;text-align:center;line-height:1.1}
+.rodape .bib.chegou .bnum b{animation:trofeu .5s var(--tranco)}
+body.escolhendo .rodape .bib.alvo,.rodape .bib.selecionado{border-color:#7fd0ea;box-shadow:0 0 0 2px #1f6f8f,0 0 22px 4px rgba(79,195,238,.8)}
+/* mão: cartas recolhidas, só a parte de cima à vista; ao passar o mouse, a carta sobe inteira */
+.rodape .mao{flex:1;min-width:0;display:flex;justify-content:center;align-items:flex-start;padding-left:14px;--w:118px}
+.rodape .mao .mini{margin-left:-14px;flex:none;transform:translateY(var(--up,0px)) perspective(520px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform .16s var(--saida),box-shadow .14s}
+.rodape .mao .mini:hover,.rodape .mao .mini.selecionado{z-index:5;--up:-62px}
+.rodape .mao[data-n="6"] .mini{margin-left:-30px}.rodape .mao[data-n="7"] .mini,.rodape .mao[data-n="8"] .mini,.rodape .mao[data-n="9"] .mini{margin-left:-44px}
+.rodape .mao .vaziaM{color:#e9dcc0;align-self:center;font-style:italic}
+body.escolhendo .rodape .mao .mini:not(.selecionado){filter:brightness(.6) saturate(.6)}
+body.escolhendo .rodape .mao .selecionado,body.escolhendo .cmd.selecionado{box-shadow:0 0 0 3px var(--egeu),0 0 26px 4px rgba(31,111,143,.8)}
+/* comandos, à direita */
+.cmds{display:flex;flex-direction:column;justify-content:center;gap:6px;width:226px;flex:none}
+.cmd{display:flex;align-items:center;gap:9px;padding:4px 12px 4px 5px;border-radius:20px;font-weight:800;font-size:14px;color:#2a1c10;text-align:left;
+  background:linear-gradient(180deg,#faf3e2,#e2d2ae);border:1px solid #8a6510;border-bottom:3px solid #6b4d0c;box-shadow:0 2px 6px rgba(0,0,0,.3)}
+.cmd .cc{flex:none;width:25px;height:25px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#2a1c10;color:#f6d98a;font-family:var(--serif);font-weight:900;font-size:15px}
+.cmd.fim{gap:10px;padding:8px 16px 8px 10px;border-radius:12px;font-family:var(--serif);font-weight:900;font-size:19px;letter-spacing:.2px;color:#1e1404;
+  background:linear-gradient(180deg,#f6d478,#d6a430);border-color:#8a6510;border-bottom:4px solid #6b4d0c;box-shadow:inset 0 1px 0 rgba(255,244,200,.8),0 3px 8px rgba(0,0,0,.4)}
+.cmd .ico{display:flex;flex:none}
+.cmd:hover:not(:disabled){filter:brightness(1.06);transform:translateY(-1px)}
+.cmd:active:not(:disabled){transform:translateY(1px)}
+.cmd:disabled{opacity:.5}
+/* a dica da seleção ocupa o cabeçalho (assim não cobre a faixa dos adversários) */
+.dica{top:2px;padding:1px 4px 1px 12px;border-radius:8px;border-width:1.5px;gap:8px;max-width:min(860px,calc(100vw - 16px));box-shadow:0 4px 14px rgba(0,0,0,.45)}
+.dica .t{font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.dica .btn.sm{padding:1px 8px;font-size:12px;flex:none}
+/* etiqueta de estado (chegando, já debateu, Bibliotecário): sobre o peito do filósofo, logo acima dos livros */
+#mesa .seat:not(.opp-seat) .mini .sel{top:50%;transform:translate(-50%,-100%)}
+@media(max-width:1100px){.rodape{gap:10px;padding-left:8px;padding-right:8px}.rodape .bib{width:176px}.rodape .mao{--w:104px}.cmds{width:200px}.cmd{font-size:13px}.cmd.fim{font-size:17px}}
+@media(max-height:780px){.rodape{height:114px;padding-top:14px}.rodape .ident{width:90px;height:92px}.rodape .mao{--w:102px}.rodape .bib .estante{row-gap:4px}.cmd.fim{padding:6px 14px 6px 10px}.cmds{gap:5px}}
 </style>
 </head>
 <body>

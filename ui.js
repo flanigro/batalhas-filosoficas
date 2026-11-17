@@ -9,7 +9,33 @@ function esc(t){return String(t).replace(/[&<>"]/g,function(c){return {'&':'&amp
 function sleep(ms){return new Promise(function(r){setTimeout(r,ms);});}
 var AREA=BF.AREA, ESC=BF.ESCOLA, C=BF.C, DEB=BF.DEB;
 var BUSTO='<svg viewBox="0 0 40 44" width="34" height="38" aria-hidden="true"><path d="M6 44v-6q0-9 9-11l5 3 5-3q9 2 9 11v6z" fill="#efeae0" stroke="#8d8472"/><circle cx="20" cy="14" r="9.5" fill="#f6f2e9" stroke="#8d8472"/><path d="M8 34q12 8 24 0v4q-12 8-24 0z" fill="var(--pc)"/></svg>';
-var CLEP='<svg viewBox="0 0 20 24" width="16" height="20" aria-hidden="true"><path d="M3 2h14l-2 8q-1 3-5 3t-5-3z" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M10 13v3" stroke="currentColor" stroke-width="1.5" stroke-dasharray="1 1.5"/><path d="M5 17h10l-1 5H6z" fill="currentColor"/></svg>';
+// ampulheta do botão Encerrar turno: duas bases, o vidro em dois bulbos, areia em cima, filete e monte embaixo
+var AMPULHETA='<svg viewBox="0 0 24 30" width="20" height="25" aria-hidden="true"><rect x="2" y="1" width="20" height="3.6" rx="1.4" fill="currentColor"/><rect x="2" y="25.4" width="20" height="3.6" rx="1.4" fill="currentColor"/>'
+  +'<path d="M5.2 4.6h13.6c0 5.6-4.2 7.6-5.4 10.4 1.2 2.8 5.4 4.8 5.4 10.4H5.2c0-5.6 4.2-7.6 5.4-10.4C9.4 12.2 5.2 10.2 5.2 4.6z" fill="rgba(255,255,255,.35)" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>'
+  +'<path d="M8.3 8.2h7.4L12 12.6z" fill="currentColor"/><path d="M12 13v8.4" stroke="currentColor" stroke-width="1.1"/><path d="M7.2 24.6c1.4-3.6 3.2-4.6 4.8-4.6s3.4 1 4.8 4.6z" fill="currentColor"/></svg>';
+var USAR_BONECOS=false;   // marionetes (Diógenes) ficam para a etapa de animação: por ora, todos aparecem como carta
+// emblema do jogador: a inicial no centro de uma coroa de louros, e o nome completo num pergaminho
+var LOUROS=(function(){
+  var f='', cx=50, cy=48, r=37;
+  for(var lado=-1;lado<=1;lado+=2){
+    for(var i=0;i<10;i++){
+      var t=(22+i*14.5)*Math.PI/180, x=cx+lado*r*Math.sin(t), y=cy+r*Math.cos(t), g=Math.atan2(-Math.sin(t),lado*Math.cos(t))*180/Math.PI;
+      [-1,1].forEach(function(k){ var dx=k*lado*3.6*Math.sin(t), dy=k*3.6*Math.cos(t);   // duas folhas por nó, uma de cada lado do ramo
+        f+='<ellipse cx="'+(x+dx).toFixed(1)+'" cy="'+(y+dy).toFixed(1)+'" rx="7.6" ry="3.1" transform="rotate('+(g+k*lado*28).toFixed(0)+' '+(x+dx).toFixed(1)+' '+(y+dy).toFixed(1)+')" fill="'+((i+k)%2?'#7d8f34':'#5f7128')+'" stroke="#36420f" stroke-width=".7"/>'; });
+    }
+  }
+  return '<svg class="louros" viewBox="0 0 100 100" aria-hidden="true">'+f+'<path d="M38 88q12 6 24 0l-4 8-8-4-8 4z" fill="var(--pc)" stroke="#2a1c10" stroke-width="1"/>'
+    +'<circle cx="50" cy="48" r="25" fill="#fbf4e2" stroke="var(--pc)" stroke-width="4.5"/><circle cx="50" cy="48" r="27.3" fill="none" stroke="#2a1c10" stroke-width="1"/>';
+})();
+function emblema(p){
+  var pl=S.players[p], letra=pl.nome.charAt(0).toUpperCase();
+  return '<div class="emb">'+LOUROS+'<text x="50" y="50" text-anchor="middle" dominant-baseline="central" font-family="Alegreya,Georgia,serif" font-weight="900" font-size="38" fill="#2a1c10">'+esc(letra)+'</text></svg></div>'
+    +'<div class="perg"><span>'+esc(pl.nome)+'</span></div>';
+}
+// placar: pontos acumulados e o objetivo (30)
+function placar(p){ var pl=S.players[p]; return '<div class="pts" title="Pontos: '+pl.points+' de '+S.cfg.pontos+'"><b>'+pl.points+'</b><small>/'+S.cfg.pontos+'</small></div>'; }
+// livros da Biblioteca em HTML (Minha Biblioteca, na faixa de baixo): em grupos de cinco, para contar a olho
+function livrosHTML(n){ var h=''; for(var i=0;i<Math.min(n,60);i++)h+='<i class="liv"></i>'; return h; }
 var TIPO={c:'Citação · tradução livre',p:'Paráfrase',i:'Inferência a partir da doutrina'};
 function pode(){return S&&S.turn===0&&!S.over&&!ocupado&&!emPalco&&!animando;}
 function areasNaMesa(){var o={};S.debates.forEach(function(d){o[DEB[d.id].area]=1;});return o;}
@@ -28,7 +54,7 @@ function miniF(g,c,attrs,cls,st){
 // âncora de um filósofo na mesa: a figura é da cena 3D; aqui ficam o alvo de clique, a etiqueta de estado
 // e, se o filósofo tem marionete, o encaixe .fig com o boneco (posto sobre o pedestal pela cena)
 function ancF(g,c,attrs,anc,figAnc){
-  var inerte=!BF.ativo(g), bon=figAnc&&window.BF_BONECOS&&BF_BONECOS[c.id];
+  var inerte=!BF.ativo(g), bon=USAR_BONECOS&&figAnc&&window.BF_BONECOS&&BF_BONECOS[c.id];
   return '<button class="mini F '+(bon?'boneco ':'')+(inerte?'novo ':'')+(g.acted?'acted ':'')+'" data-anc="'+anc+'" data-cid="'+c.id+'" '+attrs+' aria-label="'+esc(c.nome)+'" title="'+esc(c.nome)+'">'
     +(bon?'<div class="fig" data-anc="'+figAnc+'">'+BF_BONECOS[c.id].svg+'</div>':'')
     +(g.lib?'<div class="sel libr">Bibliotecário</div>':inerte?'<div class="sel">chegando</div>':g.acted?'<div class="sel">já debateu</div>':'')+'</button>';
@@ -53,11 +79,10 @@ function renderOpps(){
   for(var p=1;p<S.players.length;p++){
     var pl=S.players[p], vez=S.turn===p&&!S.over, bk='';
     for(var b=0;b<pl.hand.length;b++)bk+='<span class="back"></span>';
-    h+='<div class="panel opp '+(vez?'vez':'')+'" data-painel="'+p+'" data-anc="painel:'+p+'" style="--pc:'+pl.cor+'"><span class="linha"><span class="nome ptitle">'+esc(pl.nome)+'</span>'
-      +'<span class="pts">'+pl.points+'<small>/ '+S.cfg.pontos+'</small></span></span>'+(vez?'<span class="jog">jogando…</span>':'')+'<span class="linha">'+trofeus(p)
-      +'<span class="backs" title="Cartas na mão: '+pl.hand.length+'">'+bk+'</span></span></div>';
+    h+='<div class="ident'+(vez?' vez':'')+'" data-painel="'+p+'" data-anc="ident:'+p+'" style="--pc:'+pl.cor+'">'+emblema(p)
+      +'<div class="linha">'+placar(p)+trofeus(p)+'<span class="backs" title="Cartas na mão: '+pl.hand.length+'">'+bk+'</span></div>'+(vez?'<span class="jog">jogando…</span>':'')+'</div>';
     pl.group.forEach(function(g,i){h+=seat(g,p,i,false);});
-    h+='<div class="bibop" data-anc="bibop:'+p+'" style="--pc:'+pl.cor+'" title="Biblioteca de '+esc(pl.nome)+': '+BF.nI(pl.library)+' guardadas"><small>Biblioteca</small>'+pl.library+'</div>';
+    h+='<div class="bibop" data-anc="bibop:'+p+'" style="--pc:'+pl.cor+'" title="Biblioteca de '+esc(pl.nome)+': '+BF.nI(pl.library)+' guardadas"><b>'+pl.library+'</b></div>';
   }
   $('opps').innerHTML=h;
 }
@@ -95,22 +120,26 @@ function renderMe(){
   pl.group.forEach(function(x,i){g+=seat(x,0,i,true);});
   g+='</div>';
   $('me').innerHTML=g;
-  $('hvez').innerHTML=S.over?'<b>Partida encerrada.</b>':vez?'<b>Sua vez.</b> Clique numa carta ou num filósofo e a mesa mostra onde ele pode agir; ou arraste. Botão direito: carta ampliada.':'Vez de <b>'+esc(S.players[S.turn].nome)+'</b>…';
-  // Biblioteca: âncora sobre a estante 3D
-  h+='<div class="bib '+(bibChegou?'chegou':'')+'" id="bib" data-anc="bib" '+(vez?'data-a="bib" data-drag="livro" title="Clique ou arraste para dar ideias aos filósofos"':'title="Sua Biblioteca"')+'><div class="t"><span class="q"><b>'+pl.library+'</b>Biblioteca</span><span class="ger" title="Ideias que chegam à Biblioteca na sua fase de Reflexão">+'+ganhoBib(0)+' por turno</span></div></div>';
-  // canto: placar e botões
-  h+='<div class="canto"><div class="eu '+(vez?'vez':'')+'" style="--pc:'+pl.cor+'"><span class="nome">Você</span><span class="pts">'+pl.points+'<small>/ '+S.cfg.pontos+'</small></span>'+trofeus(0)+'</div>';
-  if(S.over)h+='<button class="btn pri" data-a="fim">Ver resultado</button>';
-  else if(vez)h+='<button class="btn sm" data-a="extra" '+(pl.boughtExtra||pl.library<2?'disabled':'')+'>Carta extra (2)</button>'
-      +'<button class="btn sm" data-a="troca" '+(BF.podeTrocar(S,0)?'':'disabled')+' title="Uma vez por partida">'+(pl.trocou?'Troca usada':'Trocar filósofo ('+S.cfg.custoTroca+')')+'</button>'
-      +'<button class="btn pri clep" data-a="fimturno" title="Clepsidra: o relógio de água que media o tempo das falas em Atenas">'+CLEP+'Encerrar turno</button>';
-  h+='</div><div class="hand leque" aria-label="Sua mão">';
-  pl.hand.forEach(function(id,i){
-    var c=C(id), caro=vez&&c.custo>pl.library, k='--k:'+(i-(pl.hand.length-1)/2);
-    h+=c.tipo==='F'?miniF(null,c,'data-a="mao" data-id="'+id+'" data-drag="mao"',caro?'caro':'',k):miniP(c,'data-a="mao" data-id="'+id+'" data-drag="mao" style="'+k+'"',caro?'caro':'');
+  $('hvez').innerHTML=S.over?'<b>Partida encerrada.</b>':vez?'<b>Sua vez.</b> Clique numa carta ou num filósofo e a mesa mostra onde ele pode agir; ou arraste. Duplo clique: carta ampliada.':'Vez de <b>'+esc(S.players[S.turn].nome)+'</b>…';
+  /* FAIXA INFERIOR (retangular, fora da perspectiva da cena): à esquerda, o jogador e Minha Biblioteca;
+     no centro, a mão; à direita, os comandos */
+  h+='<div class="rodape" id="rodape" style="--pc:'+pl.cor+'"><div class="r-esq">'
+    +'<div class="ident eu'+(vez?' vez':'')+'" data-painel="0">'+emblema(0)+'<div class="linha">'+placar(0)+trofeus(0)+'</div></div>'
+    +'<div class="bib'+(bibChegou?' chegou':'')+'" id="bib" '+(vez?'data-a="bib" data-drag="livro" title="Clique ou arraste para dar ideias aos filósofos"':'title="Minha Biblioteca"')+'>'
+    +'<div class="bt">Minha Biblioteca</div><div class="bcorpo"><div class="estante'+(pl.library>30?' cheia':'')+'">'+livrosHTML(pl.library)+'</div>'
+    +'<div class="bnum"><b>'+pl.library+'</b><small title="Ideias que chegam à Biblioteca na sua fase de Reflexão">+'+ganhoBib(0)+' por turno</small></div></div></div></div>';
+  h+='<div class="mao" data-n="'+Math.min(pl.hand.length,9)+'" aria-label="Sua mão">';   // o limite é 5 no fim do turno; durante o turno a mão pode ter 6 ou 7
+  pl.hand.forEach(function(id){
+    var c=C(id), caro=vez&&c.custo>pl.library;
+    h+=c.tipo==='F'?miniF(null,c,'data-a="mao" data-id="'+id+'" data-drag="mao"',caro?'caro':''):miniP(c,'data-a="mao" data-id="'+id+'" data-drag="mao"',caro?'caro':'');
   });
   if(!pl.hand.length)h+='<span class="vaziaM">Sem cartas na mão.</span>';
-  h+='</div>';
+  h+='</div><div class="cmds">';
+  if(S.over)h+='<button class="cmd fim" data-a="fim">Ver resultado</button>';
+  else h+='<button class="cmd" data-a="extra" '+(!vez||pl.boughtExtra||pl.library<2?'disabled':'')+' title="Paga 2 ideias da Biblioteca e compra uma carta (uma vez por turno)"><span class="cc">2</span>Comprar carta extra</button>'
+      +'<button class="cmd" data-a="troca" '+(vez&&BF.podeTrocar(S,0)?'':'disabled')+' title="Uma vez por partida"><span class="cc">'+S.cfg.custoTroca+'</span>'+(pl.trocou?'Troca já usada':'Trocar filósofo')+'</button>'
+      +'<button class="cmd fim" data-a="fimturno" '+(vez?'':'disabled')+'><span class="ico">'+AMPULHETA+'</span>Encerrar turno</button>';
+  h+='</div></div>';
   $('hud').innerHTML=h; bibChegou=false;
 }
 function redesenhar(){ renderOpps();renderAgora();renderMe();m3d(); }
@@ -393,7 +422,7 @@ function origemEl(tipo,ref){
   if(tipo==='fil')return q$('[data-seat="'+ref+'"] .mini');
   if(tipo==='livro')return $('bib');
   if(tipo==='troca')return q$('[data-a=troca]');
-  return q$('#hud .hand [data-id="'+ref+'"]');
+  return q$('#hud .mao [data-id="'+ref+'"]');
 }
 function iniciarSel(tipo,ref){
   if(!pode())return;
@@ -478,8 +507,8 @@ function regrasHTML(){
     +'<li><b>Recém-baixado:</b> entra em ação no próximo turno.</li>'
     +'<li><b>Bibliotecário:</b> solte um filósofo na Biblioteca para nomeá-lo. Ocupa uma cadeira, não debate e produz, a cada turno, tantas ideias quanto o seu custo, direto para a Biblioteca.</li>'
     +'<li><b>Troca</b> (5 ideias, uma vez por partida): troque um filósofo seu por um de um adversário. Os dois perdem as ideias e entram em ação no turno seguinte.</li>'
-    +'<li><b>Vencer um debate:</b> no início do seu turno, ter ideias iguais ou acima do valor e ninguém com mais que você. A linha dourada da tribuna marca essa altura. Torre até o topo (o dobro do valor) é vitória imediata.</li>'
-    +'<li><b>Fim:</b> 30 pontos ou 12 rodadas. Botão direito numa carta mostra a carta ampliada.</li></ul>';
+    +'<li><b>Vencer um debate:</b> no início do seu turno, ter ideias iguais ou acima do valor e ninguém com mais que você. O marco dourado da prateleira marca esse valor. Prateleira cheia (o dobro do valor) é vitória imediata.</li>'
+    +'<li><b>Fim:</b> 30 pontos ou 12 rodadas. Duplo clique (ou botão direito) numa carta mostra a carta ampliada.</li></ul>';
 }
 function telaInicio(){
   modal('<h2>Batalhas Filosóficas</h2><p>Filósofos disputam as grandes perguntas da filosofia. Você joga contra Hipátia e Sêneca, com três escolas na pilha: Grécia Clássica, Materialistas e Empiristas, Germânicos, mais dois livres-pensadores.</p>'
@@ -535,6 +564,11 @@ document.addEventListener('click',function(ev){
 });
 document.addEventListener('contextmenu',function(e){
   var m=e.target.closest('.mini[data-cid]'); if(!m||!S)return;
+  e.preventDefault(); verCarta(m.dataset.cid);
+});
+// duplo clique numa carta (mão, púlpito ou adversário): carta ampliada
+document.addEventListener('dblclick',function(e){
+  var m=e.target.closest('.mini[data-cid]'); if(!m||!S||m.closest('.ov'))return;
   e.preventDefault(); verCarta(m.dataset.cid);
 });
 document.addEventListener('keydown',function(e){
