@@ -79,8 +79,8 @@ function renderOpps(){
   for(var p=1;p<S.players.length;p++){
     var pl=S.players[p], vez=S.turn===p&&!S.over, bk='';
     for(var b=0;b<pl.hand.length;b++)bk+='<span class="back"></span>';
-    h+='<div class="ident'+(vez?' vez':'')+'" data-painel="'+p+'" data-anc="ident:'+p+'" style="--pc:'+pl.cor+'">'+emblema(p)
-      +'<div class="linha">'+placar(p)+trofeus(p)+'<span class="backs" title="Cartas na mão: '+pl.hand.length+'">'+bk+'</span></div>'+(vez?'<span class="jog">jogando…</span>':'')+'</div>';
+    h+='<div class="ident'+(vez?' vez':'')+'" data-painel="'+p+'" data-anc="ident:'+p+'" style="--pc:'+pl.cor+'">'+emblema(p)+placar(p)
+      +'<div class="extras">'+trofeus(p)+'<span class="backs" title="Cartas na mão: '+pl.hand.length+'">'+bk+'</span></div>'+(vez?'<span class="jog">jogando…</span>':'')+'</div>';
     pl.group.forEach(function(g,i){h+=seat(g,p,i,false);});
     h+='<div class="bibop" data-anc="bibop:'+p+'" style="--pc:'+pl.cor+'" title="Biblioteca de '+esc(pl.nome)+': '+BF.nI(pl.library)+' guardadas"><b>'+pl.library+'</b></div>';
   }
@@ -114,6 +114,18 @@ function ganhoBib(p){
   pl.group.forEach(function(g){ if(g.lib&&BF.ativo(g))n+=C(g.id).custo; });
   return n;
 }
+// de onde vêm as ideias de cada turno: as básicas e, se houver, o Bibliotecário (rosto, nome e parcela)
+function geracaoHTML(){
+  var pl=S.players[0], base=S.cfg.bibPorTurno||3, lib=null;
+  pl.group.forEach(function(g){ if(g.lib)lib=g; });
+  var h='<div class="ger" title="Ideias que chegam à Biblioteca na sua fase de Reflexão"><span class="gp" title="Geração básica">+'+base+' <small>básicas</small></span>';
+  if(lib){
+    var c=C(lib.id), at=BF.ativo(lib);
+    h+='<span class="gp bibl'+(at?'':' espera')+'" title="'+esc(c.nome)+', Bibliotecário: '+(at?'produz '+BF.nI(c.custo)+' por turno':'começa a produzir no próximo turno')+'">'
+      +'<i class="rosto" style="background-image:url(img/'+c.id+'.jpg)"></i>'+(at?'+'+c.custo+' <small>'+esc(c.nome)+'</small>':'<small>'+esc(c.nome)+': próximo turno</small>')+'</span>';
+  }
+  return h+'<span class="gt">= +'+ganhoBib(0)+'<small>/turno</small></span></div>';
+}
 function renderMe(){
   var pl=S.players[0], vez=S.turn===0&&!S.over, h='', g='';
   g+='<div class="group" id="megrupo" data-anc="grupo">';
@@ -124,10 +136,10 @@ function renderMe(){
   /* FAIXA INFERIOR (retangular, fora da perspectiva da cena): à esquerda, o jogador e Minha Biblioteca;
      no centro, a mão; à direita, os comandos */
   h+='<div class="rodape" id="rodape" style="--pc:'+pl.cor+'"><div class="r-esq">'
-    +'<div class="ident eu'+(vez?' vez':'')+'" data-painel="0">'+emblema(0)+'<div class="linha">'+placar(0)+trofeus(0)+'</div></div>'
+    +'<div class="ident eu'+(vez?' vez':'')+'" data-painel="0">'+emblema(0)+placar(0)+'<div class="extras">'+trofeus(0)+'</div></div>'
     +'<div class="bib'+(bibChegou?' chegou':'')+'" id="bib" '+(vez?'data-a="bib" data-drag="livro" title="Clique ou arraste para dar ideias aos filósofos"':'title="Minha Biblioteca"')+'>'
     +'<div class="bt">Minha Biblioteca</div><div class="bcorpo"><div class="estante'+(pl.library>30?' cheia':'')+'">'+livrosHTML(pl.library)+'</div>'
-    +'<div class="bnum"><b>'+pl.library+'</b><small title="Ideias que chegam à Biblioteca na sua fase de Reflexão">+'+ganhoBib(0)+' por turno</small></div></div></div></div>';
+    +'<div class="bnum" title="Ideias disponíveis na Biblioteca"><b>'+pl.library+'</b><small>disponíveis</small></div></div>'+geracaoHTML()+'</div></div>';
   h+='<div class="mao" data-n="'+Math.min(pl.hand.length,9)+'" aria-label="Sua mão">';   // o limite é 5 no fim do turno; durante o turno a mão pode ter 6 ou 7
   pl.hand.forEach(function(id){
     var c=C(id), caro=vez&&c.custo>pl.library;
@@ -160,6 +172,7 @@ function render(){
   $('pips').innerHTML=p;
   redesenhar();renderLog();
   if(sel)reaplicarSel();
+  setTimeout(verAviso,0);
 }
 
 // ---------- balões (fila, um de cada vez) ----------
@@ -249,6 +262,44 @@ function palcoRel(f){
   return palco(h);
 }
 
+/* Falácia ou Práxis usada (por você ou por um adversário): a própria carta no centro, com quem a usou, o alvo e
+   o resultado. Provisório: as cenas 3D específicas virão depois. Um clique fecha; o efeito já foi aplicado. */
+function palcoCarta(f){
+  var c=C(f.id), pl=S.players[f.P], fal=/^Fal/.test(c.sub||''), q=f.did?DEB[f.did]:null, res=[];
+  if(f.perda>0&&f.prm&&f.prm.o!==undefined)res.push(S.players[f.prm.o].nome+' perde '+BF.nI(f.perda)+(q?' em «'+q.q+'»':''));
+  if(f.ganho>0)res.push(pl.nome+' ganha '+BF.nI(f.ganho)+(q?' em «'+q.q+'»':''));
+  var jog='<div class="jogada" style="--pc:'+pl.cor+'"><b>'+esc(pl.nome)+'</b> ▸ usa '+(fal?'uma falácia':'uma carta de Práxis')+(f.label?'<span>'+esc(f.label)+'</span>':'')+'</div>';
+  return palco('<div class="cena usada"><div class="cartaU">'+bigHTML(c)+'</div><div class="fala">'+jog
+    +'<div class="et">'+esc(c.sub||'')+'</div><h3>'+esc(c.nome)+'</h3><p>'+esc(c.d)+'</p>'
+    +(res.length?'<div class="refl"><b>Resultado:</b><ul>'+res.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul></div>':'')+'%CONT%</div></div>');
+}
+
+/* 7.1 Aviso de ideias insuficientes: quando nenhuma jogada que use ideias é possível (baixar carta, levar filósofo
+   a debate, dar ideia com o +, carta extra, troca). Aparece uma vez por situação; clique fora fecha sem agir. */
+var avisoChave=null;
+function podeUsarIdeias(){
+  var pl=S.players[0], i, c;
+  for(i=0;i<pl.hand.length;i++){ c=C(pl.hand[i]); if(c.custo>pl.library)continue;
+    if(c.tipo==='F')return true;
+    if(BF.praxisOptions(S,0,c.id).length)return true; }
+  for(i=0;i<pl.group.length;i++){ if(BF.moveOptions(S,0,i).length||BF.canGive(S,0,i))return true; }
+  if(!pl.boughtExtra&&pl.library>=2)return true;
+  return BF.podeTrocar(S,0);
+}
+function chaveEstado(){
+  var pl=S.players[0];
+  return [S.round,pl.library,pl.hand.join(),pl.group.map(function(g){return g.id+g.ideas+(g.acted?'a':'')+(g.lib?'b':'');}).join(),S.debates.map(function(d){return d.stakes.join('.');}).join(';')].join('|');
+}
+function verAviso(){
+  if(!S||!pode()||sel||$('aviso').classList.contains('on')||$('ov').classList.contains('on'))return;
+  if(podeUsarIdeias()){ avisoChave=null; return; }
+  var k=chaveEstado(); if(k===avisoChave)return; avisoChave=k;
+  $('aviso').innerHTML='<div class="caixa" role="dialog" aria-label="Aviso"><b>Você não tem mais ideias disponíveis.</b><p>Suas ideias não são suficientes para baixar cartas ou participar dos debates. Você pode continuar examinando o tabuleiro ou encerrar seu turno.</p>'
+    +'<div class="fecha"><button class="btn" data-a="avisofecha">Continuar observando</button><button class="btn pri" data-a="avisofim">Encerrar turno</button></div></div>';
+  $('aviso').classList.add('on');
+}
+function fecharAviso(){ $('aviso').classList.remove('on'); $('aviso').innerHTML=''; }
+
 // ---------- tocar efeitos ----------
 // Livros e troféus que uma cena ainda vai "entregar" ficam escondidos até ela revelá-los.
 function prepararOcultos(lista){
@@ -314,7 +365,7 @@ async function tocar(lista){
         break;
       case 'segue': if(M3())voo(M3().mundoPilha(f.P,f.id),M3().topoTorre(f.did,f.P),1,f.P); await sleep(veloz?200:420); await revelar(f.did,f.P,1); break;
       case 'vit': await esperarBaloes(); await BFX.cena('vitoria',f); break;
-      case 'praxis': await esperarBaloes(); await BFX.cena('falacia',f); break;
+      case 'praxis': await esperarBaloes(); await palcoCarta(f); await BFX.cena('falacia',f); break;
       case 'dupla': [f.a,f.b].forEach(function(id){brilhar(f.P,id,'#c2410c');}); BFX.coro('aplauso','Dupla clássica!',1300); break;
     }
   }
@@ -527,6 +578,13 @@ function comDiogenes(){
 // ---------- cliques ----------
 document.addEventListener('click',function(ev){
   if(Date.now()-ultimoArrasto<150)return;
+  // aviso aberto: clique fora fecha sem agir; os botões fecham ou encerram o turno
+  if($('aviso').classList.contains('on')){
+    var ba=ev.target.closest('[data-a]');
+    if(ba&&ba.dataset.a==='avisofim'){ fecharAviso(); if(pode())encerrar(false); return; }
+    if(!ev.target.closest('.caixa')||(ba&&ba.dataset.a==='avisofecha')){ fecharAviso(); ev.stopPropagation(); return; }
+    return;
+  }
   // modo de seleção: alvo executa; resto cancela
   if(sel&&!emPalco&&!$('ov').classList.contains('on')){
     var al=ev.target.closest('.alvo');
@@ -547,7 +605,9 @@ document.addEventListener('click',function(ev){
   switch(a2){
     case 'fechar': fechar(); break;
     case 'ver': verCarta(id); break;
-    case 'grupo': if(meu)iniciarSel('fil',i); else verCarta(S.players[0].group[i].id); break;
+    case 'grupo':
+      // o Bibliotecário não vai a debate: o clique só inspeciona (duplo clique abre a carta); a restrição só aparece se ele for arrastado
+      if(meu){ if(S.players[0].group[i]&&S.players[0].group[i].lib)return; iniciarSel('fil',i); } else verCarta(S.players[0].group[i].id); break;
     case 'mao': if(meu)iniciarSel('mao',id); else verCarta(id); break;
     case 'bib': if(meu)iniciarSel('livro',null); break;
     case 'troca': if(meu)iniciarSel('troca',null); break;

@@ -144,8 +144,8 @@
       d: 'Use o argumento do oponente contra ele. Num debate seu em que ele tenha ao menos 3 ideias, mude 3 para a sua cor.' },
     { id: 'adhominem',      nome: 'Ad Hominem', custo: 2, sub: 'Falácia — ataque pessoal',
       d: 'Remova as ideias de um filósofo oponente e acrescente a mesma quantidade em um debate do qual você participa.' },
-    { id: 'reductio',       nome: 'Reductio ad Absurdum', custo: 4, sub: 'Falácia — redução ao absurdo',
-      d: 'Reduza a zero as ideias de um oponente em um debate do qual você participa.' },
+    { id: 'reductio',       nome: 'Reductio ad Absurdum', custo: 3, sub: 'Falácia — redução ao absurdo',
+      d: 'Reduza as ideias de um oponente em um debate pela metade.' },
     { id: 'sofisma',        nome: 'Sofisma', custo: 2, sub: 'Práxis',
       d: 'Num debate do qual você já participa: +2 ideias para você e −3 de um oponente.' },
     { id: 'petitio',        nome: 'Petitio Principii', custo: 3, sub: 'Falácia — petição de princípio',
@@ -745,7 +745,7 @@
           d = s.debates[i]; q = DEB[d.id];
           if (base === 'falseabilidade' && q.area !== 'logica') return;
           ops(function (x) {
-            var min = base === 'retorsio' ? 3 : 1;
+            var min = base === 'retorsio' ? 3 : base === 'reductio' ? 2 : 1;   // Reductio: com 1 ideia a metade (para cima) não tira nada
             if (d.stakes[x] >= min) out.push({ label: '«' + q.q + '» contra ' + nomeJ(s, x) + ' (tem ' + d.stakes[x] + ')', prm: { d: i, o: x } });
           });
         });
@@ -780,7 +780,7 @@
       case 'autoridade': d.stakes[P] += 5; break;
       case 'espantalho': d.stakes[P] += 4; d.stakes[prm.o] = Math.max(0, d.stakes[prm.o] - 4); break;
       case 'sofisma': d.stakes[P] += 2; d.stakes[prm.o] = Math.max(0, d.stakes[prm.o] - 3); break;
-      case 'reductio': d.stakes[prm.o] = 0; break;
+      case 'reductio': d.stakes[prm.o] = Math.ceil(d.stakes[prm.o] / 2); break;   // o oponente fica com a metade, arredondada para cima (9 → 5)
       case 'retorsio': d.stakes[prm.o] -= 3; d.stakes[P] += 3; break;
       case 'falseabilidade': d.stakes[prm.o] = Math.max(0, d.stakes[prm.o] - 5); break;
       case 'adhominem':

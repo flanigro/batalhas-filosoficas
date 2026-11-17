@@ -24,23 +24,27 @@ const V3 = THREE.Vector3, BF = window.BF;
 const L = {
   // arena: centro (cx, cz), raio onde começam os degraus, número de degraus (bancos), profundidade e altura de
   // cada um, parapeito no alto; ext = quanto o arco passa de meia-volta de cada lado (em radianos)
-  arena: { cx: 0, cz: .8, r0: 7.7, n: 5, prof: .8, alt: .3, par: .28, ext: .5, ez: .62 },   // ez: achatamento em z (a planta é meia elipse)
+  arena: { cx: 0, cz: .8, r0: 7.7, n: 4, prof: .8, alt: .3, ext: .5, ez: .62 },   // ez: achatamento em z (a planta é meia elipse)
   podio: .2,                                   // pódio baixo sob cada placa
   // placas: a do centro de frente; as dos lados giradas de leve, acompanhando a curva da arena
   placa: { x: [-4.4, 0, 4.4], z: [-1.08, -1.35, -1.08], rot: [.14, 0, -.14], w: 3.95, esp: .2, topo: .1, cab: .62, perg: 1.12, prat: .5, base: .14, lado: .14, med: .5, num: .44 },
   // púlpitos do jogador; a carta fica atrás, com "oculto" de altura escondida pelo púlpito
-  ped: { x: [-4.1, -1.37, 1.37, 4.1], z: 3.9, w: 2.3, h: .92, d: .62, carta: [1.86, 2.48], oculto: .8, fig: .82 },
-  // faixa dos adversários: z da galeria, inclinação para a câmera, largura do bloco de identificação, do
-  // módulo e dos intervalos; módulo (púlpito compacto), carta atrás dele, Biblioteca
-  banda: { z: -6.3, esc: 1.22, inc: .24, id: 1.8, m: 1.4, mg: .16, gg: 1.0, mod: { w: 1.28, h: .52, d: .44 }, carta: [1.0, 1.34], oculto: .44, bib: 1.42, alto: 2.08 },
+  ped: { x: [-4.1, -1.37, 1.37, 4.1], z: 3.9, w: 2.3, h: 1.22, d: .62, carta: [1.86, 2.48], oculto: 1.06, fig: .82 },
+  // faixa dos adversários (fica no terraço, logo atrás da arquibancada; o z sai da arena): escala, inclinação para a
+  // câmera, largura do bloco de identificação, do módulo e dos intervalos; módulo (púlpito compacto), carta atrás dele,
+  // Biblioteca; alto = topo do bloco de identificação; id0 = onde ele começa (abaixo fica a Biblioteca)
+  banda: { esc: 1.24, inc: .24, id: 2.2, m: 1.42, mg: .14, gg: .55, mod: { w: 1.34, h: .64, d: .46 }, carta: [1.24, 1.66], oculto: .54, bib: 1.7, alto: 2.42, id0: .9 },
   livro: { w: .74, d: .5 },
   cam: { fov: 30, passo: 35 * Math.PI / 180, alvo: [0, 1.4, -1.2] },
 };
 const PED_H = L.ped.h + .08;                 // altura do tampo do púlpito
 const TOPO = L.arena.n * L.arena.alt;        // altura do terraço, no alto da arquibancada
 const SOL = new V3(1, .62, .5).normalize();  // de onde vem a luz: direita, baixa, um pouco da frente
-const CONTORNO = '#3b2414';                  // cor do contorno dos objetos de jogo (estilização)
-const CINZA = '#a19b90';                     // debate ainda não aberto
+const CONTORNO = '#3a3836';                  // cor do contorno dos objetos de jogo (estilização), cinza neutro
+const CINZA = '#a3a19c';                     // debate ainda não aberto
+const R1 = L.arena.r0 + L.arena.n * L.arena.prof;   // raio externo da arquibancada
+// a galeria dos adversários fica inteira atrás da arquibancada: nenhum degrau passa na frente dos dados
+L.banda.z = L.arena.cz - (R1 + .3) * L.arena.ez - .45;
 const USAR_BONECOS = false;                  // marionetes (Diógenes) ficam para a etapa de animação
 
 let renderer, scene, camera, MAT, sol, hemi, relogio = 0;
@@ -134,7 +138,7 @@ function pintarPlaca(slot) {
   const q = slot.did ? BF.DEB[slot.did] : null, a = q ? BF.AREA[q.area] : null, cor = a ? a.cor : CINZA;
   const X = wx => (wx + P.w / 2) / P.w * W, Y = wy => (g.H - wy) / g.H * Hc, k = W / P.w;
   // fundo: reboco claro com um pouco de veio
-  x.fillStyle = q ? '#f2e7cf' : '#e6e3dc'; x.fillRect(0, 0, W, Hc);
+  x.fillStyle = q ? '#f5f1e8' : '#e6e4df'; x.fillRect(0, 0, W, Hc);
   x.globalAlpha = .28; x.globalCompositeOperation = 'multiply'; recorteMarmore(x, W, Hc, slot.i * 7 + 3); x.globalCompositeOperation = 'source-over'; x.globalAlpha = 1;
   // A. cabeçalho na cor da área, medalhão com o valor e nome da área
   const y0 = Y(g.H - P.topo), y1 = Y(g.H - P.topo - P.cab);
@@ -158,15 +162,18 @@ function pintarPlaca(slot) {
   x.textAlign = 'center'; x.fillStyle = q ? '#2a1c10' : '#7d776d'; const lh = px * 1.08, py0 = pt + (ph - pls.length * lh) / 2 + lh / 2;
   if (!q) x.font = FONTE(500, px).replace('500', 'italic 500');
   pls.forEach((l, i) => x.fillText(l, W / 2, py0 + i * lh));
-  // C. prateleiras: fundo de madeira (cinza, se o debate não abriu), letra do jogador, marco dourado do valor
+  // C. prateleiras: fundo de pedra cinza (sem madeira), escuro o bastante para os livros de todas as cores
+  //    saltarem; letra do jogador grande, na cor de maior contraste; marco dourado do valor
   const f = slot.fil;
   g.linhas.forEach((ln, p) => {
     const yt = Y(ln.yT), yb = Y(ln.yB), gr = x.createLinearGradient(0, yt, 0, yb), xa = X(-P.w / 2 + P.lado), xb = X(P.w / 2 - P.lado);
-    gr.addColorStop(0, q ? '#9a6b3f' : '#a9a49b'); gr.addColorStop(1, q ? '#6e4626' : '#8c877e'); x.fillStyle = gr; x.fillRect(xa, yt + 3, xb - xa, yb - yt - 3);
-    x.fillStyle = 'rgba(0,0,0,.25)'; x.fillRect(xa, yt + 3, xb - xa, 5);
-    const pc = q && S.players[p] ? S.players[p].cor : '#b9b3a8', cx = X(-P.w / 2 + P.lado + P.med / 2), cy = (yt + yb) / 2 + 2, r = Math.min(P.med * .4 * k, (yb - yt) * .4);
-    x.fillStyle = pc; x.beginPath(); x.arc(cx, cy, r, 0, 7); x.fill(); x.lineWidth = 4; x.strokeStyle = q ? CONTORNO : '#8a847a'; x.stroke();
-    x.fillStyle = '#fff'; x.font = FONTE(900, r * 1.25); x.textAlign = 'center'; x.fillText(inicial(p), cx, cy + 2);
+    gr.addColorStop(0, q ? '#6c6a67' : '#aeaaa3'); gr.addColorStop(1, q ? '#4f4d4a' : '#97938c'); x.fillStyle = gr; x.fillRect(xa, yt + 3, xb - xa, yb - yt - 3);
+    x.fillStyle = 'rgba(0,0,0,.28)'; x.fillRect(xa, yt + 3, xb - xa, 5);
+    const pc = q && S.players[p] ? S.players[p].cor : '#c4c0b8', cx = X(-P.w / 2 + P.lado + P.med / 2), cy = (yt + yb) / 2 + 2, r = Math.min(P.med * .47 * k, (yb - yt) * .47);
+    x.fillStyle = pc; x.beginPath(); x.arc(cx, cy, r, 0, 7); x.fill(); x.lineWidth = 3.5; x.strokeStyle = q ? '#1d1b18' : '#8a867f'; x.stroke();
+    const tl = q ? corSobre(pc) : '#6f6b65', ct = tl === '#ffffff' ? 'rgba(20,18,15,.8)' : 'rgba(255,255,255,.75)';
+    x.font = FONTE(900, r * 1.5); x.textAlign = 'center'; x.textBaseline = 'middle'; x.lineJoin = 'round';
+    x.lineWidth = 3; x.strokeStyle = ct; x.strokeText(inicial(p), cx, cy + 3); x.fillStyle = tl; x.fillText(inicial(p), cx, cy + 3);
     if (!q || !f) return;
     // marco do valor (vence com N) e fim da prateleira (dobro = vitória imediata)
     const mv = X(g.xb0 + (f.x(q.valor - 1) + f.x(q.valor)) / 2);
@@ -177,8 +184,10 @@ function pintarPlaca(slot) {
   // marcas do valor acima das prateleiras: "N" no marco e "2N" no fim
   if (q && f) {
     const ytop = Y(g.linhas[0].yT), mv = X(g.xb0 + (f.x(q.valor - 1) + f.x(q.valor)) / 2), me = X(g.xb0 + f.x(2 * q.valor - 1) + f.vaga / 2 + .02);
-    x.font = FONTE(800, 22, true); x.textBaseline = 'bottom';
-    [[mv, String(q.valor)], [me, String(2 * q.valor)]].forEach(([mx2, t], i) => { const w2 = x.measureText(t).width + 12; x.fillStyle = i ? '#b98d36' : '#c8962a'; x.beginPath(); x.roundRect(mx2 - w2 / 2, ytop - 26, w2, 24, 5); x.fill(); x.fillStyle = '#fff8e0'; x.textAlign = 'center'; x.fillText(t, mx2, ytop - 3); });
+    // N e 2N: algarismos escuros e maiores sobre etiqueta clara com borda dourada (nunca branco sobre amarelo)
+    x.font = FONTE(900, 27, true); x.textBaseline = 'bottom';
+    [[mv, String(q.valor)], [me, String(2 * q.valor)]].forEach(([mx2, t], i) => { const w2 = x.measureText(t).width + 14; x.fillStyle = '#fff7df'; x.beginPath(); x.roundRect(mx2 - w2 / 2, ytop - 31, w2, 29, 6); x.fill();
+      x.lineWidth = 3; x.strokeStyle = i ? '#a8822e' : '#c8962a'; x.stroke(); x.fillStyle = '#1d1710'; x.textAlign = 'center'; x.fillText(t, mx2, ytop - 3); });
     x.textBaseline = 'middle';
   }
   // borda na cor da área: a cor identifica o conjunto, não só o cabeçalho
@@ -187,50 +196,64 @@ function pintarPlaca(slot) {
   x.lineWidth = 4; x.strokeStyle = CONTORNO; x.strokeRect(2, 2, W - 4, Hc - 4);
   slot.tex.needsUpdate = true;
 }
-// face do púlpito do jogador: nome na faixa de cima, os quatro valores 2 × 2 embaixo
+// fundo de mármore claro e neutro para as faces dos púlpitos
+function faceMarmore(x, W, H, sem) {
+  x.fillStyle = '#ece9e3'; x.fillRect(0, 0, W, H);
+  x.globalAlpha = .35; x.globalCompositeOperation = 'multiply'; recorteMarmore(x, W, H, sem); x.globalCompositeOperation = 'source-over'; x.globalAlpha = 1;
+}
+// cor do texto sobre uma cor de fundo: escuro ou branco, o que contrastar mais
+function corSobre(hex) {
+  const c = new THREE.Color(hex), lin = v => v, L = .2126 * lin(c.r) + .7152 * lin(c.g) + .0722 * lin(c.b);   // THREE.Color já guarda em linear
+  return (L + .05) / .05 > 1.05 / (L + .05) ? '#17130f' : '#ffffff';
+}
+// número de atributo: algarismo grosso, com contorno fino para não se perder no fundo
+function numero(x, txt, cx, cy, px, cor, contornoCor) {
+  x.font = FONTE(900, px, true); x.textAlign = 'center'; x.textBaseline = 'middle';
+  x.lineJoin = 'round'; x.lineWidth = Math.max(3, px * .09); x.strokeStyle = contornoCor; x.strokeText(txt, cx, cy);
+  x.fillStyle = cor; x.fillText(txt, cx, cy);
+}
+/* face do púlpito do jogador: nome na faixa escura de cima; os quatro atributos 2 × 2, grandes, em placas na
+   cor da área. Área com debate na mesa: placa cheia e moldura branca; sem debate: placa mais apagada. */
 function pintarPedestal(seat) {
-  const c = seat.tela, x = c.getContext('2d'), W = c.width, H = c.height, fx = Math.round(H * .33);
-  x.fillStyle = '#b8562f'; x.fillRect(0, 0, W, H);                       // terracota
-  x.globalAlpha = .18; x.globalCompositeOperation = 'multiply'; x.drawImage(gerado('terracota').cor, 0, 0, W, H); x.globalCompositeOperation = 'source-over'; x.globalAlpha = 1;
-  // faixa negra do nome (cerâmica de figuras negras)
-  x.fillStyle = '#1e130e'; x.fillRect(0, 0, W, fx); x.fillStyle = '#d98a52'; x.fillRect(0, fx, W, 4);
+  const c = seat.tela, x = c.getContext('2d'), W = c.width, H = c.height, fx = Math.round(H * .2);
+  faceMarmore(x, W, H, seat.k * 13 + 5);
+  x.fillStyle = '#26231f'; x.fillRect(0, 0, W, fx); x.fillStyle = 'rgba(255,255,255,.18)'; x.fillRect(0, fx, W, 3);
   if (seat.id) {
     const ca = BF.C(seat.id), nome = ca.nome.toUpperCase();
     x.textAlign = 'center'; x.textBaseline = 'middle';
     try { x.letterSpacing = '3px'; } catch (e) {}
-    caber(x, nome, W - 48, 900, Math.round(fx * .66), 28);
-    x.fillStyle = '#f3d9a8'; x.fillText(nome, W / 2, fx * .6); try { x.letterSpacing = '0px'; } catch (e) {}
-    // quatro valores, 2 × 2: número grande na cor da área; borda grossa = área com debate na mesa
-    const gx = 18, gy = 10, bw = (W - 3 * gx) / 2, bh = (H - fx - 4 - 3 * gy) / 2;
+    caber(x, nome, W - 48, 900, Math.round(fx * .66), 26);
+    x.fillStyle = '#f4efe4'; x.fillText(nome, W / 2, fx * .58); try { x.letterSpacing = '0px'; } catch (e) {}
+    const gx = 16, gy = 12, bw = (W - 3 * gx) / 2, bh = (H - fx - 3 - 3 * gy) / 2;
     BF.AREAS.forEach((a, i) => {
-      const ar = BF.AREA[a], bx = gx + (i % 2) * (bw + gx), by = fx + 4 + gy + Math.floor(i / 2) * (bh + gy), on = seat.on && seat.on[a];
-      x.fillStyle = 'rgba(30,15,8,.35)'; x.beginPath(); x.roundRect(bx - 3, by + 4, bw, bh, 12); x.fill();
-      x.fillStyle = on ? '#fffaf0' : '#d9cdb6'; x.beginPath(); x.roundRect(bx, by, bw, bh, 12); x.fill();
-      if (on) { x.lineWidth = 15; x.strokeStyle = ar.cor; x.stroke(); x.lineWidth = 2.5; x.strokeStyle = '#fff'; x.beginPath(); x.roundRect(bx + 10, by + 10, bw - 20, bh - 20, 6); x.stroke(); }
-      else { x.lineWidth = 2; x.strokeStyle = 'rgba(60,35,20,.35)'; x.stroke(); }
-      x.fillStyle = ar.cor; x.font = FONTE(900, bh * .84, true); x.textAlign = 'center'; x.fillText(ca.vals[a], bx + bw / 2, by + bh / 2 + 4);
+      const ar = BF.AREA[a], bx = gx + (i % 2) * (bw + gx), by = fx + 3 + gy + Math.floor(i / 2) * (bh + gy), on = seat.on && seat.on[a];
+      x.fillStyle = 'rgba(40,38,34,.28)'; x.beginPath(); x.roundRect(bx - 3, by + 5, bw, bh, 14); x.fill();
+      x.globalAlpha = on ? 1 : .62; x.fillStyle = ar.cor; x.beginPath(); x.roundRect(bx, by, bw, bh, 14); x.fill(); x.globalAlpha = 1;
+      if (on) { x.lineWidth = 5; x.strokeStyle = '#ffffff'; x.beginPath(); x.roundRect(bx + 7, by + 7, bw - 14, bh - 14, 9); x.stroke(); }
+      x.lineWidth = 2.5; x.strokeStyle = 'rgba(30,28,25,.55)'; x.beginPath(); x.roundRect(bx, by, bw, bh, 14); x.stroke();
+      numero(x, String(ca.vals[a]), bx + bw / 2, by + bh / 2 + 3, bh * .9, '#ffffff', 'rgba(20,18,15,.75)');
     });
   }
   seat.tex.needsUpdate = true;
 }
-// face do púlpito compacto do adversário: nome em cima, os quatro valores em fila
+// face do púlpito compacto do adversário: nome em cima, os quatro atributos em fila, grandes
 function pintarModulo(s) {
-  const c = s.tela, x = c.getContext('2d'), W = c.width, H = c.height, fx = Math.round(H * .4);
-  x.fillStyle = '#b8562f'; x.fillRect(0, 0, W, H);
-  x.globalAlpha = .18; x.globalCompositeOperation = 'multiply'; x.drawImage(gerado('terracota').cor, 0, 0, W, H); x.globalCompositeOperation = 'source-over'; x.globalAlpha = 1;
-  x.fillStyle = '#1e130e'; x.fillRect(0, 0, W, fx); x.fillStyle = '#d98a52'; x.fillRect(0, fx, W, 4);
+  const c = s.tela, x = c.getContext('2d'), W = c.width, H = c.height, fx = Math.round(H * .34);
+  faceMarmore(x, W, H, s.k * 17 + s.P * 5);
+  x.fillStyle = '#26231f'; x.fillRect(0, 0, W, fx); x.fillStyle = 'rgba(255,255,255,.18)'; x.fillRect(0, fx, W, 3);
   if (s.id) {
     const ca = BF.C(s.id), nome = ca.nome.toUpperCase();
     x.textAlign = 'center'; x.textBaseline = 'middle';
     try { x.letterSpacing = '2px'; } catch (e) {}
-    caber(x, nome, W - 30, 900, Math.round(fx * .74), 26);
-    x.fillStyle = '#f3d9a8'; x.fillText(nome, W / 2, fx / 2 + 3); try { x.letterSpacing = '0px'; } catch (e) {}
-    const g = 10, bw = (W - 5 * g) / 4, bh = H - fx - 4 - 2 * g;
+    caber(x, nome, W - 28, 900, Math.round(fx * .74), 24);
+    x.fillStyle = '#f4efe4'; x.fillText(nome, W / 2, fx * .56); try { x.letterSpacing = '0px'; } catch (e) {}
+    const g = 9, bw = (W - 5 * g) / 4, bh = H - fx - 3 - 2 * g;
     BF.AREAS.forEach((a, i) => {
-      const bx = g + i * (bw + g), by = fx + 4 + g;
-      x.fillStyle = 'rgba(30,15,8,.35)'; x.beginPath(); x.roundRect(bx - 2, by + 3, bw, bh, 10); x.fill();
-      x.fillStyle = BF.AREA[a].cor; x.beginPath(); x.roundRect(bx, by, bw, bh, 10); x.fill(); x.lineWidth = 3; x.strokeStyle = 'rgba(255,255,255,.6)'; x.stroke();
-      x.fillStyle = '#fff'; x.font = FONTE(900, bh * .8, true); x.textAlign = 'center'; x.fillText(ca.vals[a], bx + bw / 2, by + bh / 2 + 3);
+      const bx = g + i * (bw + g), by = fx + 3 + g;
+      x.fillStyle = 'rgba(40,38,34,.28)'; x.beginPath(); x.roundRect(bx - 2, by + 4, bw, bh, 10); x.fill();
+      x.fillStyle = BF.AREA[a].cor; x.beginPath(); x.roundRect(bx, by, bw, bh, 10); x.fill();
+      x.lineWidth = 2.5; x.strokeStyle = 'rgba(30,28,25,.55)'; x.stroke();
+      numero(x, String(ca.vals[a]), bx + bw / 2, by + bh / 2 + 3, Math.min(bh * .9, bw * 1.05), '#ffffff', 'rgba(20,18,15,.75)');
     });
   }
   s.tex.needsUpdate = true;
@@ -295,7 +318,7 @@ function uvArco(geo, modo) {
 }
 function criarArena() {
   const A = L.arena, g = new THREE.Group(); g.position.set(A.cx, 0, A.cz); g.scale.z = A.ez; scene.add(g); R.arena = g;
-  const f0 = Math.PI / 2 - A.ext, df = Math.PI + 2 * A.ext, R1 = A.r0 + A.n * A.prof, SEG = 128;
+  const f0 = Math.PI / 2 - A.ext, df = Math.PI + 2 * A.ext, SEG = 128;
   // piso (um retângulo grande; a arquibancada cobre o que fica fora do semicírculo)
   const pw = 30, pd = 26, pz = -1;
   const piso = new THREE.Mesh(new THREE.PlaneGeometry(pw, pd), criarPiso(pw, pd, pz)); piso.rotation.x = -Math.PI / 2; piso.position.set(0, 0, pz); piso.receiveShadow = true; scene.add(piso);
@@ -307,14 +330,18 @@ function criarArena() {
     anelH(r, r + A.prof, (i + 1) * A.alt, MAT.banco);               // banco
     anelV(r - .005, (i + 1) * A.alt - .035, .035, MAT.filete);      // quina do banco
   }
-  // parapeito no alto e terraço em volta (sobre ele fica a galeria dos adversários)
-  anelV(R1, TOPO, A.par, MAT.marmoreEspelho); anelV(R1 + .3, TOPO, A.par, MAT.marmoreEspelho);
-  anelH(R1, R1 + .3, TOPO + A.par, MAT.marmorePolido);
-  anelH(R1 + .3, 40, TOPO, MAT.marmore);
+  // terraço no alto da arquibancada, no mesmo nível do último banco (sem parapeito, que passava na frente dos
+  // dados dos adversários). Termina pouco atrás da galeria: dali para trás, só o céu.
+  const zFim = L.banda.z - .9, zIni = A.cz + R1 * A.ez * Math.sin(A.ext);
+  const ter = new THREE.Shape(); ter.moveTo(-18, -zIni); ter.lineTo(18, -zIni); ter.lineTo(18, -zFim); ter.lineTo(-18, -zFim); ter.lineTo(-18, -zIni);
+  const furo = new THREE.Path(); furo.absellipse(A.cx, -A.cz, R1, R1 * A.ez, 0, Math.PI * 2, false, 0); ter.holes.push(furo);
+  const tg = new THREE.ShapeGeometry(ter, 96); tg.rotateX(-Math.PI / 2); tg.translate(0, TOPO, 0);
+  const terraco = new THREE.Mesh(tg, MAT.marmore); terraco.receiveShadow = true; scene.add(terraco);
+  caixa(36, .22, .2, MAT.marmoreEspelho, { p: [0, TOPO - .11, zFim + .1], em: scene });   // borda de trás do terraço
   // cabeceiras da arquibancada (perfil em escada), nas duas pontas do arco
   const perfil = new THREE.Shape(); perfil.moveTo(A.r0, 0);
   for (let i = 0; i < A.n; i++) { perfil.lineTo(A.r0 + i * A.prof, (i + 1) * A.alt); perfil.lineTo(A.r0 + (i + 1) * A.prof, (i + 1) * A.alt); }
-  perfil.lineTo(R1, TOPO + A.par); perfil.lineTo(R1 + .3, TOPO + A.par); perfil.lineTo(R1 + .3, 0); perfil.lineTo(A.r0, 0);
+  perfil.lineTo(R1, 0); perfil.lineTo(A.r0, 0);
   [f0, f0 + df].forEach(f => { const m = new THREE.Mesh(new THREE.ShapeGeometry(perfil), MAT.marmoreEspelho); m.rotation.y = f - Math.PI / 2; m.castShadow = true; g.add(m); });
 }
 
@@ -324,11 +351,8 @@ function larguraBanda() { return 2 * larguraGrupo() + L.banda.gg; }
 function criarBanda() {
   const B = L.banda, M = B.mod, W = larguraBanda(), GW = larguraGrupo();
   const g = new THREE.Group(); g.position.set(0, TOPO, B.z); g.scale.setScalar(B.esc); scene.add(g); R.banda = g;
-  // fundo: painel de mármore com cornija, que fecha a faixa num retângulo
-  caixa(W + 1.2, B.alto + .55, .22, MAT.marmoreEspelho, { p: [0, (B.alto + .55) / 2, -1.05], em: g });
-  caixaC(W + 1.4, .16, .4, MAT.marmorePolido, { p: [0, B.alto + .63, -1.0], em: g });
-  caixaC(W + 1.0, .12, 1.5, MAT.marmorePolido, { p: [0, .06, -.2], em: g });            // soleira
-  caixaC(.16, B.alto + .4, .16, MAT.marmorePolido, { p: [0, (B.alto + .4) / 2, -.75], em: g });   // filete entre os adversários
+  // sem parede de fundo (rodada 3 de ajustes): só a soleira baixa, que assenta a faixa no terraço
+  caixaC(W + .8, .1, 1.3, MAT.marmorePolido, { p: [0, .05, -.15], em: g });
   // o conteúdo se inclina um pouco para a câmera (perspectiva discreta, leitura plana)
   const gi = new THREE.Group(); gi.position.set(0, .12, 0); gi.rotation.x = -B.inc; g.add(gi); R.bandaI = gi;
   [1, 2].forEach((P, b) => {
@@ -341,13 +365,13 @@ function criarBanda() {
 function criarModulo(P, k, mx, em) {
   const B = L.banda, M = B.mod, c = tela(512, Math.round(512 * M.h / M.w)), tex = texCanvas(c);
   const face = new THREE.MeshStandardMaterial({ map: tex, roughness: .78, envMapIntensity: .25, emissive: new THREE.Color('#58c6ee'), emissiveIntensity: 0 });
-  const corpo = new THREE.Mesh(new THREE.BoxGeometry(M.w, M.h, M.d), [MAT.terracota, MAT.terracota, MAT.terracota, MAT.terracota, face, MAT.terracota]);
+  const corpo = new THREE.Mesh(new THREE.BoxGeometry(M.w, M.h, M.d), [MAT.lado, MAT.lado, MAT.tampo, MAT.lado, face, MAT.lado]);
   corpo.position.set(mx, M.h / 2, 0); corpo.castShadow = true; corpo.receiveShadow = true; em.add(corpo); contorno(corpo, M.w, M.h, M.d);
-  caixaC(M.w + .06, .05, M.d + .05, MAT.verniz, { p: [mx, M.h + .025, 0], em });
-  caixaC(M.w - .08, .045, .03, MAT.madeira, { p: [mx, M.h + .07, M.d / 2 - .03], em });   // beiral da prateleira
+  caixa(M.w + .04, .05, M.d + .04, MAT.tampo, { p: [mx, M.h + .025, 0], em });
+  caixa(M.w - .08, .045, .03, MAT.lado, { p: [mx, M.h + .07, M.d / 2 - .03], em });   // beiral da prateleira
   const s = { P, k, x: mx, id: null, em, tela: c, tex, face, esc: 1, rx: 0, base: new V3(mx, M.h - B.oculto, -M.d / 2 - .07),
-    pilhaPos: new V3(mx - M.w / 2 + .07, M.h + .05, M.d / 2 - .13), pilha: [], larg: M.w - .46, vaga: .1, espM: .08, alt: .3, prof: .16,
-    cont: new V3(mx + M.w / 2 - .36, M.h + .14, M.d / 2 - .1) };
+    pilhaPos: new V3(mx - M.w / 2 + .07, M.h + .05, M.d / 2 - .13), pilha: [], larg: M.w - .5, vaga: .11, espM: .09, alt: .32, prof: .16,
+    cont: new V3(mx + M.w / 2 - .38, M.h + .15, M.d / 2 - .1) };
   criarFig(s, B.carta);
   s.pintar = () => pintarModulo(s); s.pintar();
   R.emis['op:' + P + ':' + k] = [s.matFig, face];
@@ -377,10 +401,11 @@ function montar() {
     const g = new THREE.Group(); g.position.set(px, 0, pd.z); scene.add(g);
     const c = tela(640, Math.round(640 * pd.h / pd.w)), tex = texCanvas(c);
     const face = new THREE.MeshStandardMaterial({ map: tex, roughness: .78, envMapIntensity: .25, emissive: new THREE.Color('#58c6ee'), emissiveIntensity: 0 });
-    const corpo = new THREE.Mesh(new THREE.BoxGeometry(pd.w, pd.h, pd.d), [MAT.terracota, MAT.terracota, MAT.terracota, MAT.terracota, face, MAT.terracota]);
+    // planos distintos: tampo claro, frente com o texto, laterais um pouco mais escuras
+    const corpo = new THREE.Mesh(new THREE.BoxGeometry(pd.w, pd.h, pd.d), [MAT.lado, MAT.lado, MAT.tampo, MAT.lado, face, MAT.lado]);
     corpo.position.y = pd.h / 2; corpo.castShadow = true; corpo.receiveShadow = true; g.add(corpo); contorno(corpo, pd.w, pd.h, pd.d);
-    caixa(pd.w + .06, .08, pd.d + .04, MAT.verniz, { p: [0, pd.h + .04, 0], em: g });
-    caixaC(pd.w - .12, .07, .04, MAT.madeira, { p: [0, PED_H + .035, pd.d / 2 - .04], em: g });   // beiral da prateleira
+    caixa(pd.w + .06, .08, pd.d + .04, MAT.tampo, { p: [0, pd.h + .04, 0], em: g });
+    caixa(pd.w - .12, .07, .04, MAT.lado, { p: [0, PED_H + .035, pd.d / 2 - .04], em: g });   // beiral da prateleira
     const s = { P: 0, k, x: px, id: null, on: null, chave: '', em: scene, g, tela: c, tex, face, esc: 1, rx: -.05, base: new V3(px, PED_H - pd.oculto, pd.z - pd.d / 2 - .09),
       pilhaPos: new V3(px - pd.w / 2 + .12, PED_H, pd.z + pd.d / 2 - .19), pilha: [], larg: pd.w - .8, vaga: .16, espM: .13, alt: .46, prof: .24,
       cont: new V3(px + pd.w / 2 - .62, PED_H + .24, pd.z + pd.d / 2 - .19) };
@@ -392,11 +417,11 @@ function montar() {
 // Biblioteca compacta (adversários): um móvel baixo e claro; os livros ficam em pé por cima, em duas fileiras
 function criarBiblioteca(P, x, z, w, em) {
   const g = new THREE.Group(); g.position.set(x, 0, z); em.add(g);
-  const m = MAT.madeiraClara.clone(); m.emissive = new THREE.Color('#58c6ee'); m.emissiveIntensity = 0;
+  const m = MAT.lado.clone(); m.emissive = new THREE.Color('#58c6ee'); m.emissiveIntensity = 0;
   caixaC(w, .36, .5, m, { p: [0, .18, 0], em: g });
   caixaC(w, .14, .2, m, { p: [0, .43, -.15], em: g });                 // degrau da fileira de trás
-  caixaC(w + .05, .04, .53, MAT.verniz, { p: [0, .38, 0], em: g });
-  caixaC(w, .05, .03, MAT.madeira, { p: [0, .41, .24], em: g });       // beiral
+  caixa(w + .05, .04, .53, MAT.tampo, { p: [0, .38, 0], em: g });
+  caixa(w, .05, .03, MAT.lado, { p: [0, .41, .24], em: g });           // beiral
   R.emis['bibop:' + P] = [m];
   return { g, P, w, livros: [], n: 0, mat: m };
 }
@@ -437,15 +462,15 @@ function montarPlaca(slot, nJ) {
   // pilastras finas nas laterais, na cor da área, com capitel e base de mármore
   [-1, 1].forEach(s => {
     const xx = s * (P.w / 2 + .06);
-    contorno(cilindro(.075, .085, geo.H - .12, mc, 16, { p: [xx, geo.H / 2, .04], em: g }), .17, geo.H - .12, .17, null, .015);
-    caixaC(.28, .1, .3, MAT.marmorePolido, { p: [xx, geo.H - .01, .04], em: g });
+    contorno(cilindro(.075, .085, geo.H - .06, mc, 16, { p: [xx, geo.H / 2 + .03, .04], em: g }), .17, geo.H - .06, .17, null, .015);
+    caixaC(.24, .09, .26, mc, { p: [xx, geo.H + .04, .04], em: g });          // capitel, na cor da área (topo visível)
     caixaC(.28, .1, .3, MAT.marmore, { p: [xx, .05, .04], em: g });
   });
-  caixaC(P.w + .46, .13, P.esp + .26, MAT.marmorePolido, { p: [0, geo.H + .1, .02], em: g });   // cornija
+  caixaC(P.w + .12, .06, P.esp + .06, mc, { p: [0, geo.H + .03, 0], em: g });   // filete fino no alto, na cor da área (no lugar da cornija)
   caixaC(P.w + .7, L.podio, 1.05, MAT.marmorePolido, { p: [0, -L.podio / 2, .22], em: g });    // pódio
   slot.geo = geo; slot.tela = c; slot.tex = tex; slot.face = face; slot.nJ = nJ; slot.livros = []; slot.prat = []; slot.frisos = [];
   geo.linhas.forEach((ln, p) => {
-    const lw = geo.xb1 - geo.xb0 + .14, mp = MAT.madeira.clone(); mp.emissive = new THREE.Color('#58c6ee'); mp.emissiveIntensity = 0;
+    const lw = geo.xb1 - geo.xb0 + .14, mp = MAT.lado.clone(); mp.emissive = new THREE.Color('#58c6ee'); mp.emissiveIntensity = 0;
     caixaC(lw, .05, .3, mp, { p: [(geo.xb0 + geo.xb1) / 2, ln.yB + .025, P.esp / 2 + .15], em: g });
     const fr = new THREE.MeshStandardMaterial({ color: CINZA, roughness: .6, emissive: new THREE.Color('#f3c552'), emissiveIntensity: 0 });
     caixa(lw, .05, .02, fr, { p: [(geo.xb0 + geo.xb1) / 2, ln.yB + .025, P.esp / 2 + .31], em: g, sombra: false });
@@ -459,7 +484,7 @@ function montarPlaca(slot, nJ) {
 function colorirPlaca(slot) {
   const q = slot.did ? BF.DEB[slot.did] : null;
   slot.matCor.color.set(q ? BF.AREA[q.area].cor : CINZA);
-  slot.prat.forEach(mp => mp.color.set(q ? '#ffffff' : '#b3ada3'));
+  slot.prat.forEach(mp => mp.color.set(q ? '#c9c6c0' : '#b1aea8'));
   slot.frisos.forEach((fr, p) => fr.color.set(q && S.players[p] ? S.players[p].cor : '#a39d93'));
 }
 function medirPrat(slot) { slot.fil = fileira(2 * slot.v, slot.geo.xb1 - slot.geo.xb0, .3, .2); }
@@ -605,9 +630,12 @@ function ancora(chave) {
     case 'fig': { const s = R.meus[+a[2]]; return retFig(s.base, 1.3 * pd.fig, 1.5 * pd.fig); }
     case 'pilha': { const s = +a[1] === 0 ? R.meus[+a[2]] : R.ops[+a[1]][+a[2]]; return ptObj(s.em === scene ? null : s.em, s.cont.x, s.cont.y, s.cont.z); }
     case 'op': { const s = R.ops[+a[1]][+a[2]]; return retCaixa(s.x - M.w / 2, 0, -M.d / 2, s.x + M.w / 2, M.h - B.oculto + B.carta[1], M.d / 2, R.bandaI); }
-    case 'ident': { const id = R.ident[+a[1]]; return retCaixa(id.x - B.id / 2, .78, .1, id.x + B.id / 2, B.alto, .1, R.bandaI); }
+    case 'ident': { const id = R.ident[+a[1]]; return retCaixa(id.x - B.id / 2, B.id0, .1, id.x + B.id / 2, B.alto, .1, R.bandaI); }
     case 'bibop': { const id = R.ident[+a[1]]; return ptObj(R.bandaI, id.x + B.bib / 2 - .08, .62, .12); }
     case 'grupo': return retCaixa(pd.x[0] - pd.w / 2, 0, pd.z - pd.d / 2, pd.x[3] + pd.w / 2, PED_H + .3, pd.z + pd.d / 2);
+    case 'faixa': {   // meio da faixa livre, entre o pódio da placa do centro e o alto das cartas dos púlpitos (dica da seleção)
+      const s0 = R.slots[1], pA = ptObj(s0.g, 0, -L.podio, .75), pB = tela2(new V3(0, PED_H + pd.carta[1] - pd.oculto, pd.z - pd.d / 2 - .09));
+      return { x: innerWidth / 2, y: (pA.y + pB.y) / 2 }; }
     case 'coro': { const p = ptObj(R.banda, 0, -.2, 1.2); p.y = Math.max(p.y, 64); return p; }
   }
   return null;
@@ -791,13 +819,20 @@ function iniciar() {
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
   renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.outputColorSpace = THREE.SRGBColorSpace;
-  scene = new THREE.Scene(); scene.background = new THREE.Color('#ead8bf'); scene.fog = new THREE.Fog('#ead8bf', 70, 220);
+  scene = new THREE.Scene(); scene.fog = new THREE.Fog('#efe4d3', 60, 200);
+  // fundo aberto: céu liso em degradê, sem horizonte nem paisagem
+  { const c = tela(4, 256), x = c.getContext('2d'), gr = x.createLinearGradient(0, 0, 0, 256);
+    gr.addColorStop(0, '#cfd6e2'); gr.addColorStop(.55, '#ece6dc'); gr.addColorStop(1, '#f3e7d4'); x.fillStyle = gr; x.fillRect(0, 0, 4, 256);
+    const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; scene.background = t; }
   scene.environment = criarAmbiente();
   camera = new THREE.PerspectiveCamera(L.cam.fov, innerWidth / innerHeight, .5, 600);
   cam.alvo0.set(L.cam.alvo[0], L.cam.alvo[1], L.cam.alvo[2]); cam.alvo.copy(cam.alvo0);
   MAT = criarMateriais(); anisotropia(Math.min(8, renderer.capabilities.getMaxAnisotropy()));
   MAT.marmoreEspelho = MAT.marmore.clone(); MAT.marmoreEspelho.color = new THREE.Color('#d9cfbd'); MAT.marmoreEspelho.side = THREE.DoubleSide;
   MAT.banco = MAT.marmore.clone(); MAT.banco.color = new THREE.Color('#e4dccd');
+  // púlpitos, módulos e Bibliotecas: mármore claro no tampo, cinza neutro nas laterais (a frente leva a textura)
+  MAT.tampo = MAT.marmorePolido.clone(); MAT.tampo.color = new THREE.Color('#fbf9f4');
+  MAT.lado = MAT.marmore.clone(); MAT.lado.color = new THREE.Color('#b9b6b0');
   MAT.filete = new THREE.MeshStandardMaterial({ color: '#8c7f6c', roughness: .8, side: THREE.DoubleSide });
   R.geoLivro = new THREE.BoxGeometry(L.livro.w, 1, L.livro.d); R.geoLivroPe = new THREE.BoxGeometry(1, 1, 1);
   R.geoPalha = new THREE.BoxGeometry(.3, .025, .025); R.geoPagina = new THREE.PlaneGeometry(.34, .44);

@@ -1,4 +1,4 @@
-# Lista de assets: o que substitui os provisórios da mesa 3D (17/11/2026; revista na rodada 5)
+# Lista de assets: o que substitui os provisórios da mesa 3D (17/11/2026; revista nas rodadas 5 e 6)
 
 Acompanha a mesa em Three.js (rodadas 3 a 5). Na rodada 5 a mesa virou uma arena semicircular de mármore: faixa dos adversários no alto, placas no centro, púlpitos do jogador na frente e a faixa inferior em HTML. Hoje tudo o que se vê na mesa é provisório: texturas geradas por código, figuras desenhadas por código, retratos de banco. Este documento lista cada peça, com as medidas para produzir a definitiva.
 
@@ -95,16 +95,16 @@ Acompanha a mesa em Three.js (rodadas 3 a 5). Na rodada 5 a mesa virou uma arena
 
 Para cada material, baixar em 2K (2048 × 2048 px) os mapas de cor, normal (OpenGL) e rugosidade; todos repetem sem emenda.
 
-- marmore: mármore branco de veios cinzentos, pouco contraste. Onde: hoje é o material principal da arena: lajes do piso, bancos e espelhos dos degraus (tingidos um pouco mais escuros), parapeito, terraço, painel da faixa dos adversários, capitéis, cornijas e pódios das placas. Escala: 3,2 unidades por repetição. Substitui o gerador "marmore" (512 px). Buscar por "white marble", "marble 01".
+- marmore: mármore branco de veios cinzentos, pouco contraste. Onde: hoje é o material principal da arena e, desde a rodada 6, dos púlpitos, módulos, Bibliotecas e prateleiras (tingido de cinza nas laterais): lajes do piso, bancos e espelhos dos degraus (tingidos um pouco mais escuros), parapeito, terraço, painel da faixa dos adversários, capitéis, cornijas e pódios das placas. Escala: 3,2 unidades por repetição. Substitui o gerador "marmore" (512 px). Buscar por "white marble", "marble 01".
 - calcario: calcário poroso bege (poros), fosco. Onde: hoje quase não aparece (a arena da rodada 5 é toda de mármore). Escala: 3. Substitui "calcario". Buscar por "limestone", "sandstone plain".
 - silhar: não é mais usado (o Flavio pediu para tirar os tijolinhos na rodada 5).
-- madeira: nogueira ou carvalho escuro, veio ao comprido. Onde: moldura e prateleiras das placas, beirais; em tom claro, as três Bibliotecas e o verso das cartas em pé. Escala: 2,2. Substitui "madeira". Buscar por "dark wood", "walnut".
+- madeira: desde a rodada 6 só nos adereços das cenas (rolos dos papiros, espantalho); prateleiras, púlpitos e Bibliotecas passaram a mármore e cinza. Escala: 2,2. Substitui "madeira". Buscar por "dark wood", "walnut".
 - bronze: bronze envelhecido com um pouco de pátina; precisa também do mapa de metal. Onde: hoje, só detalhes (pouco uso depois da rodada 4). Escala: 1,2. Substitui "bronze". Buscar por "bronze", "brass worn".
 - ouro: dourado liso, pouco riscado, com mapa de metal. Onde: hoje, só detalhes. 1K (1024 px) basta. Substitui "ouro".
 - couro: couro claro e neutro (o programa tinge na cor de cada jogador), grão fino. Onde: capa dos livros. 1K basta. Substitui "couro". Buscar por "leather white", "leather plain".
 - paginas: corte de páginas de livro fechado. Onde: três lados de cada livro. 512 px basta. Substitui "paginas". Difícil de achar pronto; pode ficar o gerado.
 - pergaminho: pergaminho ou papel antigo. Onde: papiros lançados e páginas da chuva da vitória. 1K. Substitui "pergaminho". Buscar por "parchment", "old paper".
-- terracota: barro cozido alaranjado, liso, fosco. Onde: corpo dos púlpitos do jogador e dos adversários (com a faixa negra do nome e os valores pintados por programa). 1K. Substitui "terracota". Buscar por "terracotta", "clay".
+- terracota: não é mais usada (rodada 6: púlpitos em mármore claro e cinza, sem vermelho estrutural).
 - terra: não aparece mais (a arena de mármore cobre o chão).
 - estopa e palha: tecido de estopa e feixe de palha, para o espantalho. 1K cada. Substituem "estopa" e "palha".
 - Céu para reflexos: um HDRI de poente (Poly Haven, 1K, arquivo .hdr), sol baixo à direita. Dá brilho mais rico ao bronze e ao mármore polido. Substitui o ambiente gerado em criarAmbiente (mesa3d.js). Buscar por "sunset", "golden hour".
