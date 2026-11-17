@@ -53,11 +53,11 @@ function renderOpps(){
   for(var p=1;p<S.players.length;p++){
     var pl=S.players[p], vez=S.turn===p&&!S.over, bk='';
     for(var b=0;b<pl.hand.length;b++)bk+='<span class="back"></span>';
-    h+='<div class="panel opp '+(vez?'vez':'')+'" data-painel="'+p+'" data-anc="painel:'+p+'" style="--pc:'+pl.cor+'"><span class="nome ptitle">'+esc(pl.nome)+'</span>'
-      +(vez?'<span class="jog">jogando…</span>':'')+'<span class="pts">'+pl.points+'<small>/ '+S.cfg.pontos+'</small></span>'+trofeus(p)
-      +'<span class="backs" title="Cartas na mão: '+pl.hand.length+'">'+bk+'</span></div>';
+    h+='<div class="panel opp '+(vez?'vez':'')+'" data-painel="'+p+'" data-anc="painel:'+p+'" style="--pc:'+pl.cor+'"><span class="linha"><span class="nome ptitle">'+esc(pl.nome)+'</span>'
+      +'<span class="pts">'+pl.points+'<small>/ '+S.cfg.pontos+'</small></span></span>'+(vez?'<span class="jog">jogando…</span>':'')+'<span class="linha">'+trofeus(p)
+      +'<span class="backs" title="Cartas na mão: '+pl.hand.length+'">'+bk+'</span></span></div>';
     pl.group.forEach(function(g,i){h+=seat(g,p,i,false);});
-    h+='<div class="bibop" data-anc="bibop:'+p+'" style="--pc:'+pl.cor+'" title="Biblioteca de '+esc(pl.nome)+'"><small>Biblioteca</small>'+pl.library+'</div>';
+    h+='<div class="bibop" data-anc="bibop:'+p+'" style="--pc:'+pl.cor+'" title="Biblioteca de '+esc(pl.nome)+': '+BF.nI(pl.library)+' guardadas"><small>Biblioteca</small>'+pl.library+'</div>';
   }
   $('opps').innerHTML=h;
 }
@@ -83,6 +83,12 @@ function renderAgora(){
   for(var k=S.debates.length;k<3;k++)h+='<div class="vago" data-anc="vago:'+k+'">'+(S.debDeck.length?'Novo debate ao fim da rodada '+(S.cfg.novoDebate.filter(function(r){return r>=S.round;})[0]||'—'):'—')+'</div>';
   $('agora').innerHTML=h;
 }
+// o que chega à Biblioteca a cada fase de Reflexão: as 3 fixas e a produção do Bibliotecário (se já trabalha)
+function ganhoBib(p){
+  var pl=S.players[p], n=S.cfg.bibPorTurno||3;
+  pl.group.forEach(function(g){ if(g.lib&&BF.ativo(g))n+=C(g.id).custo; });
+  return n;
+}
 function renderMe(){
   var pl=S.players[0], vez=S.turn===0&&!S.over, h='', g='';
   g+='<div class="group" id="megrupo" data-anc="grupo">';
@@ -91,7 +97,7 @@ function renderMe(){
   $('me').innerHTML=g;
   $('hvez').innerHTML=S.over?'<b>Partida encerrada.</b>':vez?'<b>Sua vez.</b> Clique numa carta ou num filósofo e a mesa mostra onde ele pode agir; ou arraste. Botão direito: carta ampliada.':'Vez de <b>'+esc(S.players[S.turn].nome)+'</b>…';
   // Biblioteca: âncora sobre a estante 3D
-  h+='<div class="bib '+(bibChegou?'chegou':'')+'" id="bib" data-anc="bib" '+(vez?'data-a="bib" data-drag="livro" title="Clique ou arraste para dar ideias aos filósofos"':'title="Sua Biblioteca"')+'><div class="t"><b>'+pl.library+'</b>Biblioteca</div></div>';
+  h+='<div class="bib '+(bibChegou?'chegou':'')+'" id="bib" data-anc="bib" '+(vez?'data-a="bib" data-drag="livro" title="Clique ou arraste para dar ideias aos filósofos"':'title="Sua Biblioteca"')+'><div class="t"><span class="q"><b>'+pl.library+'</b>Biblioteca</span><span class="ger" title="Ideias que chegam à Biblioteca na sua fase de Reflexão">+'+ganhoBib(0)+' por turno</span></div></div>';
   // canto: placar e botões
   h+='<div class="canto"><div class="eu '+(vez?'vez':'')+'" style="--pc:'+pl.cor+'"><span class="nome">Você</span><span class="pts">'+pl.points+'<small>/ '+S.cfg.pontos+'</small></span>'+trofeus(0)+'</div>';
   if(S.over)h+='<button class="btn pri" data-a="fim">Ver resultado</button>';

@@ -272,6 +272,7 @@ export function criarMateriais() {
     paginas: mat('paginas', { esc: .5 }),
     pergaminho: mat('pergaminho', { esc: 1 }),
     terracota: mat('terracota', { esc: 1 }),
+    verniz: mat('terracota', { esc: 1, cor: '#3a2a22', rug: .55, env: .4 }),   // verniz negro (tampo do pedestal, beirais)
     estopa: mat('estopa', { esc: .8 }),
     palha: mat('palha', { esc: .6 }),
     terra: mat('terra', { esc: 7 }),

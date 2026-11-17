@@ -429,6 +429,32 @@ body.diario .log{transform:none}
 .mini{box-shadow:-1px 2px 0 #d8d0be,-2px 4px 0 #b9af9a,-3px 5px 0 #8f8674,-12px 12px 14px rgba(40,25,10,.38)}
 .mini:hover{box-shadow:-1px 2px 0 #d8d0be,-2px 4px 0 #b9af9a,-3px 5px 0 #8f8674,-18px 20px 20px rgba(40,25,10,.34)}
 .btn.clep{display:inline-flex;align-items:center;gap:7px;background:linear-gradient(180deg,#d9a94a,#a8782a);border-color:#6b4d0c;border-bottom-color:#4f3808;color:#241803;box-shadow:inset 0 1px 0 rgba(255,236,170,.7)}
+
+/* ============================================================
+   RODADA 4 — PLACAS COM PRATELEIRAS, PEDESTAIS NOVOS, BIBLIOTECAS COMPACTAS
+   A âncora .est cobre a fileira de livros de um jogador na placa; o número fica logo à direita dela.
+   A âncora .pilha fica na ponta direita da prateleira do pedestal: número de livros e o botão +.
+   ============================================================ */
+.est .n{left:100%;top:50%;transform:translate(6px,-50%);font-size:17px;line-height:20px;min-width:28px}
+.est .n.zero{font-size:14px;line-height:18px}
+.rl{display:none!important}   /* as marcas do valor agora estão pintadas na placa (N e 2N) */
+.rl b{display:none}
+.pilha{transform:translate(0,-50%);gap:4px}
+.pilha b{font-size:17px;line-height:21px;min-width:26px}
+.pilha .mais1{width:26px;height:26px;font-size:19px;line-height:22px;box-shadow:0 2px 5px rgba(0,0,0,.45),0 0 0 2px #fff8e0}
+#mesa .opp-seat .pilha{transform:translate(0,-60%)}
+#mesa .opp-seat .pilha b{font-size:12.5px;line-height:16px;min-width:18px}
+.pilha.libp{transform:translate(-100%,-50%)}
+.panel.opp{transform:translate(-50%,-50%);flex-direction:row;gap:10px;padding:3px 12px 4px;align-items:center;border-width:2px}
+.panel.opp .linha{display:flex;align-items:center;gap:8px}
+.bibop{transform:translate(-50%,-100%);font-size:22px;line-height:24px;padding:1px 9px 2px;display:flex;align-items:center;gap:6px}
+.bibop small{font-size:9px}
+.bib .t{top:-4px;flex-direction:column;gap:0;padding:3px 12px 4px}
+.bib .t .q{display:flex;align-items:center;gap:7px}
+.bib .t b{font-size:28px}
+.bib .t .ger{font-size:10px;letter-spacing:.4px;text-transform:none;font-weight:700;color:#f6d98a}
+#mesa .mini .sel{top:2px;transform:translate(-50%,0)}
+#megrupo.alvo{z-index:3}
 </style>
 </head>
 <body>
