@@ -1,11 +1,11 @@
-# Lista de assets: o que substitui os provisórios da mesa 3D (17/11/2026)
+# Lista de assets: o que substitui os provisórios da mesa 3D (17/11/2026; revista na rodada 4)
 
 Acompanha a rodada visual 3 (mesa em Three.js). Hoje tudo o que se vê na mesa é provisório: texturas geradas por código, figuras desenhadas por código, retratos de banco. Este documento lista cada peça, com as medidas para produzir a definitiva.
 
 ## Convenções
 
 - Luz: uma só, sol poente, vindo da direita de quem olha, baixo (cerca de 30° acima do horizonte) e um pouco pela frente. Tom quente. Nas texturas de material (mármore, madeira, bronze) NÃO pintar luz nem sombra: a cena ilumina. Em tudo o que é desenho plano (bonecos, coro, fundo, retratos) a luz pintada deve vir da direita, e a sombra projetada no chão fica por conta do programa.
-- Unidade de cena: a estela tem 3,2 unidades de altura; o pedestal, 1,4 de largura. "Escala" abaixo diz quantas unidades de cena uma repetição da textura cobre.
+- Unidade de cena: a placa de debate tem 3,95 unidades de largura e 3,5 de altura (com três jogadores); o pedestal, 2,1 de largura e 1,2 de altura. "Escala" abaixo diz quantas unidades de cena uma repetição da textura cobre.
 - Mapas de um material: cor (albedo, sem luz pintada), normal (padrão OpenGL, verde para cima) e rugosidade (branco = fosco). Metais levam também o mapa de metal. Nos bancos gratuitos esses mapas já vêm prontos, com esses nomes.
 - Formatos: cor e rugosidade em JPG (qualidade 85 a 90); normal em PNG; tudo o que tem recorte (transparência) em PNG ou WebP. Lados em potência de 2 (1024, 2048, 4096) sempre que a textura repete.
 - Onde trocar: cada material tem uma linha na tabela ARQUIVOS de materiais.js (o nome do material e os três arquivos). Desenhos planos (coro, fundo, folhagem) trocam em mesa3d.js, nas funções indicadas em cada item. Sugestão de pastas: tex/ (materiais), fundo/, coro/, bonecos/, img/ (retratos).
@@ -33,7 +33,8 @@ Acompanha a rodada visual 3 (mesa em Three.js). Hoje tudo o que se vê na mesa �
 
 ### 1.2 Retratos para as cartas (mão, carta ampliada, telas centrais, bancos dos oponentes)
 
-- O que é: um retrato por filósofo, usado em quatro lugares: carta pequena da mão (118 × 163 px), carta ampliada (foto de cerca de 680 × 560 px visíveis), retrato das telas centrais (210 × 236 px) e carta em pé nos bancos dos oponentes e nos pedestais sem boneco (textura de 256 × 352 px).
+- O que é: um retrato por filósofo, usado em cinco lugares: carta pequena da mão (118 × 163 px), carta ampliada (foto de cerca de 680 × 560 px visíveis), retrato das telas centrais (210 × 236 px), carta em pé na galeria dos adversários (textura de 256 × 352 px) e busto sobre o pedestal do jogador (textura de 256 × 320 px, num nicho de topo em arco).
+- Busto do pedestal: hoje é o retrato recortado num arco. O ideal, enquanto não houver boneco, é um busto recortado (cabeça e parte do tronco, fundo transparente), PNG de 512 × 640 px, ombros cortados na base; a prateleira de livros cobre a parte de baixo do peito.
 - Formato: um arquivo-mestre por filósofo, JPG, 1200 × 1500 px (4:5), rosto no terço de cima, com folga dos lados para recorte. Sem transparência.
 - Estilo: o mesmo para os 20 (hoje há foto, pintura a óleo e escultura misturadas). Luz da direita. Fundo neutro, sem texto.
 - Substitui: img/<id>.jpg (20 arquivos, de 9 a 32 KB, provisórios de banco e de obras que podem ter proteção).
@@ -42,12 +43,14 @@ Acompanha a rodada visual 3 (mesa em Three.js). Hoje tudo o que se vê na mesa �
 ### 1.3 Coro grego
 
 - O que é: as figuras da arquibancada, em estilo de cerâmica de figuras negras, braços erguidos.
-- Onde aparece: 17 figuras em três fileiras, atrás da plataforma. Cada uma tem de 45 a 60 px de altura na tela.
+- Onde aparece: 19 figuras em duas fileiras, atrás do parapeito da galeria dos adversários, no alto da tela. Cada uma tem de 40 a 55 px de altura visível.
 - Formato: PNG com transparência, 256 × 384 px cada. De 3 a 5 variações (poses e túnicas diferentes); o programa distribui e anima (pula no aplauso, nega na vaia, oscila no murmúrio).
 - Estilo: silhueta preta (#1e130e) com incisões em terracota (#d98a52); nada de degradê.
 - Substitui: a função coristaTex de mesa3d.js (duas poses desenhadas por código, 128 × 192 px).
 
-### 1.4 Fundo: morro com templo (Acrópole)
+### 1.4 Fundo: morro com templo (Acrópole) — adiado
+
+- Com a câmera da rodada 4 o horizonte saiu de cena; o morro e o céu não aparecem. Fica registrado para uma eventual tela de abertura ou para uma vista mais aberta.
 
 - O que é: o morro com o templo no alto, pequeno e apagado pela distância.
 - Onde aparece: fundo, à esquerda, na linha do horizonte. Ocupa cerca de 330 × 130 px na tela.
@@ -101,29 +104,24 @@ Para cada material, baixar em 2K (2048 × 2048 px) os mapas de cor, normal (Open
 
 ## 3. O que pode ser gerado (Firefly) e depois retocado
 
-- Céu do poente. Onde: todo o fundo, atrás de tudo. Formato: JPG, 4096 × 2048 px, sem transparência; horizonte a 76% da altura a partir do topo, sol fora do quadro à direita (só o clarão), nuvens finas. Substitui o degradê de criarFundo.
+- (Adiado: o céu e a serra não aparecem na composição da rodada 4.) Céu do poente. Onde: todo o fundo, atrás de tudo. Formato: JPG, 4096 × 2048 px, sem transparência; horizonte a 76% da altura a partir do topo, sol fora do quadro à direita (só o clarão), nuvens finas. Substitui o degradê de criarFundo.
 - Serra distante. Onde: faixa no horizonte, de ponta a ponta. Formato: PNG com transparência, 4096 × 512 px, silhueta lilás que se desfaz em névoa embaixo. Substitui a serra de criarFundo.
 - Piso da plataforma (opcional). Hoje o piso é composto por código: lajes de mármore de 1,3 unidade, juntas, faixa de borda com meandro e círculo da orquestra. Para trocar por uma peça única: cor, normal e rugosidade em 4096 × 3200 px (a plataforma tem 16,1 × 12,6 unidades), sem repetir, vista de cima, sem luz pintada. O meandro da borda e o círculo podem ser desenhados pelo Flavio em vetor e aplicados sobre o mármore de banco: nesse caso basta um PNG com transparência, 4096 × 3200 px, só com as incrustações. Substitui criarPiso (mesa3d.js).
 - Faixa de caneluras da frente da plataforma. Formato: cor, normal e rugosidade, 1024 × 1024 px, repetindo só na horizontal, quatro caneluras por repetição, cobrindo 1,3 × 0,9 unidade. O mapa normal é o que dá o relevo; pode ser gerado a partir de um desenho em tons de cinza. Substitui "caneluras".
-- Folhagem da oliveira. Formato: PNG com transparência, 512 × 512 px, um raminho com 12 a 20 folhas (verde-acinzentado, face de baixo prateada). O programa espalha 700 cópias. Substitui folhagemTex.
-- Folhagem do cipreste. Formato: cor, normal e rugosidade, 1024 px, repetindo, verde escuro em tufos verticais. Substitui "cipreste".
 - Retratos dos filósofos (item 1.2), se o Flavio preferir gerar a partir de um estilo de referência. Vale a restrição do projeto: nada de imagem de banco ou de obra protegida na versão publicada.
 
 ## 4. Modelos 3D (opcionais; hoje são formas geométricas montadas por código)
 
 Se o Flavio quiser trocar a geometria, o formato é glTF binário (.glb), com os materiais embutidos em 1K ou 2K, origem no centro da base, eixo Y para cima, medidas em unidades de cena.
 
-- Oliveira (2 na cena; a da frente, à esquerda, é cortada pela borda): 6 unidades de altura, até 20 mil triângulos. Fontes: Poly Haven (modelos CC0), Sketchfab (CC0 ou CC-BY).
-- Cipreste (4 na cena): de 6,5 a 9 unidades de altura, até 8 mil triângulos.
-- Estante (3 na cena): 1,6 a 1,7 de largura, 1,95 a 2,6 de altura, 0,58 de fundo, três vãos. Os livros são do programa.
-- Banco dos oponentes (2): 6,4 de largura, assento a 0,5 de altura, encosto a 1,3.
-- Estela: 3,4 × 3,2 × 0,34, topo em arco. A face recebe o texto por programa; o modelo só valeria por lascas e desgaste nas bordas.
-- Pedestal: 1,4 de largura, face da frente inclinada (para ser lida de cima) com 1,3 × 1,06 de área útil; nome e valores são gravados por programa.
+- Biblioteca (3 na cena): móvel baixo de 1,7 (do jogador) ou 1,45 (dos adversários) de largura, 0,5 de altura e 0,72 de fundo, com um degrau atrás para a segunda fileira. Os livros são do programa e precisam ficar à vista: nada de portas, vãos fundos ou topo alto.
+- Placa de debate: 3,95 de largura, 3,5 de altura (mais 0,5 por jogador além de três), 0,2 de espessura, com pilastras laterais e cornija. A face recebe cabeçalho, pergunta e fundo das prateleiras por programa; o modelo valeria pela moldura.
+- Pedestal: 2,1 × 1,2 × 0,95, com tampo e beiral da prateleira; nome e valores são pintados por programa na face da frente.
 
 ## 5. O que continua sendo feito pelo programa (não precisa de asset)
 
-- Texto gravado nas estelas (área, pergunta, medalhão do valor) e nos pedestais (nome e os quatro valores em 2 × 2).
-- Livros (torres, pilhas, estantes), régua do valor, facho de luz sobre a torre que lidera, halos de alvo, sombras.
+- Texto das placas (área, medalhão do valor, pergunta, letras dos jogadores, marcas N e 2N) e dos pedestais (nome e os quatro valores em 2 × 2).
+- Livros em pé (prateleiras das placas, prateleiras dos pedestais, Bibliotecas), friso dourado da prateleira que lidera, placas de identificação dos adversários, halos de alvo, contornos, sombras.
 - Balões, faixas, telas centrais, diário, botões.
 
 ## 6. Ordem sugerida
