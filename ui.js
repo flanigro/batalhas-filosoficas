@@ -1,4 +1,6 @@
-/* Batalhas Filosóficas — interface (protótipo nível 2) */
+/* Batalhas Filosóficas — interface (protótipo nível 2)
+ * A mesa é 3D (mesa3d.js). Aqui se desenham as cartas da mão, as telas e, para cada objeto clicável da
+ * mesa, uma ÂNCORA invisível com data-anc (ver o CSS): mesmos data-atributos de antes, posição dada pela cena. */
 (function(){
 'use strict';
 var S=null, veloz=false, ocupado=false, animando=null, aberto=null, emPalco=false, bibChegou=false, ultimoArrasto=0, sel=null, ocultos={};
@@ -11,36 +13,37 @@ var CLEP='<svg viewBox="0 0 20 24" width="16" height="20" aria-hidden="true"><pa
 var TIPO={c:'Citação · tradução livre',p:'Paráfrase',i:'Inferência a partir da doutrina'};
 function pode(){return S&&S.turn===0&&!S.over&&!ocupado&&!emPalco&&!animando;}
 function areasNaMesa(){var o={};S.debates.forEach(function(d){o[DEB[d.id].area]=1;});return o;}
-function livros(n,max){var h='';for(var i=0;i<Math.min(n,max);i++)h+='<i class="liv"></i>';return h+(n>max?'<span class="mais">+</span>':'');}
+function m3d(){ if(window.M3D&&M3D.pronto)M3D.sync(S,ocultos); }
+function M3(){ return window.M3D&&M3D.pronto?M3D:null; }
 
 // ---------- cartas ----------
-function miniF(g,c,attrs,cls){
+function miniF(g,c,attrs,cls,st){
   var e=ESC[c.escola], on=areasNaMesa();
   var vals=BF.AREAS.map(function(a){return '<span class="'+(on[a]?'on':'')+'" style="--c:'+AREA[a].cor+'" title="'+AREA[a].nome+'">'+c.vals[a]+'</span>';}).join('');
-  var inerte=g&&!BF.ativo(g);
-  if(g&&window.BF_BONECOS&&BF_BONECOS[c.id]){ // filósofo com marionete: boneco no pedestal em vez da carta
-    return '<button class="mini F boneco '+(inerte?'novo ':'')+(g.acted?'acted ':'')+(cls||'')+'" style="--e1:'+e.cor+';--e2:'+e.cor2+'" data-cid="'+c.id+'" '+attrs+' aria-label="'+esc(c.nome)+'">'
-      +'<div class="fig">'+BF_BONECOS[c.id].svg+'</div>'
-      +'<div class="pedestal"><span class="custo">'+c.custo+'</span><b class="pn">'+esc(c.nome)+'</b><div class="vals">'+vals+'</div></div>'
-      +(g.lib?'<div class="sel libr">Bibliotecário</div>':inerte?'<div class="sel">chegando</div>':g.acted?'<div class="sel">já debateu</div>':'')+'</button>';
-  }
-  return '<button class="mini F '+(inerte?'novo ':'')+(g&&g.acted?'acted ':'')+(cls||'')+'" style="--e1:'+e.cor+';--e2:'+e.cor2+'" data-cid="'+c.id+'" '+attrs+' aria-label="'+esc(c.nome)+'">'
+  return '<button class="mini F '+(cls||'')+'" style="--e1:'+e.cor+';--e2:'+e.cor2+';'+(st||'')+'" data-cid="'+c.id+'" '+attrs+' aria-label="'+esc(c.nome)+'">'
     +'<div class="img" style="background-image:url(img/'+c.id+'.jpg)"></div><span class="custo">'+c.custo+'</span>'
     +'<div class="nome">'+esc(c.nome)+'</div>'
-    +(g&&g.lib?'<div class="sel libr">Bibliotecário</div>':inerte?'<div class="sel">chegando</div>':g&&g.acted?'<div class="sel">já debateu</div>':'')
     +'<div class="vals">'+vals+'</div></button>';
+}
+// âncora de um filósofo na mesa: a figura é da cena 3D; aqui ficam o alvo de clique, a etiqueta de estado
+// e, se o filósofo tem marionete, o encaixe .fig com o boneco (posto sobre o pedestal pela cena)
+function ancF(g,c,attrs,anc,figAnc){
+  var inerte=!BF.ativo(g), bon=figAnc&&window.BF_BONECOS&&BF_BONECOS[c.id];
+  return '<button class="mini F '+(bon?'boneco ':'')+(inerte?'novo ':'')+(g.acted?'acted ':'')+'" data-anc="'+anc+'" data-cid="'+c.id+'" '+attrs+' aria-label="'+esc(c.nome)+'" title="'+esc(c.nome)+'">'
+    +(bon?'<div class="fig" data-anc="'+figAnc+'">'+BF_BONECOS[c.id].svg+'</div>':'')
+    +(g.lib?'<div class="sel libr">Bibliotecário</div>':inerte?'<div class="sel">chegando</div>':g.acted?'<div class="sel">já debateu</div>':'')+'</button>';
 }
 function miniP(c,attrs,cls){
   return '<button class="mini P '+(cls||'')+'" data-cid="'+c.id+'" '+attrs+' aria-label="'+esc(c.nome)+'"><span class="custo">'+c.custo+'</span>'
     +'<div class="pt">'+esc(c.nome)+'</div><div class="ps">'+esc(c.sub)+'</div><div class="pd">'+esc(c.d)+'</div></button>';
 }
 function seat(g,p,i,meu){
-  var c=C(g.id), pl=S.players[p];
-  var h='<div class="seat" style="--pc:'+pl.cor+'" '+(meu?'data-seat="'+i+'"':'data-op="'+p+'" data-oi="'+i+'"')+'>'
-    +miniF(g,c,(meu?'data-a="grupo" data-i="'+i+'" data-drag="fil"':'data-a="ver" data-id="'+g.id+'"')+' data-p="'+p+'"')
-    +(g.lib?'<div class="pilha libp" title="Bibliotecário">+'+c.custo+'/turno <b>📚</b></div>'
-      :'<div class="pilha '+(g.ideas?'':'zero')+'" title="'+BF.nI(g.ideas)+'">'+livros(g.ideas,meu?14:9)+'<b>'+g.ideas+'</b></div>');
-  if(meu)h+='<div class="quick">'+(S.turn===0&&!S.over&&BF.ativo(g)&&!g.lib?'<button class="btn sm" data-a="dar" data-i="'+i+'" '+(BF.canGive(S,0,i)?'':'disabled')+' title="Dar 1 ideia da Biblioteca">+1 ideia</button>':'')+'</div>';
+  var c=C(g.id), pl=S.players[p], dar=meu&&S.turn===0&&!S.over&&BF.ativo(g)&&!g.lib;
+  var h='<div class="seat'+(meu?'':' opp-seat')+'" style="--pc:'+pl.cor+'" '+(meu?'data-seat="'+i+'"':'data-op="'+p+'" data-oi="'+i+'"')+'>'
+    +ancF(g,c,(meu?'data-a="grupo" data-i="'+i+'" data-drag="fil"':'data-a="ver" data-id="'+g.id+'"')+' data-p="'+p+'"',meu?'seat:'+i:'op:'+p+':'+i,meu?'fig:0:'+i:null)
+    +(g.lib?'<div class="pilha libp" data-anc="pilha:'+p+':'+i+'" title="Bibliotecário"><b>+'+c.custo+'/turno</b></div>'
+      :'<div class="pilha '+(g.ideas?'':'zero')+'" data-anc="pilha:'+p+':'+i+'" title="'+BF.nI(g.ideas)+'"><b>'+g.ideas+'</b>'
+        +(dar?'<button class="mais1" data-a="dar" data-i="'+i+'" '+(BF.canGive(S,0,i)?'':'disabled')+' title="Dar 1 ideia da Biblioteca">+</button>':'')+'</div>');
   return h+'</div>';
 }
 
@@ -48,14 +51,13 @@ function seat(g,p,i,meu){
 function renderOpps(){
   var h='';
   for(var p=1;p<S.players.length;p++){
-    var pl=S.players[p], vez=S.turn===p&&!S.over;
-    h+='<div class="panel opp '+(vez?'vez':'')+'" data-painel="'+p+'" style="--pc:'+pl.cor+'"><div class="ptitle"><span class="busto">'+BUSTO+'</span><span class="placa-nome">'+esc(pl.nome)+'</span>'
-      +' <span class="pmeta">'+(vez?'· jogando…':'')+'</span><span class="pts">'+pl.points+'<small>/ '+S.cfg.pontos+'</small></span></div><div class="group">';
+    var pl=S.players[p], vez=S.turn===p&&!S.over, bk='';
+    for(var b=0;b<pl.hand.length;b++)bk+='<span class="back"></span>';
+    h+='<div class="panel opp '+(vez?'vez':'')+'" data-painel="'+p+'" data-anc="painel:'+p+'" style="--pc:'+pl.cor+'"><span class="nome ptitle">'+esc(pl.nome)+'</span>'
+      +(vez?'<span class="jog">jogando…</span>':'')+'<span class="pts">'+pl.points+'<small>/ '+S.cfg.pontos+'</small></span>'+trofeus(p)
+      +'<span class="backs" title="Cartas na mão: '+pl.hand.length+'">'+bk+'</span></div>';
     pl.group.forEach(function(g,i){h+=seat(g,p,i,false);});
-    for(var k=pl.group.length;k<4;k++)h+='<div class="vazio">cadeira<br>vaga</div>';
-    h+='</div><div class="pmeta rodape">Mão: <span class="backs">';
-    for(var b=0;b<pl.hand.length;b++)h+='<span class="back"></span>';
-    h+='</span>'+trofeus(p)+'</div></div>';
+    h+='<div class="bibop" data-anc="bibop:'+p+'" style="--pc:'+pl.cor+'" title="Biblioteca de '+esc(pl.nome)+'"><small>Biblioteca</small>'+pl.library+'</div>';
   }
   $('opps').innerHTML=h;
 }
@@ -68,48 +70,44 @@ function trofeus(p){
 function renderAgora(){
   var h='';
   S.debates.forEach(function(d,i){
-    var q=DEB[d.id], a=AREA[q.area], bh=Math.max(4,Math.min(7.5,104/(2*q.valor)));
-    h+='<div class="trib" style="--c:'+a.cor+';--bh:'+bh+'px;--v:'+q.valor+'"><div class="deb" data-di="'+i+'">'
-      +'<div class="lapide"><div class="area">'+a.nome+'</div><div class="valor" title="valor do debate">'+q.valor+'</div><div class="q">'+esc(q.q)+'</div></div>'
-      +'<div class="torres"><span class="linha vence"><em>vence com '+q.valor+'</em></span><span class="linha topo"><em>'+(2*q.valor)+': vitória imediata</em></span>';
+    var q=DEB[d.id], a=AREA[q.area];
+    h+='<div class="trib"><div class="deb" data-di="'+i+'" data-anc="deb:'+i+'" title="«'+esc(q.q)+'» · '+esc(a.nome)+' · vale '+q.valor+'">';
     S.players.forEach(function(pl,p){
-      var n=d.stakes[p], lid=BF.lidera(S,i,p), vis=Math.min(n,2*q.valor), oc=Math.min(vis,ocultos[d.id+':'+p]||0), sp='';
-      for(var k=0;k<vis;k++)sp+='<i class="lv'+(k>=vis-oc?' porvir':'')+'"></i>';
-      h+='<div class="est" data-row="'+i+':'+p+'" style="--pc:'+pl.cor+'"><div class="torre'+(lid&&!oc?' lider':'')+'" data-est="'+d.id+':'+p+'">'+sp+'</div>'
-        +'<span class="n '+(lid&&!oc?'lead':'')+'" title="'+(lid?'Leva o debate no início do próprio turno':'')+'">'+(n-oc)+(lid&&!oc?'★':'')+'</span><span class="quem">'+esc(pl.nome)+'</span></div>';
+      var n=d.stakes[p], lid=BF.lidera(S,i,p), vis=Math.min(n,2*q.valor), oc=Math.min(vis,ocultos[d.id+':'+p]||0);
+      h+='<div class="est" data-row="'+i+':'+p+'" data-anc="est:'+i+':'+p+'" style="--pc:'+pl.cor+'" title="'+esc(pl.nome)+(lid?' · leva o debate no início do próprio turno':'')+'"><div class="torre'+(lid&&!oc?' lider':'')+'" data-est="'+d.id+':'+p+'"></div>'
+        +'<span class="n '+(lid&&!oc?'lead':'')+(n-oc?'':' zero')+'">'+(n-oc)+(lid&&!oc?'★':'')+'</span></div>';
     });
-    h+='</div></div></div>';
+    h+='</div><span class="rl" data-anc="lv:'+i+'" title="Linha do valor: quem tiver ao menos '+q.valor+' ideias, e mais que os outros, leva o debate no início do próprio turno"><b>'+q.valor+'</b><i> para vencer</i></span>'
+      +'<span class="rl t" data-anc="lt:'+i+'" title="Topo: com '+(2*q.valor)+' ideias a vitória é imediata"><b>'+(2*q.valor)+'</b><i> = vitória imediata</i></span></div>';
   });
-  for(var k=S.debates.length;k<3;k++)h+='<div class="trib"><div class="deb vago">'+(S.debDeck.length?'Novo debate ao fim da rodada '+(S.cfg.novoDebate.filter(function(r){return r>=S.round;})[0]||'—'):'—')+'</div></div>';
+  for(var k=S.debates.length;k<3;k++)h+='<div class="vago" data-anc="vago:'+k+'">'+(S.debDeck.length?'Novo debate ao fim da rodada '+(S.cfg.novoDebate.filter(function(r){return r>=S.round;})[0]||'—'):'—')+'</div>';
   $('agora').innerHTML=h;
 }
 function renderMe(){
   var pl=S.players[0], vez=S.turn===0&&!S.over, h='', g='';
-  g+='<div class="ptitle"><span class="dot"></span>Você <span class="pmeta">'+trofeus(0)+'</span><span class="pts">'+pl.points+'<small>/ '+S.cfg.pontos+'</small></span></div><div class="group" id="megrupo">';
+  g+='<div class="group" id="megrupo" data-anc="grupo">';
   pl.group.forEach(function(x,i){g+=seat(x,0,i,true);});
-  for(var k=pl.group.length;k<4;k++)g+='<div class="vazio">cadeira<br>vaga</div>';
   g+='</div>';
-  $('me').innerHTML=g; $('me').classList.toggle('vez',vez);
-  h+='<div class="barra">';
-  if(S.over)h+='<div class="txt"><b>Partida encerrada.</b></div><button class="btn pri" data-a="fim">Ver resultado</button>';
-  else if(!vez)h+='<div class="txt">Vez de <b>'+esc(S.players[S.turn].nome)+'</b>.</div>';
-  else{
-    var lv='';for(var b=0;b<pl.library;b++)lv+='<i></i>';
-    h+='<div class="bib '+(bibChegou?'chegou':'')+'" id="bib" data-a="bib" data-drag="livro" title="Clique ou arraste para dar ideias aos filósofos"><div class="lv">'+lv+'</div><div class="t"><b>'+pl.library+'</b>Biblioteca</div></div>'
-      +'<div class="txt"><b>Sua vez.</b> Clique numa carta e a mesa mostra onde ela pode agir, ou arraste. Botão direito: carta ampliada.</div>'
-      +'<button class="btn" data-a="extra" '+(pl.boughtExtra||pl.library<2?'disabled':'')+'>Carta extra (2)</button>'
-      +'<button class="btn" data-a="troca" '+(BF.podeTrocar(S,0)?'':'disabled')+' title="Uma vez por partida">'+(pl.trocou?'Troca usada':'Trocar filósofo ('+S.cfg.custoTroca+')')+'</button>'
+  $('me').innerHTML=g;
+  $('hvez').innerHTML=S.over?'<b>Partida encerrada.</b>':vez?'<b>Sua vez.</b> Clique numa carta ou num filósofo e a mesa mostra onde ele pode agir; ou arraste. Botão direito: carta ampliada.':'Vez de <b>'+esc(S.players[S.turn].nome)+'</b>…';
+  // Biblioteca: âncora sobre a estante 3D
+  h+='<div class="bib '+(bibChegou?'chegou':'')+'" id="bib" data-anc="bib" '+(vez?'data-a="bib" data-drag="livro" title="Clique ou arraste para dar ideias aos filósofos"':'title="Sua Biblioteca"')+'><div class="t"><b>'+pl.library+'</b>Biblioteca</div></div>';
+  // canto: placar e botões
+  h+='<div class="canto"><div class="eu '+(vez?'vez':'')+'" style="--pc:'+pl.cor+'"><span class="nome">Você</span><span class="pts">'+pl.points+'<small>/ '+S.cfg.pontos+'</small></span>'+trofeus(0)+'</div>';
+  if(S.over)h+='<button class="btn pri" data-a="fim">Ver resultado</button>';
+  else if(vez)h+='<button class="btn sm" data-a="extra" '+(pl.boughtExtra||pl.library<2?'disabled':'')+'>Carta extra (2)</button>'
+      +'<button class="btn sm" data-a="troca" '+(BF.podeTrocar(S,0)?'':'disabled')+' title="Uma vez por partida">'+(pl.trocou?'Troca usada':'Trocar filósofo ('+S.cfg.custoTroca+')')+'</button>'
       +'<button class="btn pri clep" data-a="fimturno" title="Clepsidra: o relógio de água que media o tempo das falas em Atenas">'+CLEP+'Encerrar turno</button>';
-  }
-  h+='</div><div class="lab">Sua mão ('+pl.hand.length+')</div><div class="hand" style="--w:118px">';
-  pl.hand.forEach(function(id){
-    var c=C(id), caro=vez&&c.custo>pl.library;
-    h+=c.tipo==='F'?miniF(null,c,'data-a="mao" data-id="'+id+'" data-drag="mao"',caro?'caro':''):miniP(c,'data-a="mao" data-id="'+id+'" data-drag="mao"',caro?'caro':'');
+  h+='</div><div class="hand leque" aria-label="Sua mão">';
+  pl.hand.forEach(function(id,i){
+    var c=C(id), caro=vez&&c.custo>pl.library, k='--k:'+(i-(pl.hand.length-1)/2);
+    h+=c.tipo==='F'?miniF(null,c,'data-a="mao" data-id="'+id+'" data-drag="mao"',caro?'caro':'',k):miniP(c,'data-a="mao" data-id="'+id+'" data-drag="mao" style="'+k+'"',caro?'caro':'');
   });
-  if(!pl.hand.length)h+='<span class="pmeta">Sem cartas.</span>';
+  if(!pl.hand.length)h+='<span class="vaziaM">Sem cartas na mão.</span>';
   h+='</div>';
   $('hud').innerHTML=h; bibChegou=false;
 }
+function redesenhar(){ renderOpps();renderAgora();renderMe();m3d(); }
 var logN=0;
 function renderLog(){
   var el=$('log'), h='', ini=Math.max(0,S.log.length-180);
@@ -125,7 +123,7 @@ function render(){
   $('hround').innerHTML='Rodada <b>'+S.round+'</b> de '+S.cfg.rodadas;
   var p='';for(var i=1;i<=S.cfg.rodadas;i++)p+='<i class="'+(i<S.round?'on':i===S.round?'on at':'')+'"></i>';
   $('pips').innerHTML=p;
-  renderOpps();renderAgora();renderMe();renderLog();
+  redesenhar();renderLog();
   if(sel)reaplicarSel();
 }
 
@@ -141,7 +139,7 @@ function balao(f){
     b.style.cssText='--tc:'+(TONS[f.tom]||TONS.con)+';--dur:'+dur+'ms;left:'+Math.max(130,Math.min(window.innerWidth-130,r.left+r.width/2))+'px;top:'+(baixo?r.bottom+10:r.top-10)+'px';
     b.innerHTML='<b>'+esc(f.tit)+'</b>'+esc(f.txt||'');
     $('fx').appendChild(b);
-    m.style.setProperty('--bc',TONS[f.tom]||TONS.con);m.classList.remove('brilho');void m.offsetWidth;m.classList.add('brilho');
+    brilhar(f.P,f.id,TONS[f.tom]||TONS.con);
     setTimeout(function(){b.remove();res();},dur);
   });
 }
@@ -152,19 +150,12 @@ function enfileirar(f){
 }
 async function esperarBaloes(){ while(rodandoBal) await rodandoBal; }
 
-function voo(de,para,n,cor){
-  if(!de||!para)return;
-  var a=de.getBoundingClientRect(), b=para.getBoundingClientRect();
+function brilhar(P,id,cor){ var m=M3(); if(m)m.brilhar(P,id,cor); }
+// livros voam de um ponto a outro da cena (ideias dadas, ideias que seguem para o debate)
+function voo(de,para,n,P){
+  var m=M3(); if(!m||!de||!para)return;
   n=Math.min(n,10);
-  for(var i=0;i<n;i++)(function(i){
-    var v=document.createElement('div'); v.className='voa'; v.style.setProperty('--pc',cor);
-    $('fx').appendChild(v);
-    var x0=a.left+a.width/2+(i-n/2)*5, y0=a.top+a.height/2, x1=b.left+b.width*(.25+.5*Math.random()), y1=b.top+b.height/2-9;
-    var an=v.animate([{transform:'translate('+x0+'px,'+y0+'px) rotate(0deg) scale(1.2)',opacity:0},{opacity:1,offset:.12},
-      {transform:'translate('+((x0+x1)/2)+'px,'+(Math.min(y0,y1)-50)+'px) rotate(200deg) scale(1.5)',offset:.55},
-      {transform:'translate('+x1+'px,'+y1+'px) rotate(360deg) scale(1)',opacity:1}],{duration:veloz?380:750,delay:i*(veloz?30:70),easing:'ease-in-out',fill:'both'});
-    an.onfinish=function(){v.remove();};
-  })(i);
+  for(var i=0;i<n;i++)m.livroVoa(de.clone(),para.clone(),P,{d:750,atraso:i*70,esc:.8,alto:1.3});
 }
 function faixa(tit,sub,cor,dur){
   var f=document.createElement('div'); f.className='faixa'; f.style.cssText='--pc:'+(cor||'#e9b93f')+';--dur:'+dur+'ms';
@@ -234,16 +225,16 @@ function prepararOcultos(lista){
     else if(f.k==='praxis'&&f.did&&f.ganho>0)add(f.did+':'+f.P,f.ganho);
     else if(f.k==='vit')add('trof:'+f.P,1);
   });
-  if(n){renderOpps();renderAgora();renderMe();if(sel)reaplicarSel();}
+  if(n){redesenhar();if(sel)reaplicarSel();}
 }
 async function revelar(did,P,n){
-  var key=did+':'+P, t=q$('[data-est="'+key+'"]');
+  var key=did+':'+P, m=M3();
   for(var k=0;k<n;k++){
-    if(ocultos[key]>0)ocultos[key]--;
-    var b=t&&t.querySelector('.lv.porvir');
-    if(!b)continue;
-    b.classList.remove('porvir'); b.classList.add('cai');
-    var ne=t.parentNode.querySelector('.n'); if(ne)ne.textContent=(parseInt(ne.textContent,10)||0)+1;
+    if(!(ocultos[key]>0))continue;
+    ocultos[key]--;
+    if(m)m.cairLivro(did,P);
+    var t=q$('[data-est="'+key+'"]'), ne=t&&t.parentNode.querySelector('.n');
+    if(ne){ne.textContent=(parseInt(ne.textContent,10)||0)+1;ne.classList.remove('zero');}
     await sleep(veloz?35:80);
   }
 }
@@ -274,8 +265,8 @@ async function tocar(lista){
       case 'pop': if(bloq) await balao(f); else enfileirar(f); break;
       case 'turno': if(!S.over) await faixa(f.P===0?'Sua vez':pl.nome,'Rodada '+S.round+' · Fase de Reflexão',pl.cor,veloz?700:(f.P===0?1500:1200)); break;
       case 'troca': await esperarBaloes(); await faixa((f.P===0?'Você troca ':pl.nome+' troca ')+C(f.a).nome+' por '+C(f.b).nome,'Os dois perdem as ideias e entram em ação no próximo turno',pl.cor,veloz?1500:3200); break;
-      case 'bib': if(f.P===0){var b=$('bib'); if(b){b.classList.remove('chegou');void b.offsetWidth;b.classList.add('chegou');}} break;
-      case 'dar': voo(f.P===0?$('bib')||$('me').querySelector('.ptitle'):document.querySelector('[data-painel="'+f.P+'"] .ptitle'),elMini(f.P,f.id),f.n,pl.cor); if(bloq) await sleep(veloz?400:900); break;
+      case 'bib': if(f.P===0){var b=$('bib'); if(b){b.classList.remove('chegou');void b.offsetWidth;b.classList.add('chegou');}} if(M3())M3().chegarEstante(f.P,f.n); break;
+      case 'dar': if(M3())voo(M3().mundoEstante(f.P),M3().mundoPilha(f.P,f.id),f.n,f.P); if(bloq) await sleep(veloz?400:900); break;
       case 'baixa': await esperarBaloes(); await palcoBaixa(f); break;
       case 'debate':
         await BFX.cena('entrada',f);
@@ -286,15 +277,15 @@ async function tocar(lista){
           if(f.rels&&f.rels.length){ await esperarBaloes(); await palcoRel(f); }
         }
         break;
-      case 'segue': voo(elMini(f.P,f.id),CTX.elTorre(f.did,f.P),1,pl.cor); await sleep(veloz?200:420); await revelar(f.did,f.P,1); break;
+      case 'segue': if(M3())voo(M3().mundoPilha(f.P,f.id),M3().topoTorre(f.did,f.P),1,f.P); await sleep(veloz?200:420); await revelar(f.did,f.P,1); break;
       case 'vit': await esperarBaloes(); await BFX.cena('vitoria',f); break;
       case 'praxis': await esperarBaloes(); await BFX.cena('falacia',f); break;
-      case 'dupla': [f.a,f.b].forEach(function(id){var m=elMini(f.P,id); if(m){m.style.setProperty('--bc','#c2410c');m.classList.remove('brilho');void m.offsetWidth;m.classList.add('brilho');}}); BFX.coro('aplauso','Dupla clássica!',1300); break;
+      case 'dupla': [f.a,f.b].forEach(function(id){brilhar(f.P,id,'#c2410c');}); BFX.coro('aplauso','Dupla clássica!',1300); break;
     }
   }
   if(bloq) await esperarBaloes();
   var sobra=Object.keys(ocultos).some(function(k){return ocultos[k]>0;});
-  ocultos={}; if(sobra){renderOpps();renderAgora();renderMe();}
+  ocultos={}; if(sobra){redesenhar();}
 }
 function agir(fn){ cancelarSel(); fn(); aberto=null; $('ov').classList.remove('on'); render();
   animando=tocar(S.fx.splice(0)).then(function(){ animando=null; render(); if(S.over)telaFim(); }); }
@@ -563,6 +554,7 @@ document.addEventListener('pointermove',function(e){
     arr.on=true; document.body.classList.add('arrastando');
     var g;
     if(arr.tipo==='livro'){g=document.createElement('div');g.innerHTML='<i class="liv" style="--pc:#e9b93f;width:12px;height:34px"></i>';arr.dx=6;arr.dy=17;}
+    else if(arr.tipo==='fil'){var t0=document.createElement('div');t0.innerHTML=miniF(null,C(S.players[0].group[arr.ref].id),'','');g=t0.firstChild;g.style.setProperty('--w','84px');arr.dx=42;arr.dy=58;}
     else{var r=arr.el.getBoundingClientRect();g=arr.el.cloneNode(true);g.style.width=r.width+'px';g.style.height=r.height+'px';arr.dx=arr.x-r.left;arr.dy=arr.y-r.top;arr.el.classList.add('origem');}
     g.classList.add('fantasma'); document.body.appendChild(g); arr.g=g;
   }
@@ -593,14 +585,14 @@ var inclinada=null;
 document.addEventListener('pointermove',function(e){
   var m=e.pointerType==='mouse'&&!arr&&e.target.closest?e.target.closest('.mini'):null;
   if(inclinada&&inclinada!==m){inclinada.style.removeProperty('--rx');inclinada.style.removeProperty('--ry');inclinada=null;}
-  if(!m||m.classList.contains('fantasma'))return;
+  if(!m||m.classList.contains('fantasma')||m.closest('#mesa'))return;
   var r=m.getBoundingClientRect(), x=(e.clientX-r.left)/r.width-.5, y=(e.clientY-r.top)/r.height-.5;
   m.style.setProperty('--ry',(x*16).toFixed(1)+'deg'); m.style.setProperty('--rx',(-y*12).toFixed(1)+'deg'); inclinada=m;
 });
-document.addEventListener('pointermove',function(e){var m=$('mesa'),r=m.getBoundingClientRect();m.style.setProperty('--mx',Math.max(-.5,Math.min(.5,(e.clientX-r.left)/r.width-.5)).toFixed(3));});
+$('bdiario').onclick=$('bdiario2').onclick=function(){document.body.classList.toggle('diario');};
 BFX.ligar(CTX);
 $('bregras').onclick=function(){modal('<h2>Como jogar</h2>'+regrasHTML()+'<p style="font-size:13.5px;color:var(--mute)">Protótipo de nível 2: valem os valores das áreas e o poder gratuito de cada filósofo. Os poderes pagos aparecem na carta ampliada, marcados como nível 3. Falas, citações e contextos históricos ainda estão por verificar.</p><div class="fecha"><button class="btn" data-a="fechar">Fechar</button></div>');};
 $('bnova').onclick=telaInicio;
-window.__bf={agir:agir,render:render,get S(){return S;},get ocupado(){return ocupado;},get emPalco(){return emPalco;},get animando(){return animando;},get sel(){return sel;}};
+window.__bf={agir:agir,render:render,rodarIA:rodarIA,get S(){return S;},get ocupado(){return ocupado;},get emPalco(){return emPalco;},get animando(){return animando;},get sel(){return sel;}};
 telaInicio();
 })();
