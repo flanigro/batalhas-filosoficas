@@ -1,6 +1,6 @@
 # Lista de assets: o que substitui os provisórios da mesa 3D (17/11/2026; revista na rodada 4)
 
-Acompanha a rodada visual 3 (mesa em Three.js). Hoje tudo o que se vê na mesa é provisório: texturas geradas por código, figuras desenhadas por código, retratos de banco. Este documento lista cada peça, com as medidas para produzir a definitiva.
+Acompanha a mesa em Three.js (rodadas 3 e 4). Hoje tudo o que se vê na mesa é provisório: texturas geradas por código, figuras desenhadas por código, retratos de banco. Este documento lista cada peça, com as medidas para produzir a definitiva.
 
 ## Convenções
 
@@ -8,7 +8,7 @@ Acompanha a rodada visual 3 (mesa em Three.js). Hoje tudo o que se vê na mesa �
 - Unidade de cena: a placa de debate tem 3,95 unidades de largura e 3,5 de altura (com três jogadores); o pedestal, 2,1 de largura e 1,2 de altura. "Escala" abaixo diz quantas unidades de cena uma repetição da textura cobre.
 - Mapas de um material: cor (albedo, sem luz pintada), normal (padrão OpenGL, verde para cima) e rugosidade (branco = fosco). Metais levam também o mapa de metal. Nos bancos gratuitos esses mapas já vêm prontos, com esses nomes.
 - Formatos: cor e rugosidade em JPG (qualidade 85 a 90); normal em PNG; tudo o que tem recorte (transparência) em PNG ou WebP. Lados em potência de 2 (1024, 2048, 4096) sempre que a textura repete.
-- Onde trocar: cada material tem uma linha na tabela ARQUIVOS de materiais.js (o nome do material e os três arquivos). Desenhos planos (coro, fundo, folhagem) trocam em mesa3d.js, nas funções indicadas em cada item. Sugestão de pastas: tex/ (materiais), fundo/, coro/, bonecos/, img/ (retratos).
+- Onde trocar: cada material tem uma linha na tabela ARQUIVOS de materiais.js (o nome do material e os três arquivos). Desenhos planos (coro, bustos) trocam em mesa3d.js, nas funções indicadas em cada item. Sugestão de pastas: tex/ (materiais), fundo/, coro/, bonecos/, img/ (retratos).
 
 ## 1. O que o Flavio desenha
 
@@ -31,7 +31,7 @@ Acompanha a rodada visual 3 (mesa em Three.js). Hoje tudo o que se vê na mesa �
 - Estilo: o traço do esboço do Flavio; contorno escuro, cores chapadas com uma sombra simples do lado esquerdo (a luz vem da direita). Sem sombra no chão.
 - Substitui: BF_BONECOS.diogenes (bonecos.js) e, para os outros 19, a carta em pé sobre o pedestal.
 
-### 1.2 Retratos para as cartas (mão, carta ampliada, telas centrais, bancos dos oponentes)
+### 1.2 Retratos (mão, carta ampliada, telas centrais, galeria dos adversários, bustos dos pedestais)
 
 - O que é: um retrato por filósofo, usado em cinco lugares: carta pequena da mão (118 × 163 px), carta ampliada (foto de cerca de 680 × 560 px visíveis), retrato das telas centrais (210 × 236 px), carta em pé na galeria dos adversários (textura de 256 × 352 px) e busto sobre o pedestal do jogador (textura de 256 × 320 px, num nicho de topo em arco).
 - Busto do pedestal: hoje é o retrato recortado num arco. O ideal, enquanto não houver boneco, é um busto recortado (cabeça e parte do tronco, fundo transparente), PNG de 512 × 640 px, ombros cortados na base; a prateleira de livros cobre a parte de baixo do peito.
@@ -88,17 +88,17 @@ Acompanha a rodada visual 3 (mesa em Three.js). Hoje tudo o que se vê na mesa �
 
 Para cada material, baixar em 2K (2048 × 2048 px) os mapas de cor, normal (OpenGL) e rugosidade; todos repetem sem emenda.
 
-- marmore: mármore branco de veios cinzentos, pouco contraste. Onde: estelas, pedestais, bancos, cornija da plataforma e as lajes do piso. Escala: 3,2 unidades por repetição. Substitui o gerador "marmore" (512 px). Buscar por "white marble", "marble 01".
+- marmore: mármore branco de veios cinzentos, pouco contraste. Onde: pilastras e cornijas das placas, cornija da plataforma, tampo do tablado e da galeria, lajes do piso. Escala: 3,2 unidades por repetição. Substitui o gerador "marmore" (512 px). Buscar por "white marble", "marble 01".
 - calcario: calcário poroso bege (poros), fosco. Onde: degraus da plataforma, muro do fundo da arquibancada. Escala: 3. Substitui "calcario". Buscar por "limestone", "sandstone plain".
 - silhar: parede de blocos de calcário com juntas, fiadas de cerca de 0,65 unidade. Onde: estrado dos oponentes e degraus da arquibancada. Escala: 2,6 (quatro fiadas por repetição). Substitui "silhar". Buscar por "stone block wall", "sandstone blocks".
-- madeira: nogueira ou carvalho escuro, veio ao comprido. Onde: as três estantes; em tom claro, o verso das cartas em pé. Escala: 2,2. Substitui "madeira". Buscar por "dark wood", "walnut".
-- bronze: bronze envelhecido com um pouco de pátina; precisa também do mapa de metal. Onde: postes da régua do valor, vara das estantes, apoios dos bancos. Escala: 1,2. Substitui "bronze". Buscar por "bronze", "brass worn".
+- madeira: nogueira ou carvalho escuro, veio ao comprido. Onde: moldura e prateleiras das placas, beirais; em tom claro, as três Bibliotecas e o verso das cartas em pé. Escala: 2,2. Substitui "madeira". Buscar por "dark wood", "walnut".
+- bronze: bronze envelhecido com um pouco de pátina; precisa também do mapa de metal. Onde: hoje, só detalhes (pouco uso depois da rodada 4). Escala: 1,2. Substitui "bronze". Buscar por "bronze", "brass worn".
 - ouro: dourado liso, pouco riscado, com mapa de metal. Onde: corda do valor e remates dos postes. 1K (1024 px) basta. Substitui "ouro".
 - couro: couro claro e neutro (o programa tinge na cor de cada jogador), grão fino. Onde: capa dos livros. 1K basta. Substitui "couro". Buscar por "leather white", "leather plain".
 - paginas: corte de páginas de livro fechado. Onde: três lados de cada livro. 512 px basta. Substitui "paginas". Difícil de achar pronto; pode ficar o gerado.
 - pergaminho: pergaminho ou papel antigo. Onde: papiros lançados e páginas da chuva da vitória. 1K. Substitui "pergaminho". Buscar por "parchment", "old paper".
+- terracota: barro cozido alaranjado, liso, fosco. Onde: corpo dos pedestais (com a faixa negra do nome e os valores pintados por programa). 1K. Substitui "terracota". Buscar por "terracotta", "clay".
 - terra: chão de terra batida com pedrisco e capim seco. Onde: todo o terreno em volta. Escala: 7. Substitui "terra". Buscar por "dry ground", "rocky terrain", "sparse grass".
-- casca: casca de oliveira ou de árvore velha. Onde: troncos. 1K. Substitui "casca". Buscar por "bark".
 - estopa e palha: tecido de estopa e feixe de palha, para o espantalho. 1K cada. Substituem "estopa" e "palha".
 - Céu para reflexos: um HDRI de poente (Poly Haven, 1K, arquivo .hdr), sol baixo à direita. Dá brilho mais rico ao bronze e ao mármore polido. Substitui o ambiente gerado em criarAmbiente (mesa3d.js). Buscar por "sunset", "golden hour".
 
