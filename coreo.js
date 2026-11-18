@@ -159,6 +159,7 @@ def('entrada',async function(ev,c){
 });
 async function entradaCarta(ev,c,f,torre){
   var m=M3D, o=f.obj, casa=f.casa.clone(), pe=m.peTorre(ev.did,ev.P), tom=tomDe(ev.id);
+  if(f.ajusteY)pe.y+=f.ajusteY;   // personagem em PNG: os pés, e não a borda da prancheta, tocam o chão
   m.fora(ev.P,ev.id,true);
   await m.arco(o,pe,T(ev.P===0?620:760),ev.P===0?2.2:4.6);
   m.tranco(o,T(280)); tremer(3);

@@ -1,4 +1,4 @@
-# Lista de assets: o que substitui os provisórios da mesa 3D (17/11/2026; revista nas rodadas 5 e 6)
+# Lista de assets: o que substitui os provisórios da mesa 3D (17/11/2026; revista nas rodadas 5 e 6 e no contrato dos personagens)
 
 Acompanha a mesa em Three.js (rodadas 3 a 5). Na rodada 5 a mesa virou uma arena semicircular de mármore: faixa dos adversários no alto, placas no centro, púlpitos do jogador na frente e a faixa inferior em HTML. Hoje tudo o que se vê na mesa é provisório: texturas geradas por código, figuras desenhadas por código, retratos de banco. Este documento lista cada peça, com as medidas para produzir a definitiva.
 
@@ -8,33 +8,38 @@ Acompanha a mesa em Three.js (rodadas 3 a 5). Na rodada 5 a mesa virou uma arena
 - Unidade de cena: a placa de debate tem 3,95 unidades de largura e 3,5 de altura (com três jogadores); o púlpito do jogador, 2,3 de largura e 1,22 de altura; o púlpito compacto do adversário, 1,34 × 0,64 (a faixa dos adversários é ampliada 1,24 vez na cena). "Escala" abaixo diz quantas unidades de cena uma repetição da textura cobre.
 - Mapas de um material: cor (albedo, sem luz pintada), normal (padrão OpenGL, verde para cima) e rugosidade (branco = fosco). Metais levam também o mapa de metal. Nos bancos gratuitos esses mapas já vêm prontos, com esses nomes.
 - Formatos: cor e rugosidade em JPG (qualidade 85 a 90); normal em PNG; tudo o que tem recorte (transparência) em PNG ou WebP. Lados em potência de 2 (1024, 2048, 4096) sempre que a textura repete.
-- Onde trocar: cada material tem uma linha na tabela ARQUIVOS de materiais.js (o nome do material e os três arquivos). Desenhos planos (coro, bustos) trocam em mesa3d.js, nas funções indicadas em cada item. Sugestão de pastas: tex/ (materiais), fundo/, coro/, bonecos/, img/ (retratos).
+- Onde trocar: cada material tem uma linha na tabela ARQUIVOS de materiais.js (o nome do material e os três arquivos). Desenhos planos trocam em mesa3d.js, nas funções indicadas em cada item; os personagens entram por arquivo (item 1.1). Sugestão de pastas: tex/ (materiais), personagens/ (ilustrações dos filósofos), coro/, img/ (retratos).
 
 ## 1. O que o Flavio desenha
 
-### 1.1 Bonecos dos filósofos (Rive)
+### 1.1 Personagens dos filósofos (contrato do piloto; tecnologia de animação em aberto)
 
-- O que é: a figura de cada filósofo, de corpo inteiro, animada. Hoje só o Diógenes tem boneco (SVG de recorte, provisório, em bonecos.js), desligado nesta etapa; todos os 20 aparecem como a imagem da carta atrás do púlpito.
-- Onde aparece: atrás do púlpito do jogador (só cabeça, ombros e peito à vista) e, na etapa de animação, saltando do púlpito até a faixa livre diante das placas, depositando os livros e voltando. Na tela, a figura tem de 110 a 170 px de altura no pedestal e diminui ao se afastar.
-- Quantos: 20 nesta fase (as três escolas e os dois livres-pensadores); 38 no jogo completo.
-- Formato: um arquivo .riv por filósofo (ou um só com 20 pranchetas). Prancheta de 520 × 600 px, fundo transparente, pés apoiados na borda de baixo, figura centrada. O pedestal NÃO entra no desenho: é da cena.
-- Encaixe no programa: cada boneco ocupa um elemento .fig (um canvas do Rive por boneco), que a cena posiciona sobre o pedestal. Está preparado; falta só carregar o runtime do Rive.
-- Partes (as mesmas do recorte atual): perna esquerda, perna direita, corpo (tronco), braço que lança, braço do adereço, o que pende do adereço (lanterna, balança, relógio), cabeça, pálpebras, e o animal ou objeto que fica no pedestal (com rabo ou parte móvel, se houver). Sobra nas articulações, para o giro não abrir buracos.
-- Pontos de giro: quadril de cada perna, ombro de cada braço, base do pescoço, argola do que pende, raiz do rabo.
-- Máquina de estados (nome sugerido: "boneco"), com uma entrada numérica "estado":
-  - 0, em espera (laço de 3 a 5 s): respira, pisca, inclina a cabeça, o adereço balança.
-  - 1, andando (laço de 0,7 s, dois passos): pernas alternam, corpo sobe e desce de leve.
-  - 2, lançando (0,45 s por lançamento, pode repetir): o braço sobe e solta o papiro.
-  - Gatilhos de reação, curtos (até 1 s): "aplauso" (comemora quando toma a frente), "espanto" (ergue a sobrancelha; usado no Ad Hominem), "desdem" (vira o rosto; Diógenes vira de costas).
-- O companheiro que fica no pedestal (o cachorro do Diógenes) deve ser uma prancheta à parte ou uma camada que o programa possa manter no pedestal enquanto a figura anda.
-- Vista: de frente ou três quartos. A figura anda para o fundo da cena e volta; uma vista só basta para começar. Uma segunda vista, de costas em três quartos, deixaria a ida mais convincente (decidir depois).
-- Estilo: o traço do esboço do Flavio; contorno escuro, cores chapadas com uma sombra simples do lado esquerdo (a luz vem da direita). Sem sombra no chão.
-- Substitui: BF_BONECOS.diogenes (bonecos.js) e, para os outros 19, a imagem da carta atrás do púlpito. Nesta etapa a marionete está desligada (USAR_BONECOS); os bonecos entram junto com os saltos e as animações de espera.
+Decisão de 17/11/2026 (parecer técnico aprovado): separar como desenhar os filósofos de como animá-los. A arte começa agora; a tecnologia de animação será escolhida depois de testar o Nietzsche. Ficam em aberto, decididas por teste: **Rive** desenhando todos os personagens num canvas compartilhado, usado como textura na cena; ou **marionete de recorte montada no Three.js**, com as partes em planos e as animações por programa. O Rive continua como possibilidade artística, sobretudo para movimentos expressivos e individualizados. Custo a confirmar na contratação: a exportação gratuita do Rive mostra uma abertura do Rive, e a página oficial informa plano pago a partir de US$ 9 por usuário por mês.
+
+- **O que é:** uma ilustração-mestre por filósofo, de corpo inteiro, caricatural, simples, de contorno orgânico, no traço dos desenhos do Flavio (como o Diógenes no barril). A iconografia das cartas é referência de identidade, não de estilo.
+- **Piloto, nesta ordem:** Nietzsche (estudo visual e estilo), depois Diógenes (anatomia fora do comum e acessórios) e Aristóteles (figura convencional, para padronizar). Nada de produzir os 20 de uma vez.
+- **Primeira entrega estática.** O estudo do Nietzsche vem sem articulação e sem animação, para avaliar a arte e testar a escala na cena. Só depois de aprovado se prepara o rig.
+- **Prancheta:** personagem com cerca de 2000 px de altura, numa prancheta de cerca de 1500 × 2200 px, fundo transparente, com folga em cima e nos lados para os braços erguidos no salto. Pés apoiados numa linha de chão a 4% da borda de baixo; figura centrada; uma vista só (de frente ou três quartos).
+- **Guia do púlpito:** linha horizontal a 48% da altura da figura, medida a partir dos pés (na prancheta acima, a 47,6% da altura da prancheta, a partir da borda de baixo). Na cena, os pés ficam no chão atrás do púlpito e a guia coincide com o tampo: tudo abaixo dela fica escondido. Rosto, ombros e mãos em repouso ficam acima da guia. Com cerca de três cabeças de altura, a linha cai perto da cintura. A mesma arte serve, em escala menor, nos púlpitos compactos dos adversários.
+- **Camadas desde o estudo estático** (não precisa articular, mas desenhar separado evita redesenho), com nomes fixos que se mantêm entre versões:
+  - cabeça, olhos ou pálpebras, sobrancelhas, boca (opcional);
+  - tronco e quadril;
+  - braço e antebraço com a mão, de cada lado;
+  - coxa e perna com o pé, de cada lado;
+  - acessórios soltos (bigode do Nietzsche na cabeça; barril e lanterna do Diógenes à parte; o cachorro é opcional).
+  - Sobra nas juntas: cada parte avança por baixo da vizinha, para o giro não abrir buraco.
+- **Pivôs e âncoras:** uma camada de guias com uma cruzinha nomeada em cada ponto. Pivôs: base do pescoço, ombros, cotovelos, quadris, joelhos. Âncoras: "base" (no chão, entre os pés), "mão-que-deposita" (onde o programa encaixa o livro durante o gesto), "topo-da-cabeça" (etiquetas e balões).
+- **Arquivos:** PSD em 8 bits (há relatos de PSD em 16 bits que o Rive não importa) e um PNG achatado com transparência. Na arte não entram custo, nome, valores nem livros; os estados "recém-baixado" e "já debateu" são feitos pelo programa.
+- **Encaixe estático pronto (branch `mesa-3d`):** o PNG achatado vai em `personagens/<id>.png` (por exemplo `personagens/nietzsche.png`) e substitui a imagem da carta atrás do púlpito, com os pés no chão e a guia no tampo; se o arquivo faltar, volta a carta. As frações da linha do chão e da guia ficam no registro PERSONAGENS de mesa3d.js, caso a arte use outras. Entradas de teste: `#nietzsche` (Nietzsche no seu grupo), `#doze` (o personagem nas doze vagas), `#medir` (painel de desempenho); combinam com hífen, como `#nietzsche-medir`.
+- **Contrato de movimentos** (para a etapa animada): repouso (laço de 3 a 5 s: respira, pisca), impulso (cerca de 0,25 s), voo (pose mantida durante a trajetória, que é do Three.js), pouso (cerca de 0,25 s), depositar (cerca de 0,5 s, com o evento "solta" no quadro em que a mão solta os livros), volta (impulso, voo, pouso e repouso no púlpito). A coreografia (coreo.js) manda no tempo; o personagem toca os clipes e avisa o fim de cada um e o "solta". Os livros são da engine e da cena: um gesto serve para qualquer quantidade.
+- **Fora do contrato:** caminhada, lançamento de papiros, reações elaboradas e animações de personalidade (ficam para depois). O encaixe antigo em HTML (`.fig`) sai: não deixa o púlpito esconder o personagem.
+- **Desempenho:** até 12 filósofos visíveis ao mesmo tempo. Metas: 45 quadros por segundo ou mais em notebook com vídeo integrado, 30 ou mais em tablet, medidas com `#medir` (gravação de 20 s: parado, durante um salto, com a câmera em foco).
+- **Substitui:** a imagem da carta atrás dos púlpitos (texFig) e o boneco provisório do Diógenes em bonecos.js (desligado; fica como referência).
 
 ### 1.2 Retratos (mão, carta ampliada, telas centrais, figuras atrás dos púlpitos)
 
 - O que é: um retrato por filósofo, usado em cinco lugares: carta pequena da mão (118 × 163 px), carta ampliada (foto de cerca de 680 × 560 px visíveis), retrato das telas centrais (210 × 236 px) e, desde a rodada 5, a figura atrás dos púlpitos, tanto do jogador quanto dos adversários (textura de 320 × 428 px, proporção 3:4, com o custo pintado no canto de cima; o púlpito esconde o terço de baixo).
-- Figura atrás do púlpito: hoje é o retrato num retângulo com moldura na cor da escola. O ideal, enquanto não houver boneco, é um busto recortado até a cintura (fundo transparente), PNG de 600 × 800 px, rosto no quarto de cima; o púlpito esconde a parte de baixo, então cabeça, ombros e peito têm de caber nos 60% de cima. Substitui texFig (mesa3d.js).
+- Figura atrás do púlpito: hoje é o retrato num retângulo com moldura na cor da escola. Será substituída pela ilustração de corpo inteiro do item 1.1 (encaixe pronto em `personagens/<id>.png`); o busto recortado deixa de ser necessário.
 - Formato: um arquivo-mestre por filósofo, JPG, 1200 × 1500 px (4:5), rosto no terço de cima, com folga dos lados para recorte. Sem transparência.
 - Estilo: o mesmo para os 20 (hoje há foto, pintura a óleo e escultura misturadas). Luz da direita. Fundo neutro, sem texto.
 - Substitui: img/<id>.jpg (20 arquivos, de 9 a 32 KB, provisórios de banco e de obras que podem ter proteção).
@@ -134,8 +139,9 @@ Se o Flavio quiser trocar a geometria, o formato é glTF binário (.glb), com os
 
 ## 6. Ordem sugerida
 
-1. Texturas de banco (seção 2): troca rápida, uma linha por material, e muda a cena inteira.
-2. Bustos recortados até a cintura para trás dos púlpitos (1.2), enquanto não houver bonecos.
-3. Bonecos no Rive, começando pelo Diógenes (item 1.1); o coro (1.3) só quando houver público nas arquibancadas.
-4. Retratos (1.2), molduras (1.7) e fundos da carta grande (1.8).
-5. Peças das falácias (1.5), conforme as cenas forem programadas.
+1. Estudo estático do Nietzsche (item 1.1), em camadas nomeadas, com a guia do púlpito.
+2. Teste de escala na cena: o PNG em `personagens/nietzsche.png`, visto atrás do seu púlpito, no púlpito compacto dos adversários e no salto até o debate (`#nietzsche`, `#doze`).
+3. Aprovação do estilo; depois, os estudos estáticos do Diógenes e do Aristóteles.
+4. Nietzsche articulado e o teste das duas tecnologias (Rive num canvas compartilhado × marionete no Three.js), com doze cópias e as medições do `#medir`.
+5. Escolha da tecnologia de animação; só então os demais filósofos, em lotes.
+6. Em paralelo, quando houver tempo: texturas de banco (seção 2), retratos das cartas (1.2), molduras (1.7) e fundos da carta grande (1.8), peças das falácias (1.5) conforme as cenas forem programadas; o coro (1.3) só quando houver público nas arquibancadas.

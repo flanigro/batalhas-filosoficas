@@ -46,6 +46,19 @@ const R1 = L.arena.r0 + L.arena.n * L.arena.prof;   // raio externo da arquibanc
 // a galeria dos adversários fica inteira atrás da arquibancada: nenhum degrau passa na frente dos dados
 L.banda.z = L.arena.cz - (R1 + .3) * L.arena.ez - .45;
 const USAR_BONECOS = false;                  // marionetes (Diógenes) ficam para a etapa de animação
+/* PERSONAGENS: ilustração estática de corpo inteiro (PNG com transparência) que substitui a imagem da carta atrás
+   do púlpito, enquanto não há animação. Encaixe reversível: se o arquivo faltar ou não carregar, volta a carta.
+   Para desligar tudo, USAR_PERSONAGENS = false; para tirar um filósofo, apague a linha dele.
+   Convenção da arte (lista de assets, item 1.1), em frações da altura da prancheta, medidas a partir da borda de baixo:
+     pes  = linha do chão, onde os pés se apoiam (padrão .04);
+     guia = guia do púlpito (padrão .476, que é 48% da altura da figura numa prancheta de 2200 px com figura de 2000 px).
+   Na cena, os pés ficam no chão e a guia coincide com o tampo do púlpito: a escala sai daí. */
+const USAR_PERSONAGENS = true;
+const PERSONAGENS = {
+  nietzsche: { arq: 'personagens/nietzsche.png', pes: .04, guia: .476 },
+};
+const _hash = location.hash.slice(1).split('-');   // entradas de teste: #medir, #doze (o mesmo personagem nas doze vagas)
+const TESTE_DOZE = _hash.indexOf('doze') >= 0, MEDIR = _hash.indexOf('medir') >= 0;
 
 let renderer, scene, camera, MAT, sol, hemi, relogio = 0;
 const R = { slots: [], meus: [], ops: {}, bibs: {}, ident: {}, livroPe: {}, livroMat: {}, coro: [], halos: {}, emis: {} };
@@ -93,6 +106,21 @@ function retrato(id, cb) {
   let o = _img[id];
   if (!o) { o = _img[id] = { img: new Image(), ok: false, cbs: [] }; o.img.onload = () => { o.ok = true; o.cbs.splice(0).forEach(f => f()); }; o.img.src = 'img/' + id + '.jpg'; }
   if (o.ok) return o.img; if (cb) o.cbs.push(cb); return null;
+}
+// ilustração do personagem (PNG): carrega uma vez; cb roda quando chega. null = não há ou não carregou
+const _pers = {};
+function personagem(id, cb) {
+  const def = USAR_PERSONAGENS && PERSONAGENS[id]; if (!def) return null;
+  let o = _pers[id];
+  if (!o) {
+    o = _pers[id] = { ok: false, falhou: false, cbs: [], def };
+    const img = new Image();
+    img.onload = () => { const t = new THREE.Texture(img); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; t.needsUpdate = true; registrar(t);
+      o.tex = t; o.asp = img.width / img.height; o.ok = true; o.cbs.splice(0).forEach(f => f()); };
+    img.onerror = () => { o.falhou = true; o.cbs.splice(0); };
+    img.src = def.arq;
+  }
+  if (o.ok) return o; if (cb && !o.falhou) o.cbs.push(cb); return null;
 }
 /* O filósofo atrás do púlpito: a imagem da carta só com o personagem e o custo (sem os quatro valores,
    que já estão no púlpito). O púlpito esconde a parte de baixo; ficam à vista cabeça, ombros e peito. */
@@ -382,7 +410,8 @@ function criarFig(s, dim) {
   const geo = new THREE.PlaneGeometry(dim[0], dim[1]); geo.translate(0, dim[1] / 2, 0);
   const m = new THREE.MeshStandardMaterial({ roughness: .7, envMapIntensity: .2, emissive: new THREE.Color('#58c6ee'), emissiveIntensity: 0 });
   const fig = new THREE.Mesh(geo, m); fig.castShadow = true; fig.receiveShadow = true; fig.visible = false; fig.position.copy(s.base); fig.rotation.x = s.rx;
-  s.em.add(fig); s.fig = fig; s.matFig = m; s.dim = dim;
+  s.em.add(fig); s.fig = fig; s.matFig = m; s.dim = dim; s.geoCarta = geo;
+  s.topo = s.P === 0 ? PED_H : L.banda.mod.h + .05;   // altura do tampo, onde cai a guia do personagem
 }
 
 // ---------- montagem da cena ----------
@@ -545,11 +574,26 @@ function sync(estado, ocultos) {
   S.players.forEach((pl, p) => { if (R.bibs[p]) ajustarBib(R.bibs[p], pl.library); });
   if (alturaRodape() !== cam.rod) enquadrar(); else posicionar(true);
 }
+// lugar de repouso da figura: o da carta, ou, com personagem, os pés no chão logo atrás do púlpito
+function baseDe(s) { return s.baseP || s.base; }
+// veste a figura com o personagem (PNG) ou com a imagem da carta
+function vestir(s, id) {
+  const pid = TESTE_DOZE ? 'nietzsche' : id, pe = id ? personagem(pid, () => { s.vestido = null; ocupar(s, s.g0, s.P); }) : null;
+  const chave = pe ? 'p:' + pid : 'c:' + id; if (s.vestido === chave) return; s.vestido = chave;
+  if (pe) {
+    const d = pe.def, h = s.topo / (d.guia - d.pes), w = h * pe.asp, geo = new THREE.PlaneGeometry(w, h); geo.translate(0, h / 2, 0);
+    s.fig.geometry = geo; s.matFig.map = pe.tex; s.matFig.alphaTest = .5; s.matFig.needsUpdate = true;
+    s.baseP = new V3(s.base.x, -d.pes * h, s.base.z); s.ajusteY = -d.pes * h;
+  } else {
+    s.fig.geometry = s.geoCarta; s.matFig.map = id ? texFig(id) : null; s.matFig.alphaTest = 0; s.matFig.needsUpdate = true; s.baseP = null; s.ajusteY = 0;
+  }
+}
 function ocupar(s, g, P) {
-  const id = g ? g.id : null;
-  if (s.id !== id) { s.id = id; if (id) { s.matFig.map = texFig(id); s.matFig.needsUpdate = true; } if (s.pintar) s.pintar(); }
+  const id = g ? g.id : null; s.g0 = g;
+  if (s.id !== id) { s.id = id; if (s.pintar) s.pintar(); }
+  vestir(s, id);
   s.boneco = !!(USAR_BONECOS && id && P === 0 && window.BF_BONECOS && window.BF_BONECOS[id]);
-  if (!s.fora) { s.fig.visible = !!id && !s.boneco; s.fig.position.copy(s.base); s.fig.rotation.set(s.rx, 0, 0); s.fig.scale.setScalar(1); }
+  if (!s.fora) { s.fig.visible = !!id && !s.boneco; s.fig.position.copy(baseDe(s)); s.fig.rotation.set(s.rx, 0, 0); s.fig.scale.setScalar(1); }
   if (id) { const inerte = !BF.ativo(g); s.matFig.color.set(inerte ? '#b9bccb' : g.acted ? '#a8a49c' : '#ffffff'); s.matFig.opacity = inerte ? .6 : 1;
     if (s.matFig.transparent !== inerte) { s.matFig.transparent = inerte; s.matFig.needsUpdate = true; } }
   ajustarPilha(s, g && !g.lib ? g.ideas : 0, P);
@@ -697,14 +741,56 @@ function quadro(agora) {
   if (window.M3D && M3D.aoQuadro) M3D.aoQuadro();
   renderer.render(scene, camera);
 }
-function laco(t) { requestAnimationFrame(laco); quadro(t); }
+function laco(t) { requestAnimationFrame(laco); quadro(t); if (MEDIR) medirQuadro(t); }
+
+/* ---------- modo de medição (#medir no endereço) ----------
+   Painel com quadros por segundo, tempo médio e p95 do quadro (últimos 600 quadros), chamadas de desenho,
+   triângulos, texturas e resolução. "Gravar 20 s" mede um trecho e devolve um resumo para copiar.
+   Sugestão de cenários (parecer dos personagens): parado na mesa; durante um salto; com a câmera em foco numa placa.
+   #medir-doze põe o mesmo personagem de teste nas doze vagas. */
+const MED = { dts: [], grav: null, ult: 0, prox: 0, el: null };
+function criarMedidor() {
+  const el = document.createElement('div'); el.className = 'medidor';
+  el.innerHTML = '<div class="v">medindo…</div><div class="b"><button class="btn sm" data-med="gravar">Gravar 20 s</button><button class="btn sm" data-med="fechar">Ocultar</button></div><textarea readonly hidden></textarea>';
+  el.addEventListener('click', e => { const b = e.target.closest('[data-med]'); if (!b) return; e.stopPropagation();
+    if (b.dataset.med === 'fechar') { el.classList.toggle('min'); b.textContent = el.classList.contains('min') ? 'Mostrar' : 'Ocultar'; }
+    if (b.dataset.med === 'gravar' && !MED.grav) { MED.grav = []; b.textContent = 'gravando…'; setTimeout(() => fimGravacao(b), 20000); }
+    if (b.dataset.med === 'copiar') { const t = el.querySelector('textarea'); t.select(); try { navigator.clipboard.writeText(t.value); } catch (er) {} } });
+  document.body.appendChild(el); MED.el = el;
+}
+function estat(lista) {
+  const o = lista.slice().sort((a, b) => a - b), n = Math.max(1, o.length), media = o.reduce((a, b) => a + b, 0) / n;
+  return { n: o.length, media, p95: o[Math.floor(o.length * .95)] || 0, pior: o[o.length - 1] || 0, lentos: o.filter(x => x > 33.4).length };
+}
+function fimGravacao(b) {
+  const e = estat(MED.grav), i = renderer.info, t = MED.el.querySelector('textarea'); MED.grav = null; b.textContent = 'Gravar 20 s';
+  t.value = ['Batalhas Filosóficas — medição de 20 s (' + new Date().toLocaleString('pt-BR') + ')',
+    'Cenário: ' + (location.hash || '(nenhum)') + (cam.focado ? ', câmera em foco' : ''),
+    'Quadros: ' + e.n + ' · média ' + (1000 / e.media).toFixed(1) + ' q/s · quadro médio ' + e.media.toFixed(1) + ' ms · p95 ' + e.p95.toFixed(1) + ' ms · pior ' + e.pior.toFixed(1) + ' ms · acima de 33 ms: ' + e.lentos,
+    'Chamadas de desenho: ' + i.render.calls + ' · triângulos: ' + i.render.triangles + ' · texturas: ' + i.memory.textures + ' · geometrias: ' + i.memory.geometries,
+    'Janela: ' + innerWidth + ' × ' + innerHeight + ' · densidade ' + renderer.getPixelRatio() + ' · sombras ' + (renderer.shadowMap.enabled ? 'sim' : 'não'),
+    'Navegador: ' + navigator.userAgent].join('\n');
+  t.hidden = false;
+  if (!MED.el.querySelector('[data-med=copiar]')) MED.el.querySelector('.b').insertAdjacentHTML('beforeend', '<button class="btn sm" data-med="copiar">Copiar</button>');
+}
+function medirQuadro(agora) {
+  if (MED.ult) { const dt = agora - MED.ult; MED.dts.push(dt); if (MED.dts.length > 600) MED.dts.shift(); if (MED.grav) MED.grav.push(dt); }
+  MED.ult = agora;
+  if (agora < MED.prox || !MED.el) return; MED.prox = agora + 500;
+  const e = estat(MED.dts), i = renderer.info;
+  MED.el.querySelector('.v').innerHTML = '<b>' + (1000 / e.media).toFixed(0) + '</b> q/s · quadro ' + e.media.toFixed(1) + ' ms · p95 ' + e.p95.toFixed(1) + ' ms<br>'
+    + i.render.calls + ' desenhos · ' + (i.render.triangles / 1000).toFixed(0) + ' mil triângulos · ' + i.memory.textures + ' texturas<br>'
+    + innerWidth + ' × ' + innerHeight + ' · densidade ' + renderer.getPixelRatio() + (MED.grav ? ' · <b>gravando</b>' : '');
+}
 
 // ---------- peças de coreografia ----------
 function figura(P, id) {
   const lista = P === 0 ? R.meus : R.ops[P]; if (!lista) return null;
   const s = lista.find(x => x.id === id); if (!s) return null;
-  const casa = s.em === scene ? s.base.clone() : s.em.localToWorld(s.base.clone());
-  return { s, boneco: s.boneco, obj: s.boneco ? s.ancora : s.fig, casa, esc: s.esc };
+  const casa = s.em === scene ? baseDe(s).clone() : s.em.localToWorld(baseDe(s).clone());
+  // ajusteY: quanto descer o ponto de pouso para os pés (e não a borda da prancheta) tocarem o chão
+  const k = s.em === scene ? 1 : L.banda.esc;
+  return { s, boneco: s.boneco, obj: s.boneco ? s.ancora : s.fig, casa, esc: s.esc, ajusteY: (s.ajusteY || 0) * k };
 }
 function arco(obj, para, ms, alto, ease) {
   const de = obj.position.clone(); alto = alto === undefined ? 1.6 : alto;
@@ -808,7 +894,7 @@ function qualidade(q) { renderer.setPixelRatio(q.pixel || 1); renderer.shadowMap
 function fora(P, id, sim) {
   const f = figura(P, id); if (!f) return; const s = f.s; s.fora = sim;
   if (sim) { if (s.fig.parent !== scene) scene.attach(s.fig); }
-  else { if (s.fig.parent !== s.em) s.em.attach(s.fig); s.fig.position.copy(s.base); s.fig.rotation.set(s.rx, 0, 0); s.fig.scale.setScalar(1); }
+  else { if (s.fig.parent !== s.em) s.em.attach(s.fig); s.fig.position.copy(baseDe(s)); s.fig.rotation.set(s.rx, 0, 0); s.fig.scale.setScalar(1); }
 }
 
 // ---------- partida ----------
@@ -854,6 +940,7 @@ function iniciar() {
     Promise.all(["700 40px 'Alegreya'", "900 40px 'Alegreya'", "500 40px 'Alegreya'", "italic 500 40px 'Alegreya'", "800 40px 'Alegreya Sans'", "900 40px 'Alegreya Sans'"].map(f => document.fonts.load(f).catch(() => 0))).then(tudo);
     if (document.fonts.ready) document.fonts.ready.then(tudo);
   }
+  if (MEDIR) criarMedidor();
   API.pronto = true; document.body.classList.add('com3d');
   if (window.__bf && window.__bf.S) window.__bf.render();
 }

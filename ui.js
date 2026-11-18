@@ -567,12 +567,15 @@ function telaInicio(){
     +'<div class="lab" style="margin-top:12px">Oponentes</div><div class="sel"><label><input type="radio" name="niv" value="aprendiz" checked>Aprendizes<br><small style="color:var(--mute)">erram mais, usam menos falácias</small></label><label><input type="radio" name="niv" value="mestre">Mestres<br><small style="color:var(--mute)">calculam cada debate</small></label></div>'
     +'<div class="fecha"><button class="btn pri" data-a="comecar">Começar</button></div>');
 }
-function nova(nivel){ S=BF.newGame({niveis:['mestre',nivel,nivel]}); if(location.hash==='#diogenes')comDiogenes(); logN=0; bibChegou=true; fechar(); rodarIA(); }
-// Teste da marionete: abrir a página com #diogenes no fim do endereço põe o Diógenes, já ativo e com 4 ideias, no seu grupo.
-function comDiogenes(){
-  var tira=function(a){var i=a.indexOf('diogenes'); if(i>=0)a.splice(i,1);};
-  tira(S.deck); S.players.forEach(function(x){tira(x.hand); x.group=x.group.filter(function(g){return g.id!=='diogenes';});});
-  S.players[0].group.unshift({id:'diogenes',ideas:4,novo:false,acted:false});
+function nova(nivel){ S=BF.newGame({niveis:['mestre',nivel,nivel]});
+  var h=location.hash.slice(1).split('-'); ['diogenes','nietzsche'].forEach(function(id){ if(h.indexOf(id)>=0)comFilosofo(id); });
+  logN=0; bibChegou=true; fechar(); rodarIA(); }
+/* Entradas de teste: #diogenes ou #nietzsche no fim do endereço põem esse filósofo, já ativo e com 4 ideias, no seu grupo.
+   Combinam com hífen: #nietzsche-medir (com o painel de medição), #medir-doze (personagem de teste nas doze vagas). */
+function comFilosofo(id){
+  var tira=function(a){var i=a.indexOf(id); if(i>=0)a.splice(i,1);};
+  tira(S.deck); S.players.forEach(function(x){tira(x.hand); x.group=x.group.filter(function(g){return g.id!==id;});});
+  S.players[0].group.unshift({id:id,ideas:4,novo:false,acted:false});
 }
 
 // ---------- cliques ----------
