@@ -33,7 +33,7 @@ function emblema(p){
     +'<div class="perg"><span>'+esc(pl.nome)+'</span></div>';
 }
 // placar: pontos acumulados e o objetivo (30)
-function placar(p){ var pl=S.players[p]; return '<div class="pts" title="Pontos: '+pl.points+' de '+S.cfg.pontos+'"><b>'+pl.points+'</b><small>/'+S.cfg.pontos+'</small></div>'; }
+function placar(p){ var pl=S.players[p], pts=pl.points-(ocultos['pts:'+p]||0); return '<div class="pts" data-pts="'+p+'" title="Pontos: '+pts+' de '+S.cfg.pontos+'"><b>'+pts+'</b><small>/'+S.cfg.pontos+'</small></div>'; }
 // livros da Biblioteca em HTML (Minha Biblioteca, na faixa de baixo): em grupos de cinco, para contar a olho
 function livrosHTML(n){ var h=''; for(var i=0;i<Math.min(n,60);i++)h+='<i class="liv"></i>'; return h; }
 var TIPO={c:'Citação · tradução livre',p:'Paráfrase',i:'Inferência a partir da doutrina'};
@@ -318,7 +318,7 @@ function prepararOcultos(lista){
     if(f.k==='debate'){add(f.did+':'+f.P,f.amt);add('fig:'+f.P+':'+f.id,1);}
     else if(f.k==='segue'&&f.did)add(f.did+':'+f.P,1);
     else if(f.k==='praxis'&&f.did&&f.ganho>0)add(f.did+':'+f.P,f.ganho);
-    else if(f.k==='vit')add('trof:'+f.P,1);
+    else if(f.k==='vit'){ add('trof:'+f.P,1); add('pts:'+f.P,f.valor); ocultos['placa:'+f.di]={id:f.did,stakes:f.stakes||[0,0,0]}; n++; }
   });
   if(n){redesenhar();if(sel)reaplicarSel();}
 }
@@ -334,8 +334,10 @@ async function revelar(did,P,n){
     await sleep(veloz?35:80);
   }
 }
-function revelarTrofeu(P){
+function revelarTrofeu(P,valor){
   if(ocultos['trof:'+P]>0)ocultos['trof:'+P]--;
+  if(valor&&ocultos['pts:'+P]>0){ ocultos['pts:'+P]=Math.max(0,ocultos['pts:'+P]-valor);
+    document.querySelectorAll('[data-pts="'+P+'"] b').forEach(function(b){ b.textContent=S.players[P].points-(ocultos['pts:'+P]||0); b.parentNode.title='Pontos: '+b.textContent+' de '+S.cfg.pontos; b.classList.remove('soma'); void b.offsetWidth; b.classList.add('soma'); }); }
   var t=q$('[data-trof="'+P+'"] .trofeu.porvir'); if(t){t.classList.remove('porvir');t.classList.add('chegou');}
   var v=q$('[data-trof="'+P+'"] .tv'); if(v)v.remove();
 }
@@ -347,7 +349,7 @@ var CTX={
   elDeb:function(di){return q$('.deb[data-di="'+di+'"]');},
   elTrofeu:function(P){return q$('[data-trof="'+P+'"]');},
   idDoGrupo:function(P,fi){var g=S.players[P].group[fi];return g?g.id:null;},
-  revelar:revelar, revelarTrofeu:revelarTrofeu,
+  revelar:revelar, revelarTrofeu:revelarTrofeu, medalhao:function(di){ var e=q$('.deb[data-di="'+di+'"]'); if(!e)return null; var r=e.getBoundingClientRect(); return {x:r.left+r.width*.13,y:r.top+r.height*.1}; },
   lidera:function(did,P){for(var i=0;i<S.debates.length;i++)if(S.debates[i].id===did)return BF.lidera(S,i,P);return false;},
   nome:function(P){return S.players[P].nome;}, cor:function(P){return S.players[P].cor;},
   carta:function(id){return C(id);}, area:function(a){return AREA[a];}
@@ -375,7 +377,10 @@ async function tocar(lista){
         }
         break;
       case 'segue': if(M3())voo(M3().mundoPilha(f.P,f.id),M3().topoTorre(f.did,f.P),1,f.P); await sleep(veloz?200:420); await revelar(f.did,f.P,1); break;
-      case 'vit': await esperarBaloes(); await BFX.cena('vitoria',f); break;
+      case 'vit': await esperarBaloes(); await BFX.cena('vitoria',f);
+        // só agora a pergunta nova entra: a placa gira e troca de texto e de cor
+        if(M3()) await M3().virarPlaca(f.di,function(){ delete ocultos['placa:'+f.di]; m3d(); }); else { delete ocultos['placa:'+f.di]; m3d(); }
+        break;
       case 'praxis': await esperarBaloes(); await palcoCarta(f); await BFX.cena('falacia',f); break;
       case 'dupla': som('dupla'); [f.a,f.b].forEach(function(id){brilhar(f.P,id,'#c2410c');}); BFX.coro('aplauso','Dupla clássica!',1300); break;
     }
@@ -409,8 +414,8 @@ function bigHTML(c){
 }
 // centro horizontal da figura de corpo inteiro (do cotovelo esquerdo à mão estendida), em fração da largura da prancha:
 // a carta grande centraliza a figura na área livre à esquerda. Medido nas pranchas de 18/11/2026; sem valor, 0,58.
-var CORPO_CX={aristoteles:.59,platao:.57,socrates:.605,epicuro:.588,pitagoras:.617,diogenes:.603,marx:.563,hegel:.578,hobbes:.563,bacon:.577,
-  locke:.587,rousseau:.589,kant:.562,nietzsche:.607,schopenhauer:.608,heidegger:.572,freud:.569,arendt:.601,maquiavel:.587,erasmo:.607};
+var CORPO_CX={aristoteles:.59,platao:.57,socrates:.605,epicuro:.588,pitagoras:.617,diogenes:.573,marx:.563,hegel:.578,hobbes:.563,bacon:.577,
+  locke:.587,rousseau:.589,kant:.562,nietzsche:.607,schopenhauer:.608,heidegger:.572,freud:.541,arendt:.601,maquiavel:.587,erasmo:.607};
 function verCarta(id){
   cancelarSel();
   $('box').innerHTML=bigHTML(C(id))+'<div class="fecha"><button class="btn" data-a="fechar">Fechar</button></div>';

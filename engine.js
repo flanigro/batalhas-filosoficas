@@ -455,7 +455,7 @@
     pl.points += q.valor;
     pl.won.push(d.id);
     log(s, pl.nome + ' vence o debate «' + q.q + '» e marca ' + q.valor + ' pontos (' + motivo + ').', 'vit', P);
-    fx(s, { k: 'vit', P: P, q: q.q, valor: q.valor, di: di, did: d.id, area: q.area });
+    fx(s, { k: 'vit', P: P, q: q.q, valor: q.valor, di: di, did: d.id, area: q.area, stakes: d.stakes.slice() });
     s.debates.splice(di, 1);
     if (s.debDeck.length) {
       var id = s.debDeck.pop();
