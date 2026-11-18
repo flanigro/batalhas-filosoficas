@@ -231,14 +231,14 @@ function relHTML(r){
 }
 var PFX='Na fase de Reflexão, ';
 function palcoBaixa(f){
-  var c=C(f.id), pl=S.players[f.P], d=BF.duplaDe(c.id), lista=[];
+  var c=C(f.id), pl=S.players[f.P], ds=BF.duplasDe(c.id), lista=[];
   var naRef=c.c1.d.indexOf(PFX)===0;
   if(f.lib){
     lista.push('Produz '+BF.nI(c.custo)+' por turno para a Biblioteca');
     lista.push('Não participa dos debates e não recebe ideias');
   } else {
     lista.push(c.nome+' recebe '+BF.nI(BF.REFLEXAO[c.custo]));
-    if(d)lista.push('Dupla clássica com '+C(d[1]).nome+': +'+BF.nI(BF.BONUS_DUPLA));
+    ds.forEach(function(d){lista.push('Dupla clássica com '+C(d.par).nome+': +'+BF.nI(BF.BONUS_DUPLA));});
   }
   if(naRef){var r=c.c1.d.slice(PFX.length); lista.push('<span class="peq">'+esc(c.c1.t)+': '+esc(r.charAt(0).toUpperCase()+r.slice(1))+'</span>');}
   var quando=f.lib?'Começará a produzir no próximo turno.':'Entrará em ação no próximo turno.';
@@ -379,13 +379,13 @@ function agir(fn){ cancelarSel(); fn(); aberto=null; $('ov').classList.remove('o
 // ---------- carta ampliada (só leitura) ----------
 function bigHTML(c){
   if(c.tipo==='P')return '<div class="bigP"><span class="bc">'+c.custo+'</span><h3>'+esc(c.nome)+'</h3><div class="ps">'+esc(c.sub)+'</div><p>'+esc(c.d)+'</p></div>';
-  var e=ESC[c.escola], d=BF.duplaDe(c.id);
+  var e=ESC[c.escola], ds=BF.duplasDe(c.id);
   var pills=BF.AREAS.map(function(a){return '<div class="pill" style="--c:'+AREA[a].cor+'">'+AREA[a].nome+'<b>'+c.vals[a]+'</b></div>';}).join('');
   return '<div class="big" style="--e1:'+e.cor+';--e2:'+e.cor2+'"><div class="foto" style="background-image:url(img/'+c.id+'.jpg)"></div>'
     +'<span class="bc">'+c.custo+'</span><div class="head"><i>'+esc(c.pre)+'</i><b>'+esc(c.nome)+'</b></div><div class="areas">'+pills+'</div>'
     +'<div class="corpo">'
     +'<div class="conc c1"><span class="cc">–</span><b><small class="rot">Poder</small>'+esc(c.c1.t)+'</b>'+esc(c.c1.d)+'</div>'
-    +'<div class="conc info"><b>Na fase de Reflexão:</b> recebe '+BF.nI(BF.REFLEXAO[c.custo])+(d?' · <b>Dupla clássica</b> com '+esc(C(d[1]).nome)+': +'+BF.nI(BF.BONUS_DUPLA):'')+'</div>'
+    +'<div class="conc info"><b>Na fase de Reflexão:</b> recebe '+BF.nI(BF.REFLEXAO[c.custo])+ds.map(function(d){return ' · <b>Dupla clássica</b> com '+esc(C(d.par).nome)+': +'+BF.nI(BF.BONUS_DUPLA);}).join('')+'</div>'
     +'<div class="conc off"><span class="cc">'+c.c2.custo+'</span><b><small class="rot">Poder 2</small>'+esc(c.c2.t)+'</b>'+esc(c.c2.d)+'</div>'
     +'<div class="conc off"><span class="cc">'+c.c3.custo+'</span><b><small class="rot">Poder 3</small>'+esc(c.c3.t)+'</b>'+esc(c.c3.d)+'</div>'
     +(c.cit?'<div class="cit">“'+esc(c.cit)+'”<small>'+esc(c.citFonte)+'</small></div>':'')
@@ -413,9 +413,9 @@ function alvosDe(tipo,ref){
     pl.group.forEach(function(g,k){ if(BF.canGive(S,0,k)){var s=q$('[data-seat="'+k+'"] .mini'); if(s)out.push({el:s,dar:k});} });
   } else if(tipo==='troca'){
     if(!BF.podeTrocar(S,0))return out;
-    pl.group.forEach(function(g,k){ if(g.lib)return; var e=q$('[data-seat="'+k+'"] .mini'); if(!e)return;
+    pl.group.forEach(function(g,k){ if(!BF.trocavel(g))return; var e=q$('[data-seat="'+k+'"] .mini'); if(!e)return;
       out.push({el:e,dica:'Agora escolha o filósofo de um adversário.',prox:function(){
-        var r=[]; for(var o=1;o<S.players.length;o++) S.players[o].group.forEach(function(x,oi){ if(x.lib)return; var t=q$('[data-op="'+o+'"][data-oi="'+oi+'"] .mini'); if(t)r.push({el:t,fn:(function(o,oi){return function(){BF.trocar(S,0,k,o,oi);};})(o,oi)}); });
+        var r=[]; for(var o=1;o<S.players.length;o++) S.players[o].group.forEach(function(x,oi){ if(!BF.trocavel(x))return; var t=q$('[data-op="'+o+'"][data-oi="'+oi+'"] .mini'); if(t)r.push({el:t,fn:(function(o,oi){return function(){BF.trocar(S,0,k,o,oi);};})(o,oi)}); });
         return r; }});
     });
   } else if(tipo==='mao'){
@@ -551,15 +551,15 @@ function telaFim(){
   modal(h+'</div><div class="fecha"><button class="btn" data-a="fechar">Ver a mesa</button><button class="btn pri" data-a="inicio">Nova partida</button></div>');
 }
 function regrasHTML(){
-  return '<ul><li><b>Ideias são livros.</b> São a única moeda: pagam cartas e erguem as torres dos debates.</li>'
-    +'<li><b>Fase de Reflexão</b> (início do turno, automática): você compra uma carta, a Biblioteca recebe 3 ideias (e guarda o que sobrar de um turno para outro), e cada filósofo reflete: +1 ideia (custo 1 ou 2), +2 (custo 3 ou 4) ou +3 (custo 5). Quem tem colega da mesma escola ganha +1. Depois disparam os poderes.</li>'
-    +'<li><b>Sua vez, em qualquer ordem:</b> baixar cartas, dar ideias da Biblioteca aos filósofos e levá-los aos debates. Clique numa carta e a mesa mostra onde ela pode agir; ou arraste.</li>'
+  return '<ul><li><b>Ideias</b> são a única moeda do jogo (na mesa, cada ideia é um livro). Pagam cartas e vão para os debates.</li>'
+    +'<li><b>Início do turno</b> (automático): você vence os debates que liderava, compra uma carta, a Biblioteca recebe 3 ideias (e guarda as sobras) e cada filósofo reflete: +1 ideia (custo 1 ou 2), +2 (custo 3 ou 4) ou +3 (custo 5). Quem tem colega da mesma escola ganha +1; cada filósofo de uma dupla clássica, +1. Depois disparam os poderes.</li>'
+    +'<li><b>Sua vez, em qualquer ordem:</b> baixar cartas, dar ideias da Biblioteca aos filósofos, levá-los aos debates, usar falácias e técnicas, comprar uma carta extra (2 ideias). Clique numa carta e a mesa mostra onde ela pode agir; ou arraste.</li>'
     +'<li><b>Debate:</b> o filósofo leva exatamente o valor que tem na área da pergunta. Sem esse tanto de ideias, não vai. Cada um debate uma vez por turno.</li>'
-    +'<li><b>Recém-baixado:</b> entra em ação no próximo turno.</li>'
+    +'<li><b>Recém-chegado</b> (baixado ou recebido em troca): entra em ação no próximo turno do dono.</li>'
     +'<li><b>Bibliotecário:</b> solte um filósofo na Biblioteca para nomeá-lo. Ocupa uma cadeira, não debate e produz, a cada turno, tantas ideias quanto o seu custo, direto para a Biblioteca.</li>'
-    +'<li><b>Troca</b> (5 ideias, uma vez por partida): troque um filósofo seu por um de um adversário. Os dois perdem as ideias e entram em ação no turno seguinte.</li>'
-    +'<li><b>Vencer um debate:</b> no início do seu turno, ter ideias iguais ou acima do valor e pelo menos uma a mais que cada adversário (empate não vence). O marco dourado da prateleira marca esse valor. Prateleira cheia (o dobro do valor) é vitória imediata.</li>'
-    +'<li><b>Fim:</b> 30 pontos ou 12 rodadas. Duplo clique (ou botão direito) numa carta mostra a carta ampliada.</li></ul>';
+    +'<li><b>Troca</b> (5 ideias, uma vez por partida): troque um filósofo seu por um de um adversário. Os dois perdem as ideias. Bibliotecário e Diógenes não são trocados.</li>'
+    +'<li><b>Vencer um debate:</b> no início do seu turno, ter ideias iguais ou acima do valor e pelo menos uma a mais que cada adversário (empate não vence). Quem lidera precisa esperar uma volta inteira da mesa, para que os outros possam responder. Com o dobro do valor, a vitória é imediata.</li>'
+    +'<li><b>Fim:</b> ao completar a rodada em que alguém chega a 30 pontos, ou ao fim da 12ª rodada. Mão com no máximo 5 cartas ao encerrar o turno. Duplo clique (ou botão direito) numa carta mostra a carta ampliada.</li></ul>';
 }
 function telaInicio(){
   modal('<h2>Batalhas Filosóficas</h2><p>Filósofos disputam as grandes perguntas da filosofia. Você joga contra Hipátia e Sêneca, com três escolas na pilha: Grécia Clássica, Materialistas e Empiristas, Germânicos, mais dois livres-pensadores.</p>'
