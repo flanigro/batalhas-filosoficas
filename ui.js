@@ -392,8 +392,10 @@ function bigHTML(c){
   if(c.tipo==='P')return '<div class="bigP"><span class="bc">'+c.custo+'</span><h3>'+esc(c.nome)+'</h3><div class="ps">'+esc(c.sub)+'</div><p>'+esc(c.d)+'</p></div>';
   var e=ESC[c.escola], ds=BF.duplasDe(c.id);
   var pills=BF.AREAS.map(function(a){return '<div class="pill" style="--c:'+AREA[a].cor+'">'+AREA[a].nome+'<b>'+c.vals[a]+'</b></div>';}).join('');
-  return '<div class="big" style="--e1:'+e.cor+';--e2:'+e.cor2+'"><div class="foto" style="background-image:url('+figURL(c.id,'corpo')+')"></div>'
-    +'<span class="bc">'+c.custo+'</span><div class="head"><i>'+esc(c.pre)+'</i><b>'+esc(c.nome)+'</b><span class="en">'+esc(e.nome)+'</span></div><div class="areas">'+pills+'</div>'
+  // complemento do nome: prenome vem antes (Sigmund Freud); "de Sínope" e afins vêm depois (Diógenes de Sínope)
+  var depois=/^de\s/i.test(c.pre||''), pre=c.pre?'<i class="'+(depois?'dep':'ant')+'">'+esc(c.pre)+'</i>':'';
+  return '<div class="big" style="--e1:'+e.cor+';--e2:'+e.cor2+'"><div class="foto"><i style="background-image:url('+figURL(c.id,'corpo')+');--cx:'+((CORPO_CX[c.id]||.58)*100)+'%"></i></div>'
+    +'<span class="bc">'+c.custo+'</span><div class="head">'+(depois?'':pre)+'<b>'+esc(c.nome)+'</b>'+(depois?pre:'')+'<span class="en">'+esc(e.nome)+'</span></div><div class="areas">'+pills+'</div>'
     +'<div class="corpo">'
     +'<div class="conc c1"><span class="cc">–</span><b><small class="rot">Poder</small>'+esc(c.c1.t)+'</b>'+esc(c.c1.d)+'</div>'
     +'<div class="conc info"><b>Na fase de Reflexão:</b> recebe '+BF.nI(BF.REFLEXAO[c.custo])+ds.map(function(d){return ' · <b>Dupla clássica</b> com '+esc(C(d.par).nome)+': +'+BF.nI(BF.BONUS_DUPLA);}).join('')+'</div>'
@@ -401,10 +403,14 @@ function bigHTML(c){
     +'<div class="conc off"><span class="cc">'+c.c3.custo+'</span><b><small class="rot">Poder 3</small>'+esc(c.c3.t)+'</b>'+esc(c.c3.d)+'</div>'
     +(c.cit?'<div class="cit">“'+esc(c.cit)+'”<small>'+esc(c.citFonte)+'</small></div>':'')
     +'</div>'
-    +'<div class="pe"><div>'+esc(c.datas)+'</div><div class="sc">'+esc(c.local)+'</div><div class="sc">Obra de referência</div><div><em>'+esc(c.obra)+'</em></div></div>'
+    +'<div class="pe"><button class="bio" data-a="bio" title="Biografia (em preparação)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5.5C5.5 4.3 8.6 4.4 12 6c3.4-1.6 6.5-1.7 9-.5V19c-2.5-1.2-5.6-1.1-9 .5-3.4-1.6-6.5-1.7-9-.5z" fill="#e9c25a" stroke="#2b2116" stroke-width="1.6" stroke-linejoin="round"/><path d="M12 6v13.5" stroke="#2b2116" stroke-width="1.6"/></svg>Biografia</button><div>'+esc(c.datas)+'</div><div class="sc">'+esc(c.local)+'</div><div class="sc">Obra de referência</div><div><em>'+esc(c.obra)+'</em></div></div>'
     +'<div class="bio-txt" role="status">A biografia de '+esc(c.nome)+' ainda está sendo escrita: dois ou três parágrafos curtos sobre a vida e a obra.</div>'
-    +'<div class="esc"><button class="bio" data-a="bio" title="Biografia (em preparação)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5.5C5.5 4.3 8.6 4.4 12 6c3.4-1.6 6.5-1.7 9-.5V19c-2.5-1.2-5.6-1.1-9 .5-3.4-1.6-6.5-1.7-9-.5z" fill="#e9c25a" stroke="#2b2116" stroke-width="1.6" stroke-linejoin="round"/><path d="M12 6v13.5" stroke="#2b2116" stroke-width="1.6"/></svg>Biografia</button></div></div>';
+    +'</div>';
 }
+// centro horizontal da figura de corpo inteiro (do cotovelo esquerdo à mão estendida), em fração da largura da prancha:
+// a carta grande centraliza a figura na área livre à esquerda. Medido nas pranchas de 18/11/2026; sem valor, 0,58.
+var CORPO_CX={aristoteles:.59,platao:.57,socrates:.605,epicuro:.588,pitagoras:.617,diogenes:.603,marx:.563,hegel:.578,hobbes:.563,bacon:.577,
+  locke:.587,rousseau:.589,kant:.562,nietzsche:.607,schopenhauer:.608,heidegger:.572,freud:.569,arendt:.601,maquiavel:.587,erasmo:.607};
 function verCarta(id){
   cancelarSel();
   $('box').innerHTML=bigHTML(C(id))+'<div class="fecha"><button class="btn" data-a="fechar">Fechar</button></div>';
