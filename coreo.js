@@ -82,6 +82,7 @@ function estouro(texto,x,y,tom){
 }
 // selo que assenta e fica um instante
 function carimbo(texto,x,y){
+  if(window.SOM)SOM.toca(texto==='Falácia!'?'falacia':'tecnica');
   var e=cria('carimbo',esc(texto),'left:'+x+'px;top:'+y+'px'), b='translate(-50%,-50%) rotate(-6deg) ';
   return anim(e,[{transform:b+'scale(1.5)',opacity:0},{transform:b+'scale(.97)',opacity:1,offset:.16},{transform:b+'scale(1)',opacity:1,offset:.24},{transform:b+'scale(1)',opacity:1,offset:.84},{transform:b+'scale(1)',opacity:0}],{d:1900,e:'ease-out'}).then(function(){e.remove();});
 }
@@ -117,6 +118,7 @@ function desfoco(){ var m=M3(); return m?m.desfoco():Promise.resolve(); }
 // tipo: 'aplauso' | 'vaia' | 'murmurio'. Não bloqueia: reage em paralelo à cena.
 var coroTimer=null;
 function coro(tipo,texto,ms){
+  if(tipo==='aplauso'&&window.SOM)SOM.toca('aplauso');
   var c=document.getElementById('coro'), m=M3(); if(m)m.coro(tipo,T(ms||1700));
   if(!c)return;
   var f=c.querySelector('.coro-fala');
@@ -161,7 +163,9 @@ async function entradaCarta(ev,c,f,torre){
   var m=M3D, o=f.obj, casa=f.casa.clone(), pe=m.peTorre(ev.did,ev.P), tom=tomDe(ev.id);
   if(f.ajusteY)pe.y+=f.ajusteY;   // personagem em PNG: os pés, e não a borda da prancheta, tocam o chão
   m.fora(ev.P,ev.id,true);
+  if(window.SOM)SOM.toca('salto');
   await m.arco(o,pe,T(ev.P===0?620:760),ev.P===0?2.2:4.6);
+  if(window.SOM)SOM.toca('pouso');
   m.tranco(o,T(280)); tremer(3);
   var p=m.tela(pe), b=caixa(torre); poeira(p.x,p.y,9);
   estouro(sorteia(INTERJ[tom]),b.x+(b.x>innerWidth/2?-90:90),b.t-8,tom);
@@ -170,6 +174,7 @@ async function entradaCarta(ev,c,f,torre){
   await c.revelar(ev.did,ev.P,ev.amt);
   if(c.lidera(ev.did,ev.P)){ coro('aplauso',sorteia(CORO.lidera),1300); }
   await dorme(tom==='contido'?520:380);
+  if(window.SOM)SOM.toca('salto');
   m.encolher(ev.P,ev.id,T(680));   // adversário: volta à escala da faixa de cima durante o voo
   await m.arco(o,casa,T(ev.P===0?520:680),ev.P===0?1.6:4.2);
   m.fora(ev.P,ev.id,false);
@@ -266,6 +271,7 @@ def('falacia:espantalho',async function(ev,c){
    A pergunta vencida vira placa, recebe a coroa de louros, chovem páginas, o coro aplaude,
    e a placa vai para a prateleira de troféus do vencedor. */
 def('vitoria',async function(ev,c){
+  if(window.SOM)SOM.toca('vitoria');
   var slot=c.elDeb(ev.di); if(slot)await foco(slot);
   var o=slot?caixa(slot):centroMesa(), ar=c.area(ev.area);
   var px=Math.max(170,Math.min(innerWidth-170,o.x)), py=Math.max(150,Math.min(innerHeight-120,o.t+70));

@@ -42,6 +42,8 @@ function areasNaMesa(){var o={};S.debates.forEach(function(d){o[DEB[d.id].area]=
 function m3d(){ if(window.M3D&&M3D.pronto)M3D.sync(S,ocultos); }
 function M3(){ return window.M3D&&M3D.pronto?M3D:null; }
 
+// som (som.js); sem o módulo, nada toca
+function som(n,o){ if(window.SOM)SOM.toca(n,o); }
 // ---------- cartas ----------
 // figuras provisórias (18/11/2026): 'busto' (da cintura para cima) ou 'corpo' (de pé); recortes das pranchas do Flavio
 function figURL(id,pose){return 'personagens/'+id+'-'+(pose||'busto')+'.webp';}
@@ -193,6 +195,8 @@ function balao(f){
     b.innerHTML='<b>'+esc(f.tit)+'</b>'+esc(f.txt||'');
     $('fx').appendChild(b);
     brilhar(f.P,f.id,TONS[f.tom]||TONS.con);
+    // ideia ganha (Reflexão, Bibliotecário, poderes): sempre o mesmo PLIM; perda: som de perda; outros poderes: brilho
+    if(f.tom==='neg')som('perda'); else if(f.tom!=='mov'&&/\+\s?\d/.test((f.tit||'')+' '+(f.txt||'')))som('plim'); else if(f.tom==='con')som('brilho');
     setTimeout(function(){b.remove();res();},dur);
   });
 }
@@ -324,6 +328,7 @@ async function revelar(did,P,n){
     if(!(ocultos[key]>0))continue;
     ocultos[key]--;
     if(m)m.cairLivro(did,P);
+    som('livro',{k:k});
     var t=q$('[data-est="'+key+'"]'), ne=t&&t.parentNode.querySelector('.n');
     if(ne){ne.textContent=(parseInt(ne.textContent,10)||0)+1;ne.classList.remove('zero');}
     await sleep(veloz?35:80);
@@ -354,11 +359,11 @@ async function tocar(lista){
     var f=lista[k], pl=S.players[f.P];
     switch(f.k){
       case 'pop': if(bloq) await balao(f); else enfileirar(f); break;
-      case 'turno': if(!S.over) await faixa(f.P===0?'Sua vez':pl.nome,'Rodada '+S.round+' · Fase de Reflexão',pl.cor,veloz?700:(f.P===0?1500:1200)); break;
+      case 'turno': if(!S.over){ som('turno'); await faixa(f.P===0?'Sua vez':pl.nome,'Rodada '+S.round+' · Fase de Reflexão',pl.cor,veloz?700:(f.P===0?1500:1200)); } break;
       case 'troca': await esperarBaloes(); await faixa((f.P===0?'Você troca ':pl.nome+' troca ')+C(f.a).nome+' por '+C(f.b).nome,'Os dois perdem as ideias e entram em ação no próximo turno',pl.cor,veloz?1500:3200); break;
-      case 'bib': if(f.P===0){var b=$('bib'); if(b){b.classList.remove('chegou');void b.offsetWidth;b.classList.add('chegou');}} if(M3())M3().chegarEstante(f.P,f.n); break;
-      case 'dar': if(M3())voo(M3().mundoEstante(f.P),M3().mundoPilha(f.P,f.id),f.n,f.P); if(bloq) await sleep(veloz?400:900); break;
-      case 'baixa': await esperarBaloes(); await palcoBaixa(f); break;
+      case 'bib': som('plim'); if(f.P===0){var b=$('bib'); if(b){b.classList.remove('chegou');void b.offsetWidth;b.classList.add('chegou');}} if(M3())M3().chegarEstante(f.P,f.n); break;
+      case 'dar': som('plim'); if(M3())voo(M3().mundoEstante(f.P),M3().mundoPilha(f.P,f.id),f.n,f.P); if(bloq) await sleep(veloz?400:900); break;
+      case 'baixa': await esperarBaloes(); som('carta'); await palcoBaixa(f); break;
       case 'debate':
         await BFX.cena('entrada',f);
         ocultos['fig:'+f.P+':'+f.id]=0; redesenhar();   // de volta ao púlpito: agora sim, "já debateu"
@@ -372,7 +377,7 @@ async function tocar(lista){
       case 'segue': if(M3())voo(M3().mundoPilha(f.P,f.id),M3().topoTorre(f.did,f.P),1,f.P); await sleep(veloz?200:420); await revelar(f.did,f.P,1); break;
       case 'vit': await esperarBaloes(); await BFX.cena('vitoria',f); break;
       case 'praxis': await esperarBaloes(); await palcoCarta(f); await BFX.cena('falacia',f); break;
-      case 'dupla': [f.a,f.b].forEach(function(id){brilhar(f.P,id,'#c2410c');}); BFX.coro('aplauso','Dupla clássica!',1300); break;
+      case 'dupla': som('dupla'); [f.a,f.b].forEach(function(id){brilhar(f.P,id,'#c2410c');}); BFX.coro('aplauso','Dupla clássica!',1300); break;
     }
   }
   if(bloq) await esperarBaloes();
@@ -496,6 +501,7 @@ function reaplicarSel(){
   if(sel.tipo==='livro'&&!sel.alvos.length&&sel.dadas){cancelarSel();return;}
   if(o)o.classList.add('selecionado');
   sel.alvos.forEach(function(a){a.el.classList.add('alvo');});
+  if(!sel.alvos.length&&!sel.erroTocado){ sel.erroTocado=true; som('erro'); }   // jogada sem alvo possível
   var t=sel.alvos.length?(sel.dicaPasso||DICAS[sel.tipo](sel.ref)):'<b>'+esc(motivoSemAlvo(sel.tipo,sel.ref))+'</b>';
   var cid=sel.tipo==='fil'?S.players[0].group[sel.ref].id:sel.tipo==='mao'?sel.ref:null;
   $('dica').innerHTML='<span class="t">'+t+'</span>'+(cid?'<button class="btn sm" data-a="lupa" data-id="'+cid+'">Ver carta</button>':'')+'<button class="btn sm" data-a="cancelar">'+(sel.tipo==='livro'&&sel.dadas?'Pronto':'Cancelar')+'</button>';
@@ -542,7 +548,7 @@ function encerrar(confirmado){
   if(exc>0){ pedirDescarte(exc); return; }
   finalizar();
 }
-function finalizar(desc){ BF.endTurn(S,desc); fechar(); if(S.turn===0)bibChegou=true; rodarIA(); }
+function finalizar(desc){ som('ampulheta'); BF.endTurn(S,desc); fechar(); if(S.turn===0)bibChegou=true; rodarIA(); }
 var descSel=[];
 function pedirDescarte(n){
   descSel=[];
@@ -551,6 +557,7 @@ function pedirDescarte(n){
   modal(h+'</div><div class="fecha"><button class="btn" data-a="fechar">Voltar</button><button class="btn pri" id="dok" data-a="dok" data-n="'+n+'" disabled>Descartar e encerrar</button></div>');
 }
 function telaFim(){
+  som('fim');
   var ord=S.players.map(function(p,i){return i;}).sort(function(a,b){return S.players[b].points-S.players[a].points;});
   var h='<h2>'+(S.vencedor<0?'Empate':S.vencedor===0?'Você venceu':S.players[S.vencedor].nome+' venceu')+'</h2><div class="placar">';
   ord.forEach(function(i){var p=S.players[i]; h+='<div class="l" style="--pc:'+p.cor+'"><b>'+p.points+'</b><div>'+esc(p.nome)+'<br><small>'+(p.won.length?p.won.map(function(d){return '«'+DEB[d].q+'» ('+DEB[d].valor+')';}).join(' · '):'nenhum debate vencido')+'</small></div></div>';});
@@ -587,6 +594,7 @@ function comFilosofo(id){
 // ---------- cliques ----------
 document.addEventListener('click',function(ev){
   if(Date.now()-ultimoArrasto<150)return;
+  if(ev.target.closest('button'))som('clique');
   // aviso aberto: clique fora fecha sem agir; os botões fecham ou encerram o turno
   if($('aviso').classList.contains('on')){
     var ba=ev.target.closest('[data-a]');
@@ -688,6 +696,8 @@ document.addEventListener('pointerup',soltar);
 document.addEventListener('pointercancel',soltar);
 document.addEventListener('dragstart',function(e){e.preventDefault();});
 
+$('bsom').textContent='Som: '+(window.SOM&&SOM.ligado()?'ligado':'desligado');
+$('bsom').onclick=function(){ if(!window.SOM)return; var l=SOM.ligado(!SOM.ligado()); this.textContent='Som: '+(l?'ligado':'desligado'); };
 $('bveloc').onclick=function(){veloz=!veloz;BFX.veloz=veloz;document.body.classList.toggle('veloz',veloz);this.textContent='Ritmo: '+(veloz?'rápido':'normal');};
 // carta com volume: inclina conforme o ponteiro
 var inclinada=null;
