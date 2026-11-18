@@ -1,6 +1,6 @@
 # Lista de assets: o que substitui os provisórios da mesa 3D (17/11/2026; revista nas rodadas 5 e 6 e no contrato dos personagens)
 
-Acompanha a mesa em Three.js (rodadas 3 a 5). Na rodada 5 a mesa virou uma arena semicircular de mármore: faixa dos adversários no alto, placas no centro, púlpitos do jogador na frente e a faixa inferior em HTML. Hoje tudo o que se vê na mesa é provisório: texturas geradas por código, figuras desenhadas por código, retratos de banco. Este documento lista cada peça, com as medidas para produzir a definitiva.
+Acompanha a mesa em Three.js (rodadas 3 a 6). Na rodada 5 a mesa virou uma arena semicircular de mármore: faixa dos adversários no alto, placas no centro, púlpitos do jogador na frente e a faixa inferior em HTML. Hoje tudo o que se vê na mesa é provisório: texturas geradas por código, figuras desenhadas por código, retratos de banco. Este documento lista cada peça, com as medidas para produzir a definitiva.
 
 ## Convenções
 
@@ -128,7 +128,7 @@ Se o Flavio quiser trocar a geometria, o formato é glTF binário (.glb), com os
 
 - Biblioteca dos adversários (2 na cena; a do jogador agora é HTML, na faixa inferior): móvel baixo de 1,7 de largura, 0,36 de altura e 0,5 de fundo, com um degrau atrás para a segunda fileira. Os livros são do programa e precisam ficar à vista: nada de portas, vãos fundos ou topo alto.
 - Placa de debate: 3,95 de largura, 3,5 de altura (mais 0,5 por jogador além de três), 0,2 de espessura, com pilastras laterais finas e filete no alto, na cor da área (sem cornija desde a rodada 6). A face recebe cabeçalho, pergunta e fundo das prateleiras por programa; o modelo valeria pela moldura.
-- Púlpito do jogador: 2,3 × 1,22 × 0,62, com tampo e beiral da prateleira; púlpito compacto do adversário: 1,34 × 0,64 × 0,46. Mármore claro no tampo, cinza nas laterais. Nome e valores são pintados por programa na face da frente; a carta (ou o busto) fica atrás, escondida em parte pelo púlpito.
+- Púlpito do jogador: 2,3 × 1,22 × 0,62, com tampo e beiral da prateleira; púlpito compacto do adversário: 1,34 × 0,64 × 0,46. Mármore claro no tampo, cinza nas laterais. Nome e valores são pintados por programa na face da frente; a carta (ou o personagem do item 1.1) fica atrás, escondida em parte pelo púlpito.
 - Arquibancada: hoje montada por código (meia elipse, quatro degraus de 0,8 × 0,3, sem parapeito); um modelo só valeria para dar relevo às quinas e às escadinhas.
 
 ## 5. O que continua sendo feito pelo programa (não precisa de asset)
