@@ -43,11 +43,13 @@ function m3d(){ if(window.M3D&&M3D.pronto)M3D.sync(S,ocultos); }
 function M3(){ return window.M3D&&M3D.pronto?M3D:null; }
 
 // ---------- cartas ----------
+// figuras provisórias (18/11/2026): 'busto' (da cintura para cima) ou 'corpo' (de pé); recortes das pranchas do Flavio
+function figURL(id,pose){return 'personagens/'+id+'-'+(pose||'busto')+'.webp';}
 function miniF(g,c,attrs,cls,st){
   var e=ESC[c.escola], on=areasNaMesa();
   var vals=BF.AREAS.map(function(a){return '<span class="'+(on[a]?'on':'')+'" style="--c:'+AREA[a].cor+'" title="'+AREA[a].nome+'">'+c.vals[a]+'</span>';}).join('');
   return '<button class="mini F '+(cls||'')+'" style="--e1:'+e.cor+';--e2:'+e.cor2+';'+(st||'')+'" data-cid="'+c.id+'" '+attrs+' aria-label="'+esc(c.nome)+'">'
-    +'<div class="img" style="background-image:url(img/'+c.id+'.jpg)"></div><span class="custo">'+c.custo+'</span>'
+    +'<div class="img" style="background-image:url('+figURL(c.id)+')"></div><span class="custo">'+c.custo+'</span>'
     +'<div class="nome">'+esc(c.nome)+'</div>'
     +'<div class="vals">'+vals+'</div></button>';
 }
@@ -122,7 +124,7 @@ function geracaoHTML(){
   if(lib){
     var c=C(lib.id), at=BF.ativo(lib);
     h+='<span class="gp bibl'+(at?'':' espera')+'" title="'+esc(c.nome)+', Bibliotecário: '+(at?'produz '+BF.nI(c.custo)+' por turno':'começa a produzir no próximo turno')+'">'
-      +'<i class="rosto" style="background-image:url(img/'+c.id+'.jpg)"></i>'+(at?'+'+c.custo+' <small>'+esc(c.nome)+'</small>':'<small>'+esc(c.nome)+': próximo turno</small>')+'</span>';
+      +'<i class="rosto" style="--e1:'+ESC[c.escola].cor+';background-image:url('+figURL(c.id)+')"></i>'+(at?'+'+c.custo+' <small>'+esc(c.nome)+'</small>':'<small>'+esc(c.nome)+': próximo turno</small>')+'</span>';
   }
   return h+'<span class="gt">= +'+ganhoBib(0)+'<small>/turno</small></span></div>';
 }
@@ -213,7 +215,7 @@ function faixa(tit,sub,cor,dur){
 }
 
 // ---------- palco central (espera o clique) ----------
-function retHTML(c,sub){var e=ESC[c.escola];return '<div class="ret" style="--e1:'+e.cor+';--e2:'+e.cor2+'"><span class="rc" title="custo em ideias">'+c.custo+'</span><div class="f" style="background-image:url(img/'+c.id+'.jpg)"></div><div class="n">'+esc(c.nome)+'<small>'+esc(sub||e.nome)+'</small></div></div>';}
+function retHTML(c,sub){var e=ESC[c.escola];return '<div class="ret" style="--e1:'+e.cor+';--e2:'+e.cor2+'"><span class="rc" title="custo em ideias">'+c.custo+'</span><div class="f" style="background-image:url('+figURL(c.id,'corpo')+')"></div><div class="n">'+esc(c.nome)+'<small>'+esc(sub||e.nome)+'</small></div></div>';}
 function palco(html){
   return new Promise(function(res){
     var p=$('palco');
@@ -227,7 +229,7 @@ function palco(html){
 }
 function relHTML(r){
   var a=C(r.a), b=C(r.b);
-  return '<div class="rel"><span class="mini-ret" style="background-image:url(img/'+b.id+'.jpg)"></span><div><b>'+esc(a.nome)+' × '+esc(b.nome)+'</b> — '+esc(r.nota)+'<div class="fonte">'+esc(r.fonte)+' · a verificar</div></div></div>';
+  return '<div class="rel"><span class="mini-ret" style="--e1:'+ESC[b.escola].cor+';background-image:url('+figURL(b.id)+')"></span><div><b>'+esc(a.nome)+' × '+esc(b.nome)+'</b> — '+esc(r.nota)+'<div class="fonte">'+esc(r.fonte)+' · a verificar</div></div></div>';
 }
 var PFX='Na fase de Reflexão, ';
 function palcoBaixa(f){
@@ -381,7 +383,7 @@ function bigHTML(c){
   if(c.tipo==='P')return '<div class="bigP"><span class="bc">'+c.custo+'</span><h3>'+esc(c.nome)+'</h3><div class="ps">'+esc(c.sub)+'</div><p>'+esc(c.d)+'</p></div>';
   var e=ESC[c.escola], ds=BF.duplasDe(c.id);
   var pills=BF.AREAS.map(function(a){return '<div class="pill" style="--c:'+AREA[a].cor+'">'+AREA[a].nome+'<b>'+c.vals[a]+'</b></div>';}).join('');
-  return '<div class="big" style="--e1:'+e.cor+';--e2:'+e.cor2+'"><div class="foto" style="background-image:url(img/'+c.id+'.jpg)"></div>'
+  return '<div class="big" style="--e1:'+e.cor+';--e2:'+e.cor2+'"><div class="foto" style="background-image:url('+figURL(c.id)+')"></div>'
     +'<span class="bc">'+c.custo+'</span><div class="head"><i>'+esc(c.pre)+'</i><b>'+esc(c.nome)+'</b></div><div class="areas">'+pills+'</div>'
     +'<div class="corpo">'
     +'<div class="conc c1"><span class="cc">–</span><b><small class="rot">Poder</small>'+esc(c.c1.t)+'</b>'+esc(c.c1.d)+'</div>'
@@ -696,6 +698,6 @@ $('bdiario').onclick=$('bdiario2').onclick=function(){document.body.classList.to
 BFX.ligar(CTX);
 $('bregras').onclick=function(){modal('<h2>Como jogar</h2>'+regrasHTML()+'<p style="font-size:13.5px;color:var(--mute)">Protótipo de nível 2: valem os valores das áreas e o poder gratuito de cada filósofo. Os poderes pagos aparecem na carta ampliada, marcados como nível 3. Falas, citações e contextos históricos ainda estão por verificar.</p><div class="fecha"><button class="btn" data-a="fechar">Fechar</button></div>');};
 $('bnova').onclick=telaInicio;
-window.__bf={agir:agir,render:render,rodarIA:rodarIA,get S(){return S;},get ocupado(){return ocupado;},get emPalco(){return emPalco;},get animando(){return animando;},get sel(){return sel;}};
+window.__bf={agir:agir,render:render,rodarIA:rodarIA,redesenhar:redesenhar,verCarta:verCarta,fechar:fechar,palco:palco,palcoBaixa:palcoBaixa,get S(){return S;},get ocupado(){return ocupado;},get emPalco(){return emPalco;},get animando(){return animando;},get sel(){return sel;}};
 telaInicio();
 })();

@@ -170,6 +170,7 @@ async function entradaCarta(ev,c,f,torre){
   await c.revelar(ev.did,ev.P,ev.amt);
   if(c.lidera(ev.did,ev.P)){ coro('aplauso',sorteia(CORO.lidera),1300); }
   await dorme(tom==='contido'?520:380);
+  m.encolher(ev.P,ev.id,T(680));   // adversário: volta à escala da faixa de cima durante o voo
   await m.arco(o,casa,T(ev.P===0?520:680),ev.P===0?1.6:4.2);
   m.fora(ev.P,ev.id,false);
 }
