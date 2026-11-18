@@ -202,7 +202,7 @@ function palcoBaixa(f){
     if(d)lista.push('Dupla clássica com '+C(d[1]).nome+': +'+BF.nI(BF.BONUS_DUPLA));
   }
   if(naRef){var r=c.c1.d.slice(PFX.length); lista.push('<span class="peq">'+esc(c.c1.t)+': '+esc(r.charAt(0).toUpperCase()+r.slice(1))+'</span>');}
-  var quando=f.lib?'Começará a produzir no próximo turno.':c.id==='nietzsche'?'Vontade de Poder: entra em ação já neste turno.':'Entrará em ação no próximo turno.';
+  var quando=f.lib?'Começará a produzir no próximo turno.':'Entrará em ação no próximo turno.';
   var jog='<div class="jogada" style="--pc:'+pl.cor+'"><b>'+esc(pl.nome)+'</b> ▸ '+(f.lib?'nomeia Bibliotecário':'baixa a carta')+'<span>'+quando+'</span></div>';
   return palco('<div class="cena">'+retHTML(c)+'<div class="fala">'+jog
     +'<h3><small class="rot">Poder</small>'+esc(c.c1.t)+'</h3><p>'+esc(c.c1.d)+'</p>'
@@ -481,7 +481,7 @@ function regrasHTML(){
     +'<li><b>Recém-baixado:</b> entra em ação no próximo turno.</li>'
     +'<li><b>Bibliotecário:</b> solte um filósofo na Biblioteca para nomeá-lo. Ocupa uma cadeira, não debate e produz, a cada turno, tantas ideias quanto o seu custo, direto para a Biblioteca.</li>'
     +'<li><b>Troca</b> (5 ideias, uma vez por partida): troque um filósofo seu por um de um adversário. Os dois perdem as ideias e entram em ação no turno seguinte.</li>'
-    +'<li><b>Vencer um debate:</b> no início do seu turno, ter ideias iguais ou acima do valor e ninguém com mais que você. A linha dourada da tribuna marca essa altura. Torre até o topo (o dobro do valor) é vitória imediata.</li>'
+    +'<li><b>Vencer um debate:</b> no início do seu turno, ter ideias iguais ou acima do valor e pelo menos uma a mais que cada adversário (empate não vence). A linha dourada da tribuna marca essa altura. Torre até o topo (o dobro do valor) é vitória imediata.</li>'
     +'<li><b>Fim:</b> 30 pontos ou 12 rodadas. Botão direito numa carta mostra a carta ampliada.</li></ul>';
 }
 function telaInicio(){

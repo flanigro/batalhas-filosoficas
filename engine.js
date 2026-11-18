@@ -279,7 +279,7 @@
     hegel: ['Dialética', 'Hegel é o único que pode levar a um debate menos que o valor da área: leva o que tiver, até o valor.'],
     locke: ['Tábula Rasa', 'Locke recebe +1 ideia sempre que você baixa uma carta. As ideias vêm da experiência.'],
     kant: ['Imperativo Categórico', 'Quando Kant leva ideias a um debate de Ética / Política, cada colega ativo do grupo acrescenta 1 ideia ao mesmo debate.'],
-    nietzsche: ['Vontade de Poder', 'Nietzsche entra em jogo ativo: recebe ideias e pode debater no turno em que é baixado.'],
+    nietzsche: ['Filosofar com o martelo', 'Ao entrar num debate, o adversário com mais ideias nesse debate perde 2.'],
     schopenhauer: ['Negação da Vontade', 'Na fase de Reflexão, recebe +1 ideia se não foi a nenhum debate no turno anterior.'],
     heidegger: ['Ser-no-mundo', 'Na fase de Reflexão, recebe +1 ideia para cada debate em que você tem ideias.'],
     freud: ['Ato Falho', 'Freud recebe +1 ideia sempre que um adversário usa uma falácia.'],
@@ -413,8 +413,8 @@
   // ---------- consultas ----------
   function inGroup(pl, id) { for (var i = 0; i < pl.group.length; i++) if (pl.group[i].id === id) return pl.group[i]; return null; }
   function oppMax(d, P) { var m = 0; for (var i = 0; i < d.stakes.length; i++) if (i !== P && d.stakes[i] > m) m = d.stakes[i]; return m; }
-  function lidera(s, di, P) { var d = s.debates[di]; return d.stakes[P] >= DEB[d.id].valor && d.stakes[P] >= oppMax(d, P); }
-  function ativo(g) { return !g.novo || g.id === 'nietzsche'; }
+  function lidera(s, di, P) { var d = s.debates[di]; return d.stakes[P] >= DEB[d.id].valor && d.stakes[P] > oppMax(d, P); }
+  function ativo(g) { return !g.novo; }
   function temColega(pl, g) {
     for (var i = 0; i < pl.group.length; i++) if (pl.group[i] !== g && C(pl.group[i].id).escola === C(g.id).escola) return true;
     return false;
@@ -659,6 +659,16 @@
       });
       if (n) { pop(s, P, 'kant', 'Imperativo Categórico', n + ' colega(s) acrescentam 1 ideia cada ao debate.'); log(s, 'Imperativo Categórico: ' + n + ' colega(s) de Kant acrescentam 1 ideia cada.', 'con', P); }
     }
+    if (g.id === 'nietzsche') {
+      var mo = -1, mv = 0;
+      for (var oo = 0; oo < s.players.length; oo++) if (oo !== P && d.stakes[oo] > mv) { mv = d.stakes[oo]; mo = oo; }
+      if (mo >= 0) {
+        var perde = Math.min(2, d.stakes[mo]);
+        d.stakes[mo] -= perde;
+        pop(s, P, 'nietzsche', 'Filosofar com o martelo', nomeJ(s, mo) + ' perde ' + nI(perde) + ' em «' + q.q + '».');
+        log(s, 'Filosofar com o martelo: ' + nomeJ(s, mo) + ' perde ' + nI(perde) + ' em «' + q.q + '».', 'con', P);
+      }
+    }
     checkInstant(s, P);
     return true;
   }
@@ -886,7 +896,7 @@
       var d = s.debates[i], val = DEB[d.id].valor, mine = d.stakes[P], om = oppMax(d, P);
       v += 0.6 * Math.min(mine, val);
       v += 0.25 * Math.max(-val, Math.min(val, mine - om));
-      if (mine >= val && mine >= om) v += 0.8 * val;
+      if (mine >= val && mine > om) v += 0.8 * val;
       if (om >= val && om > mine) v -= 0.6 * val;
     }
     var maxOpp = 0;
