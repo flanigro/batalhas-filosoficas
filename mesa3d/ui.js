@@ -42,22 +42,29 @@ function areasNaMesa(){var o={};S.debates.forEach(function(d){o[DEB[d.id].area]=
 function m3d(){ if(window.M3D&&M3D.pronto)M3D.sync(S,ocultos); }
 function M3(){ return window.M3D&&M3D.pronto?M3D:null; }
 
+// som (som.js); sem o módulo, nada toca
+function som(n,o){ if(window.SOM)SOM.toca(n,o); }
 // ---------- cartas ----------
+// figuras provisórias (18/11/2026): 'busto' (da cintura para cima) ou 'corpo' (de pé); recortes das pranchas do Flavio
+function figURL(id,pose){return 'personagens/'+id+'-'+(pose||'busto')+'.webp';}
 function miniF(g,c,attrs,cls,st){
   var e=ESC[c.escola], on=areasNaMesa();
   var vals=BF.AREAS.map(function(a){return '<span class="'+(on[a]?'on':'')+'" style="--c:'+AREA[a].cor+'" title="'+AREA[a].nome+'">'+c.vals[a]+'</span>';}).join('');
   return '<button class="mini F '+(cls||'')+'" style="--e1:'+e.cor+';--e2:'+e.cor2+';'+(st||'')+'" data-cid="'+c.id+'" '+attrs+' aria-label="'+esc(c.nome)+'">'
-    +'<div class="img" style="background-image:url(img/'+c.id+'.jpg)"></div><span class="custo">'+c.custo+'</span>'
+    +'<div class="img" style="background-image:url('+figURL(c.id)+')"></div><span class="custo">'+c.custo+'</span>'
     +'<div class="nome">'+esc(c.nome)+'</div>'
     +'<div class="vals">'+vals+'</div></button>';
 }
 // âncora de um filósofo na mesa: a figura é da cena 3D; aqui ficam o alvo de clique, a etiqueta de estado
 // e, se o filósofo tem marionete, o encaixe .fig com o boneco (posto sobre o pedestal pela cena)
+// filósofo que já foi ao debate, mas cuja cena de entrada ainda não terminou: só fica "já debateu" depois do salto
+function debatendo(P,id){ return (ocultos['fig:'+P+':'+id]>0)||S.fx.some(function(f){return f.k==='debate'&&f.P===P&&f.id===id;}); }
 function ancF(g,c,attrs,anc,figAnc){
+  var P=anc.indexOf('op:')===0?+anc.split(':')[1]:0, feito=g.acted&&!debatendo(P,c.id);
   var inerte=!BF.ativo(g), bon=USAR_BONECOS&&figAnc&&window.BF_BONECOS&&BF_BONECOS[c.id];
-  return '<button class="mini F '+(bon?'boneco ':'')+(inerte?'novo ':'')+(g.acted?'acted ':'')+'" data-anc="'+anc+'" data-cid="'+c.id+'" '+attrs+' aria-label="'+esc(c.nome)+'" title="'+esc(c.nome)+'">'
+  return '<button class="mini F '+(bon?'boneco ':'')+(inerte?'novo ':'')+(feito?'acted ':'')+'" data-anc="'+anc+'" data-cid="'+c.id+'" '+attrs+' aria-label="'+esc(c.nome)+'" title="'+esc(c.nome)+'">'
     +(bon?'<div class="fig" data-anc="'+figAnc+'">'+BF_BONECOS[c.id].svg+'</div>':'')
-    +(g.lib?'<div class="sel libr">Bibliotecário</div>':inerte?'<div class="sel">chegando</div>':g.acted?'<div class="sel">já debateu</div>':'')+'</button>';
+    +(g.lib?'<div class="sel libr">Bibliotecário</div>':inerte?'<div class="sel">chegando</div>':feito?'<div class="sel">já debateu</div>':'')+'</button>';
 }
 function miniP(c,attrs,cls){
   return '<button class="mini P '+(cls||'')+'" data-cid="'+c.id+'" '+attrs+' aria-label="'+esc(c.nome)+'"><span class="custo">'+c.custo+'</span>'
@@ -122,7 +129,7 @@ function geracaoHTML(){
   if(lib){
     var c=C(lib.id), at=BF.ativo(lib);
     h+='<span class="gp bibl'+(at?'':' espera')+'" title="'+esc(c.nome)+', Bibliotecário: '+(at?'produz '+BF.nI(c.custo)+' por turno':'começa a produzir no próximo turno')+'">'
-      +'<i class="rosto" style="background-image:url(img/'+c.id+'.jpg)"></i>'+(at?'+'+c.custo+' <small>'+esc(c.nome)+'</small>':'<small>'+esc(c.nome)+': próximo turno</small>')+'</span>';
+      +'<i class="rosto" style="--e1:'+ESC[c.escola].cor+';background-image:url('+figURL(c.id)+')"></i>'+(at?'+'+c.custo+' <small>'+esc(c.nome)+'</small>':'<small>'+esc(c.nome)+': próximo turno</small>')+'</span>';
   }
   return h+'<span class="gt">= +'+ganhoBib(0)+'<small>/turno</small></span></div>';
 }
@@ -188,6 +195,8 @@ function balao(f){
     b.innerHTML='<b>'+esc(f.tit)+'</b>'+esc(f.txt||'');
     $('fx').appendChild(b);
     brilhar(f.P,f.id,TONS[f.tom]||TONS.con);
+    // ideia ganha (Reflexão, Bibliotecário, poderes): sempre o mesmo PLIM; perda: som de perda; outros poderes: brilho
+    if(f.tom==='neg')som('perda'); else if(f.tom!=='mov'&&/\+\s?\d/.test((f.tit||'')+' '+(f.txt||'')))som('plim'); else if(f.tom==='con')som('brilho');
     setTimeout(function(){b.remove();res();},dur);
   });
 }
@@ -213,7 +222,7 @@ function faixa(tit,sub,cor,dur){
 }
 
 // ---------- palco central (espera o clique) ----------
-function retHTML(c,sub){var e=ESC[c.escola];return '<div class="ret" style="--e1:'+e.cor+';--e2:'+e.cor2+'"><span class="rc" title="custo em ideias">'+c.custo+'</span><div class="f" style="background-image:url(img/'+c.id+'.jpg)"></div><div class="n">'+esc(c.nome)+'<small>'+esc(sub||e.nome)+'</small></div></div>';}
+function retHTML(c,sub){var e=ESC[c.escola];return '<div class="ret" style="--e1:'+e.cor+';--e2:'+e.cor2+'"><span class="rc" title="custo em ideias">'+c.custo+'</span><div class="f" style="background-image:url('+figURL(c.id,'corpo')+')"></div><div class="n">'+esc(c.nome)+'<small>'+esc(sub||e.nome)+'</small></div></div>';}
 function palco(html){
   return new Promise(function(res){
     var p=$('palco');
@@ -227,18 +236,18 @@ function palco(html){
 }
 function relHTML(r){
   var a=C(r.a), b=C(r.b);
-  return '<div class="rel"><span class="mini-ret" style="background-image:url(img/'+b.id+'.jpg)"></span><div><b>'+esc(a.nome)+' × '+esc(b.nome)+'</b> — '+esc(r.nota)+'<div class="fonte">'+esc(r.fonte)+' · a verificar</div></div></div>';
+  return '<div class="rel"><span class="mini-ret" style="--e1:'+ESC[b.escola].cor+';background-image:url('+figURL(b.id)+')"></span><div><b>'+esc(a.nome)+' × '+esc(b.nome)+'</b> — '+esc(r.nota)+'<div class="fonte">'+esc(r.fonte)+' · a verificar</div></div></div>';
 }
 var PFX='Na fase de Reflexão, ';
 function palcoBaixa(f){
-  var c=C(f.id), pl=S.players[f.P], d=BF.duplaDe(c.id), lista=[];
+  var c=C(f.id), pl=S.players[f.P], ds=BF.duplasDe(c.id), lista=[];
   var naRef=c.c1.d.indexOf(PFX)===0;
   if(f.lib){
     lista.push('Produz '+BF.nI(c.custo)+' por turno para a Biblioteca');
     lista.push('Não participa dos debates e não recebe ideias');
   } else {
     lista.push(c.nome+' recebe '+BF.nI(BF.REFLEXAO[c.custo]));
-    if(d)lista.push('Dupla clássica com '+C(d[1]).nome+': +'+BF.nI(BF.BONUS_DUPLA));
+    ds.forEach(function(d){lista.push('Dupla clássica com '+C(d.par).nome+': +'+BF.nI(BF.BONUS_DUPLA));});
   }
   if(naRef){var r=c.c1.d.slice(PFX.length); lista.push('<span class="peq">'+esc(c.c1.t)+': '+esc(r.charAt(0).toUpperCase()+r.slice(1))+'</span>');}
   var quando=f.lib?'Começará a produzir no próximo turno.':'Entrará em ação no próximo turno.';
@@ -306,7 +315,7 @@ function prepararOcultos(lista){
   var n=0;
   function add(k,q){ if(q>0){ocultos[k]=(ocultos[k]||0)+q;n++;} }
   lista.forEach(function(f){
-    if(f.k==='debate')add(f.did+':'+f.P,f.amt);
+    if(f.k==='debate'){add(f.did+':'+f.P,f.amt);add('fig:'+f.P+':'+f.id,1);}
     else if(f.k==='segue'&&f.did)add(f.did+':'+f.P,1);
     else if(f.k==='praxis'&&f.did&&f.ganho>0)add(f.did+':'+f.P,f.ganho);
     else if(f.k==='vit')add('trof:'+f.P,1);
@@ -319,6 +328,7 @@ async function revelar(did,P,n){
     if(!(ocultos[key]>0))continue;
     ocultos[key]--;
     if(m)m.cairLivro(did,P);
+    som('livro',{k:k});
     var t=q$('[data-est="'+key+'"]'), ne=t&&t.parentNode.querySelector('.n');
     if(ne){ne.textContent=(parseInt(ne.textContent,10)||0)+1;ne.classList.remove('zero');}
     await sleep(veloz?35:80);
@@ -349,13 +359,14 @@ async function tocar(lista){
     var f=lista[k], pl=S.players[f.P];
     switch(f.k){
       case 'pop': if(bloq) await balao(f); else enfileirar(f); break;
-      case 'turno': if(!S.over) await faixa(f.P===0?'Sua vez':pl.nome,'Rodada '+S.round+' · Fase de Reflexão',pl.cor,veloz?700:(f.P===0?1500:1200)); break;
+      case 'turno': if(!S.over){ som('turno'); await faixa(f.P===0?'Sua vez':pl.nome,'Rodada '+S.round+' · Fase de Reflexão',pl.cor,veloz?700:(f.P===0?1500:1200)); } break;
       case 'troca': await esperarBaloes(); await faixa((f.P===0?'Você troca ':pl.nome+' troca ')+C(f.a).nome+' por '+C(f.b).nome,'Os dois perdem as ideias e entram em ação no próximo turno',pl.cor,veloz?1500:3200); break;
-      case 'bib': if(f.P===0){var b=$('bib'); if(b){b.classList.remove('chegou');void b.offsetWidth;b.classList.add('chegou');}} if(M3())M3().chegarEstante(f.P,f.n); break;
-      case 'dar': if(M3())voo(M3().mundoEstante(f.P),M3().mundoPilha(f.P,f.id),f.n,f.P); if(bloq) await sleep(veloz?400:900); break;
-      case 'baixa': await esperarBaloes(); await palcoBaixa(f); break;
+      case 'bib': som('plim'); if(f.P===0){var b=$('bib'); if(b){b.classList.remove('chegou');void b.offsetWidth;b.classList.add('chegou');}} if(M3())M3().chegarEstante(f.P,f.n); break;
+      case 'dar': som('plim'); if(M3())voo(M3().mundoEstante(f.P),M3().mundoPilha(f.P,f.id),f.n,f.P); if(bloq) await sleep(veloz?400:900); break;
+      case 'baixa': await esperarBaloes(); som('carta'); await palcoBaixa(f); break;
       case 'debate':
         await BFX.cena('entrada',f);
+        ocultos['fig:'+f.P+':'+f.id]=0; redesenhar();   // de volta ao púlpito: agora sim, "já debateu"
         if(f.fala){ await esperarBaloes(); await palcoDebate(f); }
         else {
           var bal={P:f.P,id:f.id,tit:C(f.id).nome+' +'+f.amt,txt:'em «'+DEB[f.did].q+'»',tom:'mov'};
@@ -366,7 +377,7 @@ async function tocar(lista){
       case 'segue': if(M3())voo(M3().mundoPilha(f.P,f.id),M3().topoTorre(f.did,f.P),1,f.P); await sleep(veloz?200:420); await revelar(f.did,f.P,1); break;
       case 'vit': await esperarBaloes(); await BFX.cena('vitoria',f); break;
       case 'praxis': await esperarBaloes(); await palcoCarta(f); await BFX.cena('falacia',f); break;
-      case 'dupla': [f.a,f.b].forEach(function(id){brilhar(f.P,id,'#c2410c');}); BFX.coro('aplauso','Dupla clássica!',1300); break;
+      case 'dupla': som('dupla'); [f.a,f.b].forEach(function(id){brilhar(f.P,id,'#c2410c');}); BFX.coro('aplauso','Dupla clássica!',1300); break;
     }
   }
   if(bloq) await esperarBaloes();
@@ -379,13 +390,13 @@ function agir(fn){ cancelarSel(); fn(); aberto=null; $('ov').classList.remove('o
 // ---------- carta ampliada (só leitura) ----------
 function bigHTML(c){
   if(c.tipo==='P')return '<div class="bigP"><span class="bc">'+c.custo+'</span><h3>'+esc(c.nome)+'</h3><div class="ps">'+esc(c.sub)+'</div><p>'+esc(c.d)+'</p></div>';
-  var e=ESC[c.escola], d=BF.duplaDe(c.id);
+  var e=ESC[c.escola], ds=BF.duplasDe(c.id);
   var pills=BF.AREAS.map(function(a){return '<div class="pill" style="--c:'+AREA[a].cor+'">'+AREA[a].nome+'<b>'+c.vals[a]+'</b></div>';}).join('');
-  return '<div class="big" style="--e1:'+e.cor+';--e2:'+e.cor2+'"><div class="foto" style="background-image:url(img/'+c.id+'.jpg)"></div>'
+  return '<div class="big" style="--e1:'+e.cor+';--e2:'+e.cor2+'"><div class="foto" style="background-image:url('+figURL(c.id)+')"></div>'
     +'<span class="bc">'+c.custo+'</span><div class="head"><i>'+esc(c.pre)+'</i><b>'+esc(c.nome)+'</b></div><div class="areas">'+pills+'</div>'
     +'<div class="corpo">'
     +'<div class="conc c1"><span class="cc">–</span><b><small class="rot">Poder</small>'+esc(c.c1.t)+'</b>'+esc(c.c1.d)+'</div>'
-    +'<div class="conc info"><b>Na fase de Reflexão:</b> recebe '+BF.nI(BF.REFLEXAO[c.custo])+(d?' · <b>Dupla clássica</b> com '+esc(C(d[1]).nome)+': +'+BF.nI(BF.BONUS_DUPLA):'')+'</div>'
+    +'<div class="conc info"><b>Na fase de Reflexão:</b> recebe '+BF.nI(BF.REFLEXAO[c.custo])+ds.map(function(d){return ' · <b>Dupla clássica</b> com '+esc(C(d.par).nome)+': +'+BF.nI(BF.BONUS_DUPLA);}).join('')+'</div>'
     +'<div class="conc off"><span class="cc">'+c.c2.custo+'</span><b><small class="rot">Poder 2</small>'+esc(c.c2.t)+'</b>'+esc(c.c2.d)+'</div>'
     +'<div class="conc off"><span class="cc">'+c.c3.custo+'</span><b><small class="rot">Poder 3</small>'+esc(c.c3.t)+'</b>'+esc(c.c3.d)+'</div>'
     +(c.cit?'<div class="cit">“'+esc(c.cit)+'”<small>'+esc(c.citFonte)+'</small></div>':'')
@@ -413,9 +424,9 @@ function alvosDe(tipo,ref){
     pl.group.forEach(function(g,k){ if(BF.canGive(S,0,k)){var s=q$('[data-seat="'+k+'"] .mini'); if(s)out.push({el:s,dar:k});} });
   } else if(tipo==='troca'){
     if(!BF.podeTrocar(S,0))return out;
-    pl.group.forEach(function(g,k){ if(g.lib)return; var e=q$('[data-seat="'+k+'"] .mini'); if(!e)return;
+    pl.group.forEach(function(g,k){ if(!BF.trocavel(g))return; var e=q$('[data-seat="'+k+'"] .mini'); if(!e)return;
       out.push({el:e,dica:'Agora escolha o filósofo de um adversário.',prox:function(){
-        var r=[]; for(var o=1;o<S.players.length;o++) S.players[o].group.forEach(function(x,oi){ if(x.lib)return; var t=q$('[data-op="'+o+'"][data-oi="'+oi+'"] .mini'); if(t)r.push({el:t,fn:(function(o,oi){return function(){BF.trocar(S,0,k,o,oi);};})(o,oi)}); });
+        var r=[]; for(var o=1;o<S.players.length;o++) S.players[o].group.forEach(function(x,oi){ if(!BF.trocavel(x))return; var t=q$('[data-op="'+o+'"][data-oi="'+oi+'"] .mini'); if(t)r.push({el:t,fn:(function(o,oi){return function(){BF.trocar(S,0,k,o,oi);};})(o,oi)}); });
         return r; }});
     });
   } else if(tipo==='mao'){
@@ -490,6 +501,7 @@ function reaplicarSel(){
   if(sel.tipo==='livro'&&!sel.alvos.length&&sel.dadas){cancelarSel();return;}
   if(o)o.classList.add('selecionado');
   sel.alvos.forEach(function(a){a.el.classList.add('alvo');});
+  if(!sel.alvos.length&&!sel.erroTocado){ sel.erroTocado=true; som('erro'); }   // jogada sem alvo possível
   var t=sel.alvos.length?(sel.dicaPasso||DICAS[sel.tipo](sel.ref)):'<b>'+esc(motivoSemAlvo(sel.tipo,sel.ref))+'</b>';
   var cid=sel.tipo==='fil'?S.players[0].group[sel.ref].id:sel.tipo==='mao'?sel.ref:null;
   $('dica').innerHTML='<span class="t">'+t+'</span>'+(cid?'<button class="btn sm" data-a="lupa" data-id="'+cid+'">Ver carta</button>':'')+'<button class="btn sm" data-a="cancelar">'+(sel.tipo==='livro'&&sel.dadas?'Pronto':'Cancelar')+'</button>';
@@ -536,7 +548,7 @@ function encerrar(confirmado){
   if(exc>0){ pedirDescarte(exc); return; }
   finalizar();
 }
-function finalizar(desc){ BF.endTurn(S,desc); fechar(); if(S.turn===0)bibChegou=true; rodarIA(); }
+function finalizar(desc){ som('ampulheta'); BF.endTurn(S,desc); fechar(); if(S.turn===0)bibChegou=true; rodarIA(); }
 var descSel=[];
 function pedirDescarte(n){
   descSel=[];
@@ -545,21 +557,22 @@ function pedirDescarte(n){
   modal(h+'</div><div class="fecha"><button class="btn" data-a="fechar">Voltar</button><button class="btn pri" id="dok" data-a="dok" data-n="'+n+'" disabled>Descartar e encerrar</button></div>');
 }
 function telaFim(){
+  som('fim');
   var ord=S.players.map(function(p,i){return i;}).sort(function(a,b){return S.players[b].points-S.players[a].points;});
   var h='<h2>'+(S.vencedor<0?'Empate':S.vencedor===0?'Você venceu':S.players[S.vencedor].nome+' venceu')+'</h2><div class="placar">';
   ord.forEach(function(i){var p=S.players[i]; h+='<div class="l" style="--pc:'+p.cor+'"><b>'+p.points+'</b><div>'+esc(p.nome)+'<br><small>'+(p.won.length?p.won.map(function(d){return '«'+DEB[d].q+'» ('+DEB[d].valor+')';}).join(' · '):'nenhum debate vencido')+'</small></div></div>';});
   modal(h+'</div><div class="fecha"><button class="btn" data-a="fechar">Ver a mesa</button><button class="btn pri" data-a="inicio">Nova partida</button></div>');
 }
 function regrasHTML(){
-  return '<ul><li><b>Ideias são livros.</b> São a única moeda: pagam cartas e erguem as torres dos debates.</li>'
-    +'<li><b>Fase de Reflexão</b> (início do turno, automática): você compra uma carta, a Biblioteca recebe 3 ideias (e guarda o que sobrar de um turno para outro), e cada filósofo reflete: +1 ideia (custo 1 ou 2), +2 (custo 3 ou 4) ou +3 (custo 5). Quem tem colega da mesma escola ganha +1. Depois disparam os poderes.</li>'
-    +'<li><b>Sua vez, em qualquer ordem:</b> baixar cartas, dar ideias da Biblioteca aos filósofos e levá-los aos debates. Clique numa carta e a mesa mostra onde ela pode agir; ou arraste.</li>'
+  return '<ul><li><b>Ideias</b> são a única moeda do jogo (na mesa, cada ideia é um livro). Pagam cartas e vão para os debates.</li>'
+    +'<li><b>Início do turno</b> (automático): você vence os debates que liderava, compra uma carta, a Biblioteca recebe 3 ideias (e guarda as sobras) e cada filósofo reflete: +1 ideia (custo 1 ou 2), +2 (custo 3 ou 4) ou +3 (custo 5). Quem tem colega da mesma escola ganha +1; cada filósofo de uma dupla clássica, +1. Depois disparam os poderes. Nenhum filósofo passa de 10 ideias: o excedente se perde.</li>'
+    +'<li><b>Sua vez, em qualquer ordem:</b> baixar cartas, dar ideias da Biblioteca aos filósofos, levá-los aos debates, usar falácias e técnicas, comprar uma carta extra (2 ideias). Clique numa carta e a mesa mostra onde ela pode agir; ou arraste.</li>'
     +'<li><b>Debate:</b> o filósofo leva exatamente o valor que tem na área da pergunta. Sem esse tanto de ideias, não vai. Cada um debate uma vez por turno.</li>'
-    +'<li><b>Recém-baixado:</b> entra em ação no próximo turno.</li>'
+    +'<li><b>Recém-chegado</b> (baixado ou recebido em troca): entra em ação no próximo turno do dono.</li>'
     +'<li><b>Bibliotecário:</b> solte um filósofo na Biblioteca para nomeá-lo. Ocupa uma cadeira, não debate e produz, a cada turno, tantas ideias quanto o seu custo, direto para a Biblioteca.</li>'
-    +'<li><b>Troca</b> (5 ideias, uma vez por partida): troque um filósofo seu por um de um adversário. Os dois perdem as ideias e entram em ação no turno seguinte.</li>'
-    +'<li><b>Vencer um debate:</b> no início do seu turno, ter ideias iguais ou acima do valor e pelo menos uma a mais que cada adversário (empate não vence). O marco dourado da prateleira marca esse valor. Prateleira cheia (o dobro do valor) é vitória imediata.</li>'
-    +'<li><b>Fim:</b> 30 pontos ou 12 rodadas. Duplo clique (ou botão direito) numa carta mostra a carta ampliada.</li></ul>';
+    +'<li><b>Troca</b> (5 ideias, uma vez por partida): troque um filósofo seu por um de um adversário. Os dois perdem as ideias. Bibliotecário e Diógenes não são trocados.</li>'
+    +'<li><b>Vencer um debate:</b> no início do seu turno, ter ideias iguais ou acima do valor e pelo menos uma a mais que cada adversário (empate não vence). Quem lidera precisa esperar uma volta inteira da mesa, para que os outros possam responder. Com o dobro do valor, a vitória é imediata.</li>'
+    +'<li><b>Fim:</b> ao completar a rodada em que alguém chega a 30 pontos, ou ao fim da 12ª rodada. Mão com no máximo 5 cartas ao encerrar o turno. Duplo clique (ou botão direito) numa carta mostra a carta ampliada.</li></ul>';
 }
 function telaInicio(){
   modal('<h2>Batalhas Filosóficas</h2><p>Filósofos disputam as grandes perguntas da filosofia. Você joga contra Hipátia e Sêneca, com três escolas na pilha: Grécia Clássica, Materialistas e Empiristas, Germânicos, mais dois livres-pensadores.</p>'
@@ -581,6 +594,7 @@ function comFilosofo(id){
 // ---------- cliques ----------
 document.addEventListener('click',function(ev){
   if(Date.now()-ultimoArrasto<150)return;
+  if(ev.target.closest('button'))som('clique');
   // aviso aberto: clique fora fecha sem agir; os botões fecham ou encerram o turno
   if($('aviso').classList.contains('on')){
     var ba=ev.target.closest('[data-a]');
@@ -682,6 +696,8 @@ document.addEventListener('pointerup',soltar);
 document.addEventListener('pointercancel',soltar);
 document.addEventListener('dragstart',function(e){e.preventDefault();});
 
+$('bsom').textContent='Som: '+(window.SOM&&SOM.ligado()?'ligado':'desligado');
+$('bsom').onclick=function(){ if(!window.SOM)return; var l=SOM.ligado(!SOM.ligado()); this.textContent='Som: '+(l?'ligado':'desligado'); };
 $('bveloc').onclick=function(){veloz=!veloz;BFX.veloz=veloz;document.body.classList.toggle('veloz',veloz);this.textContent='Ritmo: '+(veloz?'rápido':'normal');};
 // carta com volume: inclina conforme o ponteiro
 var inclinada=null;
@@ -696,6 +712,6 @@ $('bdiario').onclick=$('bdiario2').onclick=function(){document.body.classList.to
 BFX.ligar(CTX);
 $('bregras').onclick=function(){modal('<h2>Como jogar</h2>'+regrasHTML()+'<p style="font-size:13.5px;color:var(--mute)">Protótipo de nível 2: valem os valores das áreas e o poder gratuito de cada filósofo. Os poderes pagos aparecem na carta ampliada, marcados como nível 3. Falas, citações e contextos históricos ainda estão por verificar.</p><div class="fecha"><button class="btn" data-a="fechar">Fechar</button></div>');};
 $('bnova').onclick=telaInicio;
-window.__bf={agir:agir,render:render,rodarIA:rodarIA,get S(){return S;},get ocupado(){return ocupado;},get emPalco(){return emPalco;},get animando(){return animando;},get sel(){return sel;}};
+window.__bf={agir:agir,render:render,rodarIA:rodarIA,redesenhar:redesenhar,verCarta:verCarta,fechar:fechar,palco:palco,palcoBaixa:palcoBaixa,get S(){return S;},get ocupado(){return ocupado;},get emPalco(){return emPalco;},get animando(){return animando;},get sel(){return sel;}};
 telaInicio();
 })();

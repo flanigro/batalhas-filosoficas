@@ -29,7 +29,7 @@ const L = {
   // placas: a do centro de frente; as dos lados giradas de leve, acompanhando a curva da arena
   placa: { x: [-4.4, 0, 4.4], z: [-1.08, -1.35, -1.08], rot: [.14, 0, -.14], w: 3.95, esp: .2, topo: .1, cab: .62, perg: 1.12, prat: .5, base: .14, lado: .14, med: .5, num: .44 },
   // púlpitos do jogador; a carta fica atrás, com "oculto" de altura escondida pelo púlpito
-  ped: { x: [-4.1, -1.37, 1.37, 4.1], z: 3.9, w: 2.3, h: 1.22, d: .62, carta: [1.86, 2.48], oculto: 1.06, fig: .82 },
+  ped: { x: [-4.1, -1.37, 1.37, 4.1], z: 3.9, w: 2.3, h: 1.22, d: .62, carta: [1.86, 2.48], oculto: 1.06, fig: .82, vis: 1.75 },   // vis: altura da figura acima do tampo
   // faixa dos adversários (fica no terraço, logo atrás da arquibancada; o z sai da arena): escala, inclinação para a
   // câmera, largura do bloco de identificação, do módulo e dos intervalos; módulo (púlpito compacto), carta atrás dele,
   // Biblioteca; alto = topo do bloco de identificação; id0 = onde ele começa (abaixo fica a Biblioteca)
@@ -46,17 +46,21 @@ const R1 = L.arena.r0 + L.arena.n * L.arena.prof;   // raio externo da arquibanc
 // a galeria dos adversários fica inteira atrás da arquibancada: nenhum degrau passa na frente dos dados
 L.banda.z = L.arena.cz - (R1 + .3) * L.arena.ez - .45;
 const USAR_BONECOS = false;                  // marionetes (Diógenes) ficam para a etapa de animação
-/* PERSONAGENS: ilustração estática de corpo inteiro (PNG com transparência) que substitui a imagem da carta atrás
-   do púlpito, enquanto não há animação. Encaixe reversível: se o arquivo faltar ou não carregar, volta a carta.
-   Para desligar tudo, USAR_PERSONAGENS = false; para tirar um filósofo, apague a linha dele.
-   Convenção da arte (lista de assets, item 1.1), em frações da altura da prancheta, medidas a partir da borda de baixo:
-     pes  = linha do chão, onde os pés se apoiam (padrão .04);
-     guia = guia do púlpito (padrão .476, que é 48% da altura da figura numa prancheta de 2200 px com figura de 2000 px).
-   Na cena, os pés ficam no chão e a guia coincide com o tampo do púlpito: a escala sai daí. */
+/* FIGURAS (provisórias, 18/11/2026): duas poses por filósofo, recortadas das pranchas do Flavio.
+   personagens/<id>-busto.webp: da cintura para cima, antebraços apoiados num púlpito invisível. Fica atrás do púlpito,
+     com a borda de baixo (os antebraços) no tampo.
+   personagens/<id>-corpo.webp: corpo inteiro. Entra no salto até o debate e volta a ser busto no púlpito.
+   FORMATO PADRÃO (18/11/2026; medidas a partir da borda de baixo, eixo do corpo no centro da largura):
+     busto: antebraços na borda de baixo; topo da cabeça (sem chapéu) 850 px acima dela (prancha de 1000 × 1000,
+            topo da cabeça em y = 150); pode ter mais largura ou altura de folga, desde que as linhas se mantenham;
+     corpo: sola dos pés 50 px acima da borda de baixo; topo da cabeça 1300 px acima dos pés (prancha de 1000 × 1500).
+   Com isso todos ficam com o topo da cabeça na mesma altura e a cabeça do mesmo tamanho nas duas poses.
+   Se o arquivo faltar ou não carregar, volta a imagem da carta. Para desligar tudo, USAR_PERSONAGENS = false. */
 const USAR_PERSONAGENS = true;
-const PERSONAGENS = {
-  nietzsche: { arq: 'personagens/nietzsche.png', pes: .04, guia: .476 },
-};
+const BUSTO_ALT = 850, CORPO_ALT = 1300, CORPO_PES = 50;   // px, ver acima
+const K_FIG = 1.95 / BUSTO_ALT;      // unidades de cena por pixel da figura, no púlpito do jogador (cabeça a 1,95 acima do tampo)
+const K_OP = K_FIG * .62;     // no púlpito compacto do adversário (unidades locais da faixa, que tem escala própria)
+const APOIO = .03;            // quanto a borda de baixo do busto desce abaixo do tampo (os braços "pousam")
 const _hash = location.hash.slice(1).split('-');   // entradas de teste: #medir, #doze (o mesmo personagem nas doze vagas)
 const TESTE_DOZE = _hash.indexOf('doze') >= 0, MEDIR = _hash.indexOf('medir') >= 0;
 
@@ -107,20 +111,42 @@ function retrato(id, cb) {
   if (!o) { o = _img[id] = { img: new Image(), ok: false, cbs: [] }; o.img.onload = () => { o.ok = true; o.cbs.splice(0).forEach(f => f()); }; o.img.src = 'img/' + id + '.jpg'; }
   if (o.ok) return o.img; if (cb) o.cbs.push(cb); return null;
 }
-// ilustração do personagem (PNG): carrega uma vez; cb roda quando chega. null = não há ou não carregou
+// figura do filósofo (pose 'busto' ou 'corpo'): carrega uma vez; cb roda quando chega. null = não há ou não carregou
 const _pers = {};
-function personagem(id, cb) {
-  const def = USAR_PERSONAGENS && PERSONAGENS[id]; if (!def) return null;
-  let o = _pers[id];
+function personagem(id, pose, cb) {
+  if (!USAR_PERSONAGENS || !id) return null;
+  const ch = id + '-' + pose; let o = _pers[ch];
   if (!o) {
-    o = _pers[id] = { ok: false, falhou: false, cbs: [], def };
+    o = _pers[ch] = { ok: false, falhou: false, cbs: [] };
     const img = new Image();
     img.onload = () => { const t = new THREE.Texture(img); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; t.needsUpdate = true; registrar(t);
-      o.tex = t; o.asp = img.width / img.height; o.ok = true; o.cbs.splice(0).forEach(f => f()); };
+      o.tex = t; o.img = img; o.w = img.width; o.h = img.height; o.prof = new THREE.MeshDepthMaterial({ depthPacking: THREE.RGBADepthPacking, map: t, alphaTest: .5 });
+      o.ok = true; o.cbs.splice(0).forEach(f => f()); };
     img.onerror = () => { o.falhou = true; o.cbs.splice(0); };
-    img.src = def.arq;
+    img.src = 'personagens/' + ch + '.webp';
   }
   if (o.ok) return o; if (cb && !o.falhou) o.cbs.push(cb); return null;
+}
+/* versão esmaecida (recém-chegado): opaca, acinzentada e misturada com branco, sem deixar ver o fundo.
+   Feita uma vez por figura, quando precisa. */
+function palida(o) {
+  if (o.pal) return o.pal;
+  const c = tela(o.w, o.h), x = c.getContext('2d'); x.drawImage(o.img, 0, 0);
+  const d = x.getImageData(0, 0, o.w, o.h), p = d.data, cinza = .6, branco = .5;
+  for (let i = 0; i < p.length; i += 4) {
+    if (!p[i + 3]) continue; const l = .3 * p[i] + .59 * p[i + 1] + .11 * p[i + 2];
+    for (let j = 0; j < 3; j++) { const v = p[i + j] * (1 - cinza) + l * cinza; p[i + j] = v * (1 - branco) + 255 * branco; }
+  }
+  x.putImageData(d, 0, 0);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; registrar(t);
+  return o.pal = t;
+}
+// plano com a origem embaixo, no centro, do tamanho da figura (k = unidades por pixel)
+// esp: espelhada (as figuras da metade direita da mesa olham para o centro; a arte original olha para a direita)
+function geoFig(o, k, esp, pose) {
+  const w = o.w * k, h = o.h * k, g = new THREE.PlaneGeometry(w, h); g.translate(0, h / 2 - (pose === 'corpo' ? CORPO_PES * k : 0), 0);   // origem: base do busto ou sola dos pés
+  if (esp) { const uv = g.attributes.uv; for (let i = 0; i < uv.count; i++) uv.setX(i, 1 - uv.getX(i)); uv.needsUpdate = true; }
+  return g;
 }
 /* O filósofo atrás do púlpito: a imagem da carta só com o personagem e o custo (sem os quatro valores,
    que já estão no púlpito). O púlpito esconde a parte de baixo; ficam à vista cabeça, ombros e peito. */
@@ -234,6 +260,32 @@ function corSobre(hex) {
   const c = new THREE.Color(hex), lin = v => v, L = .2126 * lin(c.r) + .7152 * lin(c.g) + .0722 * lin(c.b);   // THREE.Color já guarda em linear
   return (L + .05) / .05 > 1.05 / (L + .05) ? '#17130f' : '#ffffff';
 }
+/* faixa do nome na cor da escola, com a etiqueta do custo à esquerda; moldura da face na cor da escola.
+   Sem filósofo: faixa escura neutra. */
+function faixaNome(x, W, H, fx, id, esp, pxMax, pxMin) {
+  if (!id) { x.fillStyle = '#26231f'; x.fillRect(0, 0, W, fx); x.fillStyle = 'rgba(255,255,255,.18)'; x.fillRect(0, fx, W, 3); return; }
+  const ca = BF.C(id), e = BF.ESCOLA[ca.escola], nome = ca.nome.toUpperCase();
+  const fundo = '#' + new THREE.Color(e.cor2).lerp(new THREE.Color(e.cor), .22).getHexString();   // tom escuro da escola: o nome branco se lê bem
+  x.fillStyle = fundo; x.fillRect(0, 0, W, fx);
+  x.fillStyle = 'rgba(0,0,0,.25)'; x.fillRect(0, fx - 4, W, 4); x.fillStyle = 'rgba(255,255,255,.22)'; x.fillRect(0, 0, W, 3);
+  // etiqueta do custo: quadrado claro, número escuro
+  const cs = fx * .74, cx0 = fx * .16, cy0 = (fx - cs) / 2;
+  x.fillStyle = 'rgba(20,15,10,.3)'; x.beginPath(); x.roundRect(cx0 + 2, cy0 + 3, cs, cs, cs * .2); x.fill();
+  x.fillStyle = '#fffaf0'; x.beginPath(); x.roundRect(cx0, cy0, cs, cs, cs * .2); x.fill(); x.lineWidth = Math.max(2, cs * .07); x.strokeStyle = e.cor2; x.stroke();
+  x.fillStyle = '#23201a'; x.font = FONTE(900, Math.round(cs * .78), true); x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(String(ca.custo), cx0 + cs / 2, cy0 + cs / 2 + cs * .04);
+  // nome, centrado no espaço que sobra
+  const n0 = cx0 + cs + fx * .12, larg = W - n0 - fx * .2;
+  try { x.letterSpacing = esp + 'px'; } catch (e2) {}
+  caber(x, nome, larg, 800, pxMax, pxMin, true);   // sem serifa, em negrito, com sombra
+  x.shadowColor = 'rgba(0,0,0,.75)'; x.shadowBlur = Math.max(3, fx * .08); x.shadowOffsetY = Math.max(2, fx * .04);
+  x.fillStyle = '#ffffff'; x.fillText(nome, n0 + larg / 2, fx * .6);   // um pouco abaixo do meio: os acentos não somem sob a borda do tampo
+  x.shadowColor = 'transparent'; x.shadowBlur = 0; x.shadowOffsetY = 0; try { x.letterSpacing = '0px'; } catch (e2) {}
+}
+function molduraEscola(x, W, H, id, lw) {
+  if (!id) return; const e = BF.ESCOLA[BF.C(id).escola];
+  x.lineWidth = lw; x.strokeStyle = e.cor; x.strokeRect(lw / 2, lw / 2, W - lw, H - lw);
+  x.lineWidth = 2; x.strokeStyle = 'rgba(30,28,25,.5)'; x.strokeRect(lw + 1, lw + 1, W - 2 * lw - 2, H - 2 * lw - 2);
+}
 // número de atributo: algarismo grosso, com contorno fino para não se perder no fundo
 function numero(x, txt, cx, cy, px, cor, contornoCor) {
   x.font = FONTE(900, px, true); x.textAlign = 'center'; x.textBaseline = 'middle';
@@ -245,14 +297,10 @@ function numero(x, txt, cx, cy, px, cor, contornoCor) {
 function pintarPedestal(seat) {
   const c = seat.tela, x = c.getContext('2d'), W = c.width, H = c.height, fx = Math.round(H * .2);
   faceMarmore(x, W, H, seat.k * 13 + 5);
-  x.fillStyle = '#26231f'; x.fillRect(0, 0, W, fx); x.fillStyle = 'rgba(255,255,255,.18)'; x.fillRect(0, fx, W, 3);
+  faixaNome(x, W, H, fx, seat.id, 1.5, Math.round(fx * .62), 26);
   if (seat.id) {
-    const ca = BF.C(seat.id), nome = ca.nome.toUpperCase();
-    x.textAlign = 'center'; x.textBaseline = 'middle';
-    try { x.letterSpacing = '3px'; } catch (e) {}
-    caber(x, nome, W - 48, 900, Math.round(fx * .66), 26);
-    x.fillStyle = '#f4efe4'; x.fillText(nome, W / 2, fx * .58); try { x.letterSpacing = '0px'; } catch (e) {}
-    const gx = 16, gy = 12, bw = (W - 3 * gx) / 2, bh = (H - fx - 3 - 3 * gy) / 2;
+    const ca = BF.C(seat.id);
+    const gx = 22, gy = 12, bw = (W - 3 * gx) / 2, bh = (H - fx - 3 - 3 * gy - 6) / 2;
     BF.AREAS.forEach((a, i) => {
       const ar = BF.AREA[a], bx = gx + (i % 2) * (bw + gx), by = fx + 3 + gy + Math.floor(i / 2) * (bh + gy), on = seat.on && seat.on[a];
       x.fillStyle = 'rgba(40,38,34,.28)'; x.beginPath(); x.roundRect(bx - 3, by + 5, bw, bh, 14); x.fill();
@@ -262,20 +310,17 @@ function pintarPedestal(seat) {
       numero(x, String(ca.vals[a]), bx + bw / 2, by + bh / 2 + 3, bh * .9, '#ffffff', 'rgba(20,18,15,.75)');
     });
   }
+  molduraEscola(x, W, H, seat.id, 12);
   seat.tex.needsUpdate = true;
 }
 // face do púlpito compacto do adversário: nome em cima, os quatro atributos em fila, grandes
 function pintarModulo(s) {
   const c = s.tela, x = c.getContext('2d'), W = c.width, H = c.height, fx = Math.round(H * .34);
   faceMarmore(x, W, H, s.k * 17 + s.P * 5);
-  x.fillStyle = '#26231f'; x.fillRect(0, 0, W, fx); x.fillStyle = 'rgba(255,255,255,.18)'; x.fillRect(0, fx, W, 3);
+  faixaNome(x, W, H, fx, s.id, 1, Math.round(fx * .64), 22);
   if (s.id) {
-    const ca = BF.C(s.id), nome = ca.nome.toUpperCase();
-    x.textAlign = 'center'; x.textBaseline = 'middle';
-    try { x.letterSpacing = '2px'; } catch (e) {}
-    caber(x, nome, W - 28, 900, Math.round(fx * .74), 24);
-    x.fillStyle = '#f4efe4'; x.fillText(nome, W / 2, fx * .56); try { x.letterSpacing = '0px'; } catch (e) {}
-    const g = 9, bw = (W - 5 * g) / 4, bh = H - fx - 3 - 2 * g;
+    const ca = BF.C(s.id);
+    const g = 12, bw = (W - 5 * g) / 4, bh = H - fx - 3 - 2 * g - 4;
     BF.AREAS.forEach((a, i) => {
       const bx = g + i * (bw + g), by = fx + 3 + g;
       x.fillStyle = 'rgba(40,38,34,.28)'; x.beginPath(); x.roundRect(bx - 2, by + 4, bw, bh, 10); x.fill();
@@ -284,6 +329,7 @@ function pintarModulo(s) {
       numero(x, String(ca.vals[a]), bx + bw / 2, by + bh / 2 + 3, Math.min(bh * .9, bw * 1.05), '#ffffff', 'rgba(20,18,15,.75)');
     });
   }
+  molduraEscola(x, W, H, s.id, 9);
   s.tex.needsUpdate = true;
 }
 
@@ -574,18 +620,25 @@ function sync(estado, ocultos) {
   S.players.forEach((pl, p) => { if (R.bibs[p]) ajustarBib(R.bibs[p], pl.library); });
   if (alturaRodape() !== cam.rod) enquadrar(); else posicionar(true);
 }
-// lugar de repouso da figura: o da carta, ou, com personagem, os pés no chão logo atrás do púlpito
+// lugar de repouso da figura: o da carta ou, com figura nova, o busto com os antebraços no tampo
 function baseDe(s) { return s.baseP || s.base; }
-// veste a figura com o personagem (PNG) ou com a imagem da carta
+// veste a figura com o busto (atrás do púlpito) ou com a imagem da carta; deixa pronto o corpo inteiro para o salto
 function vestir(s, id) {
-  const pid = TESTE_DOZE ? 'nietzsche' : id, pe = id ? personagem(pid, () => { s.vestido = null; ocupar(s, s.g0, s.P); }) : null;
-  const chave = pe ? 'p:' + pid : 'c:' + id; if (s.vestido === chave) return; s.vestido = chave;
-  if (pe) {
-    const d = pe.def, h = s.topo / (d.guia - d.pes), w = h * pe.asp, geo = new THREE.PlaneGeometry(w, h); geo.translate(0, h / 2, 0);
-    s.fig.geometry = geo; s.matFig.map = pe.tex; s.matFig.alphaTest = .5; s.matFig.needsUpdate = true;
-    s.baseP = new V3(s.base.x, -d.pes * h, s.base.z); s.ajusteY = -d.pes * h;
+  const pid = TESTE_DOZE && id ? 'nietzsche' : id, de_novo = () => { s.vestido = null; ocupar(s, s.g0, s.P); };
+  const bu = personagem(pid, 'busto', de_novo), co = personagem(pid, 'corpo', de_novo);
+  const chave = bu ? 'b:' + pid + (co ? '+c' : '') : 'c:' + id; if (s.vestido === chave || s.fora) return; s.vestido = chave;
+  const k = s.em === scene ? K_FIG : K_OP, esp = s.x > 0;   // metade direita: espelhada, olhando para o centro
+  [s.busto, s.corpo].forEach(x => { if (x) x.geo.dispose(); });
+  if (bu) {
+    s.fig.geometry = geoFig(bu, k, esp, 'busto'); s.matFig.map = bu.tex; s.matFig.alphaTest = .5; s.matFig.needsUpdate = true; s.fig.customDepthMaterial = bu.prof;
+    s.baseP = new V3(s.base.x, s.topo - APOIO, s.base.z); s.ajusteY = 0;
+    s.busto = { geo: s.fig.geometry, o: bu };
+    // corpo inteiro: mesma escala; a cabeça começa onde estava a do busto (os pés ficam escondidos atrás do púlpito)
+    if (co) { s.corpo = { geo: geoFig(co, k, esp, 'corpo'), o: co }; s.baseCorpo = new V3(s.base.x, s.baseP.y + (BUSTO_ALT - CORPO_ALT) * k, s.base.z); }
+    else { s.corpo = null; s.baseCorpo = null; }
   } else {
-    s.fig.geometry = s.geoCarta; s.matFig.map = id ? texFig(id) : null; s.matFig.alphaTest = 0; s.matFig.needsUpdate = true; s.baseP = null; s.ajusteY = 0;
+    s.fig.geometry = s.geoCarta; s.matFig.map = id ? texFig(id) : null; s.matFig.alphaTest = 0; s.matFig.needsUpdate = true; s.fig.customDepthMaterial = undefined;
+    s.baseP = null; s.ajusteY = 0; s.busto = null; s.corpo = null; s.baseCorpo = null;
   }
 }
 function ocupar(s, g, P) {
@@ -594,8 +647,12 @@ function ocupar(s, g, P) {
   vestir(s, id);
   s.boneco = !!(USAR_BONECOS && id && P === 0 && window.BF_BONECOS && window.BF_BONECOS[id]);
   if (!s.fora) { s.fig.visible = !!id && !s.boneco; s.fig.position.copy(baseDe(s)); s.fig.rotation.set(s.rx, 0, 0); s.fig.scale.setScalar(1); }
-  if (id) { const inerte = !BF.ativo(g); s.matFig.color.set(inerte ? '#b9bccb' : g.acted ? '#a8a49c' : '#ffffff'); s.matFig.opacity = inerte ? .6 : 1;
-    if (s.matFig.transparent !== inerte) { s.matFig.transparent = inerte; s.matFig.needsUpdate = true; } }
+  // recém-chegado: esmaecido sobre branco, opaco (nunca translúcido); já debateu: mais escuro
+  if (id) { const inerte = !BF.ativo(g);
+    if (s.busto && !s.fora) { const m = inerte ? palida(s.busto.o) : s.busto.o.tex; if (s.matFig.map !== m) { s.matFig.map = m; s.matFig.needsUpdate = true; } }
+    const pulando = (OC['fig:' + P + ':' + id] > 0) || S.fx.some(f => f.k === 'debate' && f.P === P && f.id === id);   // só escurece depois do salto
+    s.matFig.color.set(inerte ? (s.busto ? '#ffffff' : '#d4d6dd') : g.acted && !pulando ? '#a8a49c' : '#ffffff'); s.matFig.opacity = 1;
+    if (s.matFig.transparent) { s.matFig.transparent = false; s.matFig.needsUpdate = true; } }
   ajustarPilha(s, g && !g.lib ? g.ideas : 0, P);
 }
 
@@ -670,15 +727,15 @@ function ancora(chave) {
     case 'lv': case 'lt': { const s = R.slots[+a[1]]; if (!s.fil || !s.geo) return null; const v = s.v, xx = a[0] === 'lv' ? (s.fil.x(v - 1) + s.fil.x(v)) / 2 : s.fil.x(2 * v - 1) + s.fil.vaga / 2;
       return ptObj(s.g, s.geo.xb0 + xx, s.geo.linhas[0].yT + .02, P.esp / 2 + .02); }
     case 'vago': { const s = R.slots[+a[1]]; return ptObj(s.g, 0, 2.2, .2); }
-    case 'seat': { const x = pd.x[+a[1]]; return retCaixa(x - pd.w / 2, 0, pd.z - pd.d / 2, x + pd.w / 2, PED_H + pd.carta[1] - pd.oculto, pd.z + pd.d / 2); }
-    case 'fig': { const s = R.meus[+a[2]]; return retFig(s.base, 1.3 * pd.fig, 1.5 * pd.fig); }
+    case 'seat': { const x = pd.x[+a[1]]; return retCaixa(x - pd.w / 2, 0, pd.z - pd.d / 2, x + pd.w / 2, PED_H + pd.vis, pd.z + pd.d / 2); }
+    case 'fig': { const s = R.meus[+a[2]]; return retFig(baseDe(s), 1.3 * pd.fig, 1.5 * pd.fig); }
     case 'pilha': { const s = +a[1] === 0 ? R.meus[+a[2]] : R.ops[+a[1]][+a[2]]; return ptObj(s.em === scene ? null : s.em, s.cont.x, s.cont.y, s.cont.z); }
     case 'op': { const s = R.ops[+a[1]][+a[2]]; return retCaixa(s.x - M.w / 2, 0, -M.d / 2, s.x + M.w / 2, M.h - B.oculto + B.carta[1], M.d / 2, R.bandaI); }
     case 'ident': { const id = R.ident[+a[1]]; return retCaixa(id.x - B.id / 2, B.id0, .1, id.x + B.id / 2, B.alto, .1, R.bandaI); }
     case 'bibop': { const id = R.ident[+a[1]]; return ptObj(R.bandaI, id.x + B.bib / 2 - .08, .62, .12); }
     case 'grupo': return retCaixa(pd.x[0] - pd.w / 2, 0, pd.z - pd.d / 2, pd.x[3] + pd.w / 2, PED_H + .3, pd.z + pd.d / 2);
     case 'faixa': {   // meio da faixa livre, entre o pódio da placa do centro e o alto das cartas dos púlpitos (dica da seleção)
-      const s0 = R.slots[1], pA = ptObj(s0.g, 0, -L.podio, .75), pB = tela2(new V3(0, PED_H + pd.carta[1] - pd.oculto, pd.z - pd.d / 2 - .09));
+      const s0 = R.slots[1], pA = ptObj(s0.g, 0, -L.podio, .75), pB = tela2(new V3(0, PED_H + pd.vis, pd.z - pd.d / 2 - .09));
       return { x: innerWidth / 2, y: (pA.y + pB.y) / 2 }; }
     case 'coro': { const p = ptObj(R.banda, 0, -.2, 1.2); p.y = Math.max(p.y, 64); return p; }
   }
@@ -787,7 +844,7 @@ function medirQuadro(agora) {
 function figura(P, id) {
   const lista = P === 0 ? R.meus : R.ops[P]; if (!lista) return null;
   const s = lista.find(x => x.id === id); if (!s) return null;
-  const casa = s.em === scene ? baseDe(s).clone() : s.em.localToWorld(baseDe(s).clone());
+  const lar = s.corpo ? s.baseCorpo : baseDe(s), casa = s.em === scene ? lar.clone() : s.em.localToWorld(lar.clone());
   // ajusteY: quanto descer o ponto de pouso para os pés (e não a borda da prancheta) tocarem o chão
   const k = s.em === scene ? 1 : L.banda.esc;
   return { s, boneco: s.boneco, obj: s.boneco ? s.ancora : s.fig, casa, esc: s.esc, ajusteY: (s.ajusteY || 0) * k };
@@ -797,7 +854,7 @@ function arco(obj, para, ms, alto, ease) {
   return tween(ms, k => { obj.position.lerpVectors(de, para, k); obj.position.y += Math.sin(k * Math.PI) * alto; }, ease || E.io);
 }
 function andar(obj, para, ms) { const de = obj.position.clone(); return tween(ms, k => { obj.position.lerpVectors(de, para, k); }, E.lin); }
-function tranco(obj, ms) { return tween(ms || 260, k => { const s = 1 + Math.sin(k * Math.PI) * .16 * (1 - k); obj.scale.set(1 + (s - 1) * 1.2, 1 - (s - 1) * 1.6, 1); }, E.lin).then(() => obj.scale.setScalar(1)); }
+function tranco(obj, ms) { const e0 = obj.scale.x; return tween(ms || 260, k => { const s = 1 + Math.sin(k * Math.PI) * .16 * (1 - k); obj.scale.set(e0 * (1 + (s - 1) * 1.2), e0 * (1 - (s - 1) * 1.6), e0); }, E.lin).then(() => obj.scale.setScalar(e0)); }
 function slotDe(did) { return R.slots.find(s => s.did === did) || null; }
 // onde cai o próximo livro do jogador P na prateleira do debate (coordenadas do mundo)
 function topoTorre(did, P) {
@@ -890,11 +947,25 @@ function brilhar(P, id, cor) {
   tween(T(1100), k => { ms.forEach(m => { m.emissive.copy(c); m.emissiveIntensity = Math.sin(k * Math.PI) * .6; }); }, E.lin).then(() => ms.forEach(m => { m.emissiveIntensity = 0; }));
 }
 function qualidade(q) { renderer.setPixelRatio(q.pixel || 1); renderer.shadowMap.enabled = q.sombras !== false; scene.traverse(o => { if (o.material) [].concat(o.material).forEach(m => { m.needsUpdate = true; }); }); enquadrar(); }
-// a carta sai de trás do púlpito (salto até o debate) e volta: enquanto está fora, fica solta na cena
+// a figura sai de trás do púlpito (salto até o debate) e volta: enquanto está fora, fica solta na cena.
+// Com figura nova, sai de corpo inteiro (na escala do jogador, endireitada) e volta a ser busto no púlpito.
 function fora(P, id, sim) {
   const f = figura(P, id); if (!f) return; const s = f.s; s.fora = sim;
-  if (sim) { if (s.fig.parent !== scene) scene.attach(s.fig); }
-  else { if (s.fig.parent !== s.em) s.em.attach(s.fig); s.fig.position.copy(baseDe(s)); s.fig.rotation.set(s.rx, 0, 0); s.fig.scale.setScalar(1); }
+  if (sim) {
+    if (s.corpo) { s.fig.geometry = s.corpo.geo; s.matFig.map = s.corpo.o.tex; s.fig.customDepthMaterial = s.corpo.o.prof; s.matFig.needsUpdate = true; s.fig.position.copy(s.baseCorpo); }
+    if (s.fig.parent !== scene) scene.attach(s.fig);
+    s.esc0 = s.fig.scale.x; s.rot0 = s.fig.rotation.x;
+    if (s.corpo && s.em !== scene) { const e0 = s.esc0, e1 = K_FIG / K_OP, r0 = s.rot0; tween(T(560), k => { s.fig.scale.setScalar(e0 + (e1 - e0) * k); s.fig.rotation.x = r0 * (1 - k); }, E.io); }
+  } else {
+    if (s.fig.parent !== s.em) s.em.attach(s.fig);
+    if (s.busto) { s.fig.geometry = s.busto.geo; s.matFig.map = s.busto.o.tex; s.fig.customDepthMaterial = s.busto.o.prof; s.matFig.needsUpdate = true; }
+    s.fig.position.copy(baseDe(s)); s.fig.rotation.set(s.rx, 0, 0); s.fig.scale.setScalar(1);
+  }
+}
+// antes de voltar ao púlpito, a figura do adversário retoma a escala e a inclinação da faixa de cima
+function encolher(P, id, ms) {
+  const f = figura(P, id); if (!f || !f.s.fora || f.s.em === scene || !f.s.corpo) return Promise.resolve(); const s = f.s, e0 = s.fig.scale.x, r0 = s.fig.rotation.x;
+  return tween(ms, k => { s.fig.scale.setScalar(e0 + (s.esc0 - e0) * k); s.fig.rotation.x = r0 + (s.rot0 - r0) * k; }, E.io);
 }
 
 // ---------- partida ----------
@@ -946,7 +1017,7 @@ function iniciar() {
 }
 
 const API = {
-  pronto: false, sync, posicionar, foco, desfoco, tremer, tela: tela2, retFig, L, E, tween, mundoDeTela,
+  pronto: false, sync, posicionar, foco, desfoco, tremer, tela: tela2, retFig, L, E, tween, mundoDeTela, encolher,
   figura, arco, andar, tranco, fora, brilhar, cairLivro, derrubar, livroVoa, papiro, espantalho, particulas, chuva, coro, chegarEstante,
   topoTorre, peTorre, mundoEstante, mundoPilha, slotDe, qualidade,
   palha: pos => particulas(pos, 14, MAT.palha), V3,
