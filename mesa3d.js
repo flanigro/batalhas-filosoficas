@@ -650,7 +650,8 @@ function ocupar(s, g, P) {
   // recém-chegado: esmaecido sobre branco, opaco (nunca translúcido); já debateu: mais escuro
   if (id) { const inerte = !BF.ativo(g);
     if (s.busto && !s.fora) { const m = inerte ? palida(s.busto.o) : s.busto.o.tex; if (s.matFig.map !== m) { s.matFig.map = m; s.matFig.needsUpdate = true; } }
-    s.matFig.color.set(inerte ? (s.busto ? '#ffffff' : '#d4d6dd') : g.acted ? '#a8a49c' : '#ffffff'); s.matFig.opacity = 1;
+    const pulando = (OC['fig:' + P + ':' + id] > 0) || S.fx.some(f => f.k === 'debate' && f.P === P && f.id === id);   // só escurece depois do salto
+    s.matFig.color.set(inerte ? (s.busto ? '#ffffff' : '#d4d6dd') : g.acted && !pulando ? '#a8a49c' : '#ffffff'); s.matFig.opacity = 1;
     if (s.matFig.transparent) { s.matFig.transparent = false; s.matFig.needsUpdate = true; } }
   ajustarPilha(s, g && !g.lib ? g.ideas : 0, P);
 }

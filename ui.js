@@ -55,11 +55,14 @@ function miniF(g,c,attrs,cls,st){
 }
 // âncora de um filósofo na mesa: a figura é da cena 3D; aqui ficam o alvo de clique, a etiqueta de estado
 // e, se o filósofo tem marionete, o encaixe .fig com o boneco (posto sobre o pedestal pela cena)
+// filósofo que já foi ao debate, mas cuja cena de entrada ainda não terminou: só fica "já debateu" depois do salto
+function debatendo(P,id){ return (ocultos['fig:'+P+':'+id]>0)||S.fx.some(function(f){return f.k==='debate'&&f.P===P&&f.id===id;}); }
 function ancF(g,c,attrs,anc,figAnc){
+  var P=anc.indexOf('op:')===0?+anc.split(':')[1]:0, feito=g.acted&&!debatendo(P,c.id);
   var inerte=!BF.ativo(g), bon=USAR_BONECOS&&figAnc&&window.BF_BONECOS&&BF_BONECOS[c.id];
-  return '<button class="mini F '+(bon?'boneco ':'')+(inerte?'novo ':'')+(g.acted?'acted ':'')+'" data-anc="'+anc+'" data-cid="'+c.id+'" '+attrs+' aria-label="'+esc(c.nome)+'" title="'+esc(c.nome)+'">'
+  return '<button class="mini F '+(bon?'boneco ':'')+(inerte?'novo ':'')+(feito?'acted ':'')+'" data-anc="'+anc+'" data-cid="'+c.id+'" '+attrs+' aria-label="'+esc(c.nome)+'" title="'+esc(c.nome)+'">'
     +(bon?'<div class="fig" data-anc="'+figAnc+'">'+BF_BONECOS[c.id].svg+'</div>':'')
-    +(g.lib?'<div class="sel libr">Bibliotecário</div>':inerte?'<div class="sel">chegando</div>':g.acted?'<div class="sel">já debateu</div>':'')+'</button>';
+    +(g.lib?'<div class="sel libr">Bibliotecário</div>':inerte?'<div class="sel">chegando</div>':feito?'<div class="sel">já debateu</div>':'')+'</button>';
 }
 function miniP(c,attrs,cls){
   return '<button class="mini P '+(cls||'')+'" data-cid="'+c.id+'" '+attrs+' aria-label="'+esc(c.nome)+'"><span class="custo">'+c.custo+'</span>'
@@ -308,7 +311,7 @@ function prepararOcultos(lista){
   var n=0;
   function add(k,q){ if(q>0){ocultos[k]=(ocultos[k]||0)+q;n++;} }
   lista.forEach(function(f){
-    if(f.k==='debate')add(f.did+':'+f.P,f.amt);
+    if(f.k==='debate'){add(f.did+':'+f.P,f.amt);add('fig:'+f.P+':'+f.id,1);}
     else if(f.k==='segue'&&f.did)add(f.did+':'+f.P,1);
     else if(f.k==='praxis'&&f.did&&f.ganho>0)add(f.did+':'+f.P,f.ganho);
     else if(f.k==='vit')add('trof:'+f.P,1);
@@ -358,6 +361,7 @@ async function tocar(lista){
       case 'baixa': await esperarBaloes(); await palcoBaixa(f); break;
       case 'debate':
         await BFX.cena('entrada',f);
+        ocultos['fig:'+f.P+':'+f.id]=0; redesenhar();   // de volta ao púlpito: agora sim, "já debateu"
         if(f.fala){ await esperarBaloes(); await palcoDebate(f); }
         else {
           var bal={P:f.P,id:f.id,tit:C(f.id).nome+' +'+f.amt,txt:'em «'+DEB[f.did].q+'»',tom:'mov'};
