@@ -123,7 +123,12 @@ function personagem(id, pose, cb) {
   if (o.ok) return o; if (cb && !o.falhou) o.cbs.push(cb); return null;
 }
 // plano com a origem embaixo, no centro, do tamanho da figura (k = unidades por pixel)
-function geoFig(o, k) { const w = o.w * k, h = o.h * k, g = new THREE.PlaneGeometry(w, h); g.translate(0, h / 2, 0); return g; }
+// esp: espelhada (as figuras da metade direita da mesa olham para o centro; a arte original olha para a direita)
+function geoFig(o, k, esp) {
+  const w = o.w * k, h = o.h * k, g = new THREE.PlaneGeometry(w, h); g.translate(0, h / 2, 0);
+  if (esp) { const uv = g.attributes.uv; for (let i = 0; i < uv.count; i++) uv.setX(i, 1 - uv.getX(i)); uv.needsUpdate = true; }
+  return g;
+}
 /* O filósofo atrás do púlpito: a imagem da carta só com o personagem e o custo (sem os quatro valores,
    que já estão no púlpito). O púlpito esconde a parte de baixo; ficam à vista cabeça, ombros e peito. */
 const _fig = {};
@@ -241,7 +246,8 @@ function corSobre(hex) {
 function faixaNome(x, W, H, fx, id, esp, pxMax, pxMin) {
   if (!id) { x.fillStyle = '#26231f'; x.fillRect(0, 0, W, fx); x.fillStyle = 'rgba(255,255,255,.18)'; x.fillRect(0, fx, W, 3); return; }
   const ca = BF.C(id), e = BF.ESCOLA[ca.escola], nome = ca.nome.toUpperCase();
-  x.fillStyle = e.cor; x.fillRect(0, 0, W, fx);
+  const fundo = '#' + new THREE.Color(e.cor2).lerp(new THREE.Color(e.cor), .22).getHexString();   // tom escuro da escola: o nome branco se lê bem
+  x.fillStyle = fundo; x.fillRect(0, 0, W, fx);
   x.fillStyle = 'rgba(0,0,0,.25)'; x.fillRect(0, fx - 4, W, 4); x.fillStyle = 'rgba(255,255,255,.22)'; x.fillRect(0, 0, W, 3);
   // etiqueta do custo: quadrado claro, número escuro
   const cs = fx * .74, cx0 = fx * .16, cy0 = (fx - cs) / 2;
@@ -251,7 +257,10 @@ function faixaNome(x, W, H, fx, id, esp, pxMax, pxMin) {
   // nome, centrado no espaço que sobra
   const n0 = cx0 + cs + fx * .12, larg = W - n0 - fx * .2;
   try { x.letterSpacing = esp + 'px'; } catch (e2) {}
-  caber(x, nome, larg, 900, pxMax, pxMin); x.lineJoin = 'round'; x.lineWidth = Math.max(3, fx * .07); x.strokeStyle = 'rgba(20,16,12,.7)'; x.strokeText(nome, n0 + larg / 2, fx * .56); x.fillStyle = '#ffffff'; x.fillText(nome, n0 + larg / 2, fx * .56); try { x.letterSpacing = '0px'; } catch (e2) {}
+  caber(x, nome, larg, 800, pxMax, pxMin, true);   // sem serifa, em negrito, com sombra
+  x.shadowColor = 'rgba(0,0,0,.75)'; x.shadowBlur = Math.max(3, fx * .08); x.shadowOffsetY = Math.max(2, fx * .04);
+  x.fillStyle = '#ffffff'; x.fillText(nome, n0 + larg / 2, fx * .6);   // um pouco abaixo do meio: os acentos não somem sob a borda do tampo
+  x.shadowColor = 'transparent'; x.shadowBlur = 0; x.shadowOffsetY = 0; try { x.letterSpacing = '0px'; } catch (e2) {}
 }
 function molduraEscola(x, W, H, id, lw) {
   if (!id) return; const e = BF.ESCOLA[BF.C(id).escola];
@@ -269,7 +278,7 @@ function numero(x, txt, cx, cy, px, cor, contornoCor) {
 function pintarPedestal(seat) {
   const c = seat.tela, x = c.getContext('2d'), W = c.width, H = c.height, fx = Math.round(H * .2);
   faceMarmore(x, W, H, seat.k * 13 + 5);
-  faixaNome(x, W, H, fx, seat.id, 3, Math.round(fx * .66), 26);
+  faixaNome(x, W, H, fx, seat.id, 1.5, Math.round(fx * .62), 26);
   if (seat.id) {
     const ca = BF.C(seat.id);
     const gx = 22, gy = 12, bw = (W - 3 * gx) / 2, bh = (H - fx - 3 - 3 * gy - 6) / 2;
@@ -289,7 +298,7 @@ function pintarPedestal(seat) {
 function pintarModulo(s) {
   const c = s.tela, x = c.getContext('2d'), W = c.width, H = c.height, fx = Math.round(H * .34);
   faceMarmore(x, W, H, s.k * 17 + s.P * 5);
-  faixaNome(x, W, H, fx, s.id, 2, Math.round(fx * .7), 22);
+  faixaNome(x, W, H, fx, s.id, 1, Math.round(fx * .64), 22);
   if (s.id) {
     const ca = BF.C(s.id);
     const g = 12, bw = (W - 5 * g) / 4, bh = H - fx - 3 - 2 * g - 4;
@@ -599,14 +608,14 @@ function vestir(s, id) {
   const pid = TESTE_DOZE && id ? 'nietzsche' : id, de_novo = () => { s.vestido = null; ocupar(s, s.g0, s.P); };
   const bu = personagem(pid, 'busto', de_novo), co = personagem(pid, 'corpo', de_novo);
   const chave = bu ? 'b:' + pid + (co ? '+c' : '') : 'c:' + id; if (s.vestido === chave || s.fora) return; s.vestido = chave;
-  const k = s.em === scene ? K_FIG : K_OP;
+  const k = s.em === scene ? K_FIG : K_OP, esp = s.x > 0;   // metade direita: espelhada, olhando para o centro
   [s.busto, s.corpo].forEach(x => { if (x) x.geo.dispose(); });
   if (bu) {
-    s.fig.geometry = geoFig(bu, k); s.matFig.map = bu.tex; s.matFig.alphaTest = .5; s.matFig.needsUpdate = true; s.fig.customDepthMaterial = bu.prof;
+    s.fig.geometry = geoFig(bu, k, esp); s.matFig.map = bu.tex; s.matFig.alphaTest = .5; s.matFig.needsUpdate = true; s.fig.customDepthMaterial = bu.prof;
     s.baseP = new V3(s.base.x, s.topo - APOIO, s.base.z); s.ajusteY = 0;
     s.busto = { geo: s.fig.geometry, o: bu };
     // corpo inteiro: mesma escala; a cabeça começa onde estava a do busto (os pés ficam escondidos atrás do púlpito)
-    if (co) { s.corpo = { geo: geoFig(co, k), o: co }; s.baseCorpo = new V3(s.base.x, s.baseP.y + (bu.h - co.h) * k, s.base.z); }
+    if (co) { s.corpo = { geo: geoFig(co, k, esp), o: co }; s.baseCorpo = new V3(s.base.x, s.baseP.y + (bu.h - co.h) * k, s.base.z); }
     else { s.corpo = null; s.baseCorpo = null; }
   } else {
     s.fig.geometry = s.geoCarta; s.matFig.map = id ? texFig(id) : null; s.matFig.alphaTest = 0; s.matFig.needsUpdate = true; s.fig.customDepthMaterial = undefined;
