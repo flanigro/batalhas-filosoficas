@@ -36,7 +36,7 @@ As ideias só andam num sentido: Biblioteca → filósofo → debate. Ideias da 
 
 **As ideias num debate pertencem ao jogador, e não ao filósofo que as levou.** Depois que chegam ao debate, ninguém sabe mais de quem vieram. Por isso, um efeito que tira ideias de um debate atinge o jogador, nunca um filósofo em particular. (No digital, as ideias de cada jogador num debate aparecem numa prateleira da placa; o nome serve só para descrever a tela.)
 
-Não há teto de ideias na Biblioteca nem nos filósofos.
+A Biblioteca não tem teto. **Cada filósofo pode ter no máximo 10 ideias**: o que passaria disso se perde, venha de onde vier (Reflexão, escola, duplas, poderes, Petitio), e a Biblioteca não pode dar ideias a quem já tem 10.
 
 ### 2.2 Cartas de filósofo (20)
 
@@ -133,6 +133,8 @@ Somam-se a isso:
 - **Escola:** +1 para o filósofo que tem pelo menos um colega da mesma escola no grupo (é +1 só, qualquer que seja o número de colegas).
 - **Dupla clássica:** +1 para cada filósofo de uma dupla completa no grupo. As duplas são cinco: Platão e Sócrates; Aristóteles e Platão; Marx e Hegel; Schopenhauer e Kant; Arendt e Heidegger. Os dois membros recebem +1. Platão, que está em duas duplas, recebe +1 por dupla completa (com Sócrates e Aristóteles no grupo, +2). As cinco duplas são de colegas de escola, então cada membro recebe também o bônus de escola.
 
+**Teto de 10:** se a Reflexão levaria um filósofo acima de 10 ideias, ele fica com 10 e o resto se perde.
+
 O **Bibliotecário** não faz a Reflexão: em vez disso, produz para a Biblioteca tantas ideias quanto o seu custo (seção 6.2). Ele não recebe bônus de escola nem de dupla, mas conta como colega de escola e como parceiro de dupla para os outros.
 
 ### 5.5 Poderes da Reflexão
@@ -174,7 +176,7 @@ Depois da abertura, o jogador faz, **em qualquer ordem e quantas vezes puder**, 
 ### 6.3 Dar ideias a um filósofo
 
 - Passe ideias da Biblioteca para um filósofo **em ação** do seu grupo, uma a uma.
-- Não há limite por filósofo nem por turno.
+- Não há limite por turno, mas nenhum filósofo passa de **10 ideias** (o teto): com 10, ele não recebe mais.
 - Recém-chegados e o Bibliotecário não recebem.
 
 ### 6.4 Levar um filósofo a um debate
@@ -287,7 +289,7 @@ Em todas, "debate do qual você participa" quer dizer: debate em que você tem p
 
 - **Argumento de Autoridade** (custo 4; "Doutor falou"). Num debate do qual você participa: +5 ideias suas.
 - **Espantalho** (custo 5; caricatura do oponente). Num debate do qual você e um oponente participam: +4 para você e −4 para ele.
-- **Ad Hominem** (custo 2; ataque pessoal). Tire todas as ideias de um filósofo adversário e acrescente a mesma quantidade num debate do qual você participa. Não pode mirar Diógenes. Você precisa participar de algum debate.
+- **Ad Hominem** (custo 2; ataque pessoal). Tire **até 5** ideias de um filósofo adversário e acrescente a mesma quantidade num debate do qual você participa. Não pode mirar Diógenes. Você precisa participar de algum debate.
 - **Sofisma** (custo 2; argumento enganoso). Num debate do qual você e um oponente participam: +2 para você e −3 para ele.
 - **Petitio Principii** (custo 3; petição de princípio). Coloque 5 ideias num filósofo seu que já esteja em ação e não tenha ideias. Não vale para recém-chegados nem para o Bibliotecário.
 - **Mutatio Controversiae** (custo 3; mudando de assunto). Retire até 4 ideias suas de um debate e ponha-as em outro debate da Ágora. No digital, move sempre 4 (ou todas, se tiver menos).
@@ -326,6 +328,7 @@ Em todas, "debate do qual você participa" quer dizer: debate em que você tem p
 - **O que acontece com as ideias de quem perdeu um debate?** Somem junto com o debate vencido.
 - **Um adversário pode vencer no meu turno?** Não. A sustentação é conferida no início do turno de cada um, e a vitória imediata só para o jogador da vez.
 - **Se eu liderar no fim da abertura, por causa de Aristóteles ou Pitágoras, já venci?** Não, salvo se chegou ao dobro. A liderança precisa sobreviver aos turnos dos adversários (seção 5).
+- **E as ideias que passariam de 10?** Se perdem. Isso vale também para os poderes que dão ideias a um colega: se o Maquiavel der +1 ao filósofo com mais ideias e ele já tiver 10, o ponto se perde.
 - **Se Kant for a um debate de Ética, um colega sem ideias também contribui?** Não. Só quem tem pelo menos 1 ideia.
 - **O Bibliotecário pode ser alvo da Mais-Valia ou do Ad Hominem?** Na prática, não: ele nunca tem ideias (tudo o que ganharia vai para a Biblioteca).
 - **Recém-chegado faz a Reflexão?** Não há recém-chegado na Reflexão do dono: ele entra em ação no início do turno, antes dela (seção 5.1). Durante os turnos dos adversários, continua fora de ação (não recebe o +1 do Contrato Social de Rousseau, e Freud recém-chegado não reage a falácias).
@@ -338,7 +341,7 @@ Em todas, "debate do qual você participa" quer dizer: debate em que você tem p
 Para quem conhece o protótipo de papel. O digital mudou de propósito:
 
 - A Biblioteca recebe sempre 3 ideias por turno e **acumula**; no v4, recebia o número da rodada (até 8) e era zerada ao fim do turno.
-- Não há limite de 4 ideias repassadas por filósofo.
+- Não há limite de 4 ideias repassadas por turno; em vez disso, cada filósofo tem um teto de 10 ideias.
 - Não há Catedrático no nível 2; o grupo tem quatro cadeiras iguais. Entrou o Bibliotecário.
 - Reflexão pelo custo (1, 2 ou 3 ideias), com bônus de escola e de dupla clássica; no v4, 1 ideia por filósofo.
 - A Ágora começa com 2 debates e abre o terceiro ao fim da rodada 4.

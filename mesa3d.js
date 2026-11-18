@@ -50,10 +50,15 @@ const USAR_BONECOS = false;                  // marionetes (Diógenes) ficam par
    personagens/<id>-busto.webp: da cintura para cima, antebraços apoiados num púlpito invisível. Fica atrás do púlpito,
      com a borda de baixo (os antebraços) no tampo.
    personagens/<id>-corpo.webp: corpo inteiro. Entra no salto até o debate e volta a ser busto no púlpito.
-   Escala única por pixel (as pranchas têm as cabeças na mesma escala), para todos ficarem do mesmo tamanho.
+   FORMATO PADRÃO (18/11/2026; medidas a partir da borda de baixo, eixo do corpo no centro da largura):
+     busto: antebraços na borda de baixo; topo da cabeça (sem chapéu) 850 px acima dela (prancha de 1000 × 1000,
+            topo da cabeça em y = 150); pode ter mais largura ou altura de folga, desde que as linhas se mantenham;
+     corpo: sola dos pés 50 px acima da borda de baixo; topo da cabeça 1300 px acima dos pés (prancha de 1000 × 1500).
+   Com isso todos ficam com o topo da cabeça na mesma altura e a cabeça do mesmo tamanho nas duas poses.
    Se o arquivo faltar ou não carregar, volta a imagem da carta. Para desligar tudo, USAR_PERSONAGENS = false. */
 const USAR_PERSONAGENS = true;
-const K_FIG = 2.05 / 750;      // unidades de cena por pixel da figura, no púlpito do jogador
+const BUSTO_ALT = 850, CORPO_ALT = 1300, CORPO_PES = 50;   // px, ver acima
+const K_FIG = 1.95 / BUSTO_ALT;      // unidades de cena por pixel da figura, no púlpito do jogador (cabeça a 1,95 acima do tampo)
 const K_OP = K_FIG * .62;     // no púlpito compacto do adversário (unidades locais da faixa, que tem escala própria)
 const APOIO = .03;            // quanto a borda de baixo do busto desce abaixo do tampo (os braços "pousam")
 const _hash = location.hash.slice(1).split('-');   // entradas de teste: #medir, #doze (o mesmo personagem nas doze vagas)
@@ -115,17 +120,31 @@ function personagem(id, pose, cb) {
     o = _pers[ch] = { ok: false, falhou: false, cbs: [] };
     const img = new Image();
     img.onload = () => { const t = new THREE.Texture(img); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; t.needsUpdate = true; registrar(t);
-      o.tex = t; o.w = img.width; o.h = img.height; o.prof = new THREE.MeshDepthMaterial({ depthPacking: THREE.RGBADepthPacking, map: t, alphaTest: .5 });
+      o.tex = t; o.img = img; o.w = img.width; o.h = img.height; o.prof = new THREE.MeshDepthMaterial({ depthPacking: THREE.RGBADepthPacking, map: t, alphaTest: .5 });
       o.ok = true; o.cbs.splice(0).forEach(f => f()); };
     img.onerror = () => { o.falhou = true; o.cbs.splice(0); };
     img.src = 'personagens/' + ch + '.webp';
   }
   if (o.ok) return o; if (cb && !o.falhou) o.cbs.push(cb); return null;
 }
+/* versão esmaecida (recém-chegado): opaca, acinzentada e misturada com branco, sem deixar ver o fundo.
+   Feita uma vez por figura, quando precisa. */
+function palida(o) {
+  if (o.pal) return o.pal;
+  const c = tela(o.w, o.h), x = c.getContext('2d'); x.drawImage(o.img, 0, 0);
+  const d = x.getImageData(0, 0, o.w, o.h), p = d.data, cinza = .6, branco = .5;
+  for (let i = 0; i < p.length; i += 4) {
+    if (!p[i + 3]) continue; const l = .3 * p[i] + .59 * p[i + 1] + .11 * p[i + 2];
+    for (let j = 0; j < 3; j++) { const v = p[i + j] * (1 - cinza) + l * cinza; p[i + j] = v * (1 - branco) + 255 * branco; }
+  }
+  x.putImageData(d, 0, 0);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; registrar(t);
+  return o.pal = t;
+}
 // plano com a origem embaixo, no centro, do tamanho da figura (k = unidades por pixel)
 // esp: espelhada (as figuras da metade direita da mesa olham para o centro; a arte original olha para a direita)
-function geoFig(o, k, esp) {
-  const w = o.w * k, h = o.h * k, g = new THREE.PlaneGeometry(w, h); g.translate(0, h / 2, 0);
+function geoFig(o, k, esp, pose) {
+  const w = o.w * k, h = o.h * k, g = new THREE.PlaneGeometry(w, h); g.translate(0, h / 2 - (pose === 'corpo' ? CORPO_PES * k : 0), 0);   // origem: base do busto ou sola dos pés
   if (esp) { const uv = g.attributes.uv; for (let i = 0; i < uv.count; i++) uv.setX(i, 1 - uv.getX(i)); uv.needsUpdate = true; }
   return g;
 }
@@ -611,11 +630,11 @@ function vestir(s, id) {
   const k = s.em === scene ? K_FIG : K_OP, esp = s.x > 0;   // metade direita: espelhada, olhando para o centro
   [s.busto, s.corpo].forEach(x => { if (x) x.geo.dispose(); });
   if (bu) {
-    s.fig.geometry = geoFig(bu, k, esp); s.matFig.map = bu.tex; s.matFig.alphaTest = .5; s.matFig.needsUpdate = true; s.fig.customDepthMaterial = bu.prof;
+    s.fig.geometry = geoFig(bu, k, esp, 'busto'); s.matFig.map = bu.tex; s.matFig.alphaTest = .5; s.matFig.needsUpdate = true; s.fig.customDepthMaterial = bu.prof;
     s.baseP = new V3(s.base.x, s.topo - APOIO, s.base.z); s.ajusteY = 0;
     s.busto = { geo: s.fig.geometry, o: bu };
     // corpo inteiro: mesma escala; a cabeça começa onde estava a do busto (os pés ficam escondidos atrás do púlpito)
-    if (co) { s.corpo = { geo: geoFig(co, k, esp), o: co }; s.baseCorpo = new V3(s.base.x, s.baseP.y + (bu.h - co.h) * k, s.base.z); }
+    if (co) { s.corpo = { geo: geoFig(co, k, esp, 'corpo'), o: co }; s.baseCorpo = new V3(s.base.x, s.baseP.y + (BUSTO_ALT - CORPO_ALT) * k, s.base.z); }
     else { s.corpo = null; s.baseCorpo = null; }
   } else {
     s.fig.geometry = s.geoCarta; s.matFig.map = id ? texFig(id) : null; s.matFig.alphaTest = 0; s.matFig.needsUpdate = true; s.fig.customDepthMaterial = undefined;
@@ -628,8 +647,11 @@ function ocupar(s, g, P) {
   vestir(s, id);
   s.boneco = !!(USAR_BONECOS && id && P === 0 && window.BF_BONECOS && window.BF_BONECOS[id]);
   if (!s.fora) { s.fig.visible = !!id && !s.boneco; s.fig.position.copy(baseDe(s)); s.fig.rotation.set(s.rx, 0, 0); s.fig.scale.setScalar(1); }
-  if (id) { const inerte = !BF.ativo(g); s.matFig.color.set(inerte ? '#b9bccb' : g.acted ? '#a8a49c' : '#ffffff'); s.matFig.opacity = inerte ? .6 : 1;
-    if (s.matFig.transparent !== inerte) { s.matFig.transparent = inerte; s.matFig.needsUpdate = true; } }
+  // recém-chegado: esmaecido sobre branco, opaco (nunca translúcido); já debateu: mais escuro
+  if (id) { const inerte = !BF.ativo(g);
+    if (s.busto && !s.fora) { const m = inerte ? palida(s.busto.o) : s.busto.o.tex; if (s.matFig.map !== m) { s.matFig.map = m; s.matFig.needsUpdate = true; } }
+    s.matFig.color.set(inerte ? (s.busto ? '#ffffff' : '#d4d6dd') : g.acted ? '#a8a49c' : '#ffffff'); s.matFig.opacity = 1;
+    if (s.matFig.transparent) { s.matFig.transparent = false; s.matFig.needsUpdate = true; } }
   ajustarPilha(s, g && !g.lib ? g.ideas : 0, P);
 }
 

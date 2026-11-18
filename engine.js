@@ -143,7 +143,7 @@
     { id: 'retorsio',       nome: 'Retorsio Argumenti', custo: 3, sub: 'Técnica — bumerangue',
       d: 'Use o argumento do oponente contra ele. Num debate seu em que ele tenha ao menos 3 ideias, mude 3 para a sua cor.' },
     { id: 'adhominem',      nome: 'Ad Hominem', custo: 2, sub: 'Falácia — ataque pessoal',
-      d: 'Remova as ideias de um filósofo oponente e acrescente a mesma quantidade em um debate do qual você participa.' },
+      d: 'Remova até 5 ideias de um filósofo oponente e acrescente a mesma quantidade em um debate do qual você participa.' },
     { id: 'reductio',       nome: 'Reductio ad Absurdum', custo: 3, sub: 'Técnica — redução ao absurdo',
       d: 'Reduza as ideias de um oponente em um debate pela metade.' },
     { id: 'sofisma',        nome: 'Sofisma', custo: 2, sub: 'Falácia — argumento enganoso',
@@ -361,13 +361,15 @@
   ].forEach(function (r) { RELACOES.push(r); });
 
   // ---------- preparação ----------
-  var PADRAO = { pontos: 30, rodadas: 12, debInicial: 2, novoDebate: [4], copiasPraxis: 1, bibPorTurno: 3, custoTroca: 5 };
+  var PADRAO = { pontos: 30, rodadas: 12, debInicial: 2, novoDebate: [4], copiasPraxis: 1, bibPorTurno: 3, custoTroca: 5, teto: 10 };
   var REFLEXAO = [0, 1, 1, 2, 2, 3];
 
   function fx(s, e) { if (!s.mudo) s.fx.push(e); }
   function nI(n) { return n === 1 || n === -1 ? n + ' ideia' : n + ' ideias'; }
   // ganho do próprio filósofo; se ele é o Bibliotecário, vai para a Biblioteca
-  function ganha(s, P, g, n) { if (g.lib) s.players[P].library += n; else g.ideas += n; }
+  // teto de ideias por filósofo (decisão de 18/11/2026): o que passa do teto se perde. Devolve quanto entrou.
+  function poe(s, g, n) { var a = Math.max(0, Math.min(n, s.cfg.teto - g.ideas)); g.ideas += a; return a; }
+  function ganha(s, P, g, n) { if (g.lib) s.players[P].library += n; else poe(s, g, n); }
   function semLib(pl) { return pl.group.filter(function (x) { return !x.lib; }); }
   function FALAS() { return root.BF_FALAS || null; }
 
@@ -498,12 +500,12 @@
       }
       var base = REFLEXAO[C(g.id).custo], esc = temColega(pl, g) ? 1 : 0;
       var pares = duplasDe(g.id).filter(function (x) { return inGroup(pl, x.par); }), dup = pares.length * BONUS_DUPLA;
-      var tot = base + esc + dup;
-      g.ideas += tot;
+      var tot = base + esc + dup, entrou = poe(s, g, tot);
       var partes = ['Reflexão ' + base];
       if (esc) partes.push('Escola ' + esc);
       pares.forEach(function (x) { partes.push('Dupla com ' + C(x.par).nome + ' ' + BONUS_DUPLA); });
-      pop(s, P, g.id, C(g.id).nome + ' +' + tot, partes.join(' · '), dup ? 'dupla' : esc ? 'esc' : 'ref');
+      if (entrou < tot) partes.push('teto de ' + s.cfg.teto + ': ' + (tot - entrou) + ' se perde' + (tot - entrou > 1 ? 'm' : ''));
+      pop(s, P, g.id, C(g.id).nome + ' +' + entrou, partes.join(' · '), dup ? 'dupla' : esc ? 'esc' : 'ref');
       pares.forEach(function (x) {
         var chave = [g.id, x.par].sort().join('|');
         if (anunciadas[chave]) return;
@@ -526,12 +528,12 @@
         break;
       case 'platao':
         t = null; semLib(pl).forEach(function (x) { if (!t || C(x.id).custo > C(t.id).custo) t = x; });
-        if (t) { t.ideas += 1; diz('+1 ideia para ' + C(t.id).nome + ', o Rei Filósofo.'); }
+        if (t) { poe(s, t, 1); diz('+1 ideia para ' + C(t.id).nome + ', o Rei Filósofo.'); }
         break;
       case 'socrates':
         t = null;
         semLib(pl).forEach(function (x) { if (x !== g && (!t || x.ideas < t.ideas)) t = x; });
-        if (t) { t.ideas += 1; diz('+1 ideia para ' + C(t.id).nome + '.'); }
+        if (t) { poe(s, t, 1); diz('+1 ideia para ' + C(t.id).nome + '.'); }
         break;
       case 'epicuro':
         var viz = [];
@@ -540,7 +542,7 @@
         if (viz.length) {
           t = viz[0];
           if (viz[1] && viz[1].ideas < t.ideas) t = viz[1];
-          t.ideas += 1; diz('+1 ideia para ' + C(t.id).nome + '.');
+          poe(s, t, 1); diz('+1 ideia para ' + C(t.id).nome + '.');
         }
         break;
       case 'pitagoras':
@@ -582,7 +584,7 @@
         var n = 0;
         for (o = 0; o < s.players.length; o++) for (j = 0; j < s.players[o].group.length; j++) {
           var y = s.players[o].group[j];
-          if (C(y.id).custo === 1 && ativo(y) && !y.lib) { y.ideas += 1; n++; }
+          if (C(y.id).custo === 1 && ativo(y) && !y.lib) { poe(s, y, 1); n++; }
         }
         diz('+1 ideia para cada filósofo de custo 1 da mesa (' + n + ').');
         break;
@@ -599,7 +601,7 @@
         break;
       case 'maquiavel':
         t = null; semLib(pl).forEach(function (x) { if (!t || x.ideas > t.ideas) t = x; });
-        if (t) { t.ideas += 1; diz('+1 ideia para ' + C(t.id).nome + ', quem tem mais ideias.'); }
+        if (t) { poe(s, t, 1); diz('+1 ideia para ' + C(t.id).nome + ', quem tem mais ideias.'); }
         break;
       case 'erasmo':
         var ed = -1, eo = -1, ev = 0;
@@ -724,7 +726,7 @@
 
   function canGive(s, P, fi) {
     var pl = s.players[P], g = pl.group[fi];
-    return !(s.over || s.turn !== P || !g || g.lib || pl.library < 1 || !ativo(g));
+    return !(s.over || s.turn !== P || !g || g.lib || pl.library < 1 || !ativo(g) || g.ideas >= s.cfg.teto);
   }
   function giveIdea(s, P, fi, quieto) {
     if (!canGive(s, P, fi)) return false;
@@ -778,7 +780,7 @@
           s.players[x].group.forEach(function (g, fi) {
             if (g.ideas <= 0 || imune(g)) return;
             M.forEach(function (i) {
-              out.push({ label: 'Tirar ' + g.ideas + ' de ' + C(g.id).nome + ' (' + nomeJ(s, x) + ') → «' + DEB[s.debates[i].id].q + '»', prm: { o: x, fi: fi, d: i } });
+              out.push({ label: 'Tirar ' + Math.min(5, g.ideas) + ' de ' + C(g.id).nome + ' (' + nomeJ(s, x) + ') → «' + DEB[s.debates[i].id].q + '»', prm: { o: x, fi: fi, d: i } });
             });
           });
         });
@@ -807,8 +809,8 @@
       case 'retorsio': d.stakes[prm.o] -= 3; d.stakes[P] += 3; break;
       case 'falseabilidade': d.stakes[prm.o] = Math.max(0, d.stakes[prm.o] - 5); break;
       case 'adhominem':
-        var g = s.players[prm.o].group[prm.fi]; n = g.ideas; g.ideas = 0; d.stakes[P] += n; break;
-      case 'petitio': s.players[P].group[prm.fi].ideas += 5; break;
+        var g = s.players[prm.o].group[prm.fi]; n = Math.min(5, g.ideas); g.ideas -= n; d.stakes[P] += n; break;   // até 5 (18/11/2026)
+      case 'petitio': poe(s, s.players[P].group[prm.fi], 5); break;
       case 'mutatio':
         n = Math.min(4, d.stakes[P]); d.stakes[P] -= n; s.debates[prm.d2].stakes[P] += n; break;
     }

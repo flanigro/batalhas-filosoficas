@@ -44,10 +44,12 @@ Você comanda um grupo de filósofos que disputam as grandes perguntas da filoso
    - **+1** para cada um dos dois, se uma **dupla clássica** estiver completa no grupo: Platão e Sócrates · Aristóteles e Platão · Marx e Hegel · Schopenhauer e Kant · Arendt e Heidegger.
 5. Os **poderes** que agem na Reflexão disparam.
 
+**Teto:** nenhum filósofo passa de **10 ideias**. O que passar disso se perde.
+
 ### 2. Ações (na ordem que quiser)
 
 - **Baixar um filósofo:** pague o custo com ideias da Biblioteca. Com o grupo cheio, ele toma o lugar de um dos seus, que vai para o descarte e perde as ideias que tinha. O filósofo que chega **só entra em ação no seu próximo turno**.
-- **Dar ideias:** passe ideias da Biblioteca para os seus filósofos em ação, quantas quiser.
+- **Dar ideias:** passe ideias da Biblioteca para os seus filósofos em ação, quantas quiser, até 10 por filósofo.
 - **Levar um filósofo a um debate:** veja abaixo.
 - **Usar uma Práxis:** pague o custo e aplique o efeito.
 - **Comprar uma carta extra:** 2 ideias, uma vez por turno.
@@ -131,6 +133,8 @@ Ao completar a rodada em que alguém chegou a **30 pontos**, ou ao fim da **12ª
 ## Resumo de mesa
 
 **Abertura:** vença os debates que lidera → compre 1 carta → Biblioteca +3 → Reflexão (custo 1–2: +1 · 3–4: +2 · 5: +3; escola +1; dupla +1 cada) → poderes.
+
+**Teto:** 10 ideias por filósofo; o excedente se perde.
 
 **Ações, em qualquer ordem:** baixar filósofo · dar ideias · levar ao debate (valor exato da área, um por filósofo) · Práxis · carta extra (2, uma por turno) · troca (5, uma por partida) · Bibliotecário.
 

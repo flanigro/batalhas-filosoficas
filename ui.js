@@ -554,7 +554,7 @@ function telaFim(){
 }
 function regrasHTML(){
   return '<ul><li><b>Ideias</b> são a única moeda do jogo (na mesa, cada ideia é um livro). Pagam cartas e vão para os debates.</li>'
-    +'<li><b>Início do turno</b> (automático): você vence os debates que liderava, compra uma carta, a Biblioteca recebe 3 ideias (e guarda as sobras) e cada filósofo reflete: +1 ideia (custo 1 ou 2), +2 (custo 3 ou 4) ou +3 (custo 5). Quem tem colega da mesma escola ganha +1; cada filósofo de uma dupla clássica, +1. Depois disparam os poderes.</li>'
+    +'<li><b>Início do turno</b> (automático): você vence os debates que liderava, compra uma carta, a Biblioteca recebe 3 ideias (e guarda as sobras) e cada filósofo reflete: +1 ideia (custo 1 ou 2), +2 (custo 3 ou 4) ou +3 (custo 5). Quem tem colega da mesma escola ganha +1; cada filósofo de uma dupla clássica, +1. Depois disparam os poderes. Nenhum filósofo passa de 10 ideias: o excedente se perde.</li>'
     +'<li><b>Sua vez, em qualquer ordem:</b> baixar cartas, dar ideias da Biblioteca aos filósofos, levá-los aos debates, usar falácias e técnicas, comprar uma carta extra (2 ideias). Clique numa carta e a mesa mostra onde ela pode agir; ou arraste.</li>'
     +'<li><b>Debate:</b> o filósofo leva exatamente o valor que tem na área da pergunta. Sem esse tanto de ideias, não vai. Cada um debate uma vez por turno.</li>'
     +'<li><b>Recém-chegado</b> (baixado ou recebido em troca): entra em ação no próximo turno do dono.</li>'

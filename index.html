@@ -73,7 +73,7 @@ button:disabled{cursor:not-allowed;opacity:.45}
   transform:perspective(520px) translateY(var(--up,0)) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform .14s var(--saida),box-shadow .14s;
   box-shadow:0 2px 0 #d8d0be,0 4px 0 #b9af9a,0 5px 0 #8f8674,0 12px 14px rgba(40,25,10,.4)}
 .mini:hover{--up:-6px;box-shadow:0 2px 0 #d8d0be,0 4px 0 #b9af9a,0 5px 0 #8f8674,0 20px 20px rgba(40,25,10,.38)}
-.mini .img{position:absolute;inset:0 0 38% 0;background-size:cover;background-position:50% 0;background-repeat:no-repeat;background-color:color-mix(in srgb,var(--e1) 42%,#f1ebde)}
+.mini .img{position:absolute;inset:0 0 38% 0;background-size:125% auto;background-position:50% 22%;background-repeat:no-repeat;background-color:color-mix(in srgb,var(--e1) 42%,#f1ebde)}
 .mini .img::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.12) 0,transparent 30%,transparent 55%,var(--e2) 100%)}
 .mini .custo{position:absolute;left:4px;top:4px;min-width:23px;height:23px;border-radius:7px;background:#fff;border:2px solid var(--e2);font-family:var(--serif);font-weight:900;font-size:15px;display:flex;align-items:center;justify-content:center;z-index:2}
 .mini .nome{position:absolute;left:0;right:0;top:62%;transform:translateY(-100%);padding:2px 6px;color:#fff;font-family:var(--sans);font-weight:800;font-size:calc(var(--w)*.125);text-shadow:0 1px 2px #000,0 0 5px rgba(0,0,0,.8);z-index:2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -81,7 +81,7 @@ button:disabled{cursor:not-allowed;opacity:.45}
 .mini .vals span{border-radius:5px;background:var(--c);color:#fff;font-weight:800;font-size:calc(var(--w)*.115);display:flex;align-items:center;justify-content:center;opacity:.78}
 .mini .vals span.on{opacity:1;box-shadow:0 0 0 1.5px #fff inset}
 .mini .sel{position:absolute;left:0;right:0;top:30%;font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;text-align:center;z-index:3;line-height:13px;background:rgba(0,0,0,.72);color:#fff;display:block;margin:0}
-.mini.novo{opacity:.55;filter:grayscale(.75)}
+.mini.novo{filter:grayscale(.7)}
 .mini.acted .img{filter:grayscale(.85) brightness(.7)}
 .mini.ausente{opacity:.22}
 .mini.P{border-color:#5a4a2c;background:linear-gradient(180deg,#fbf6ea,#eadfc6)}
@@ -89,7 +89,9 @@ button:disabled{cursor:not-allowed;opacity:.45}
 .mini.P .ps{padding:2px 7px;font-size:10px;color:#7a6a45;font-weight:800;text-transform:uppercase;letter-spacing:.4px}
 .mini.P .pd{padding:2px 7px;font-size:10.5px;line-height:1.15;color:#3d372b}
 .mini.P .custo{border-color:#5a4a2c}
-.mini.caro{opacity:.7}
+.mini.caro{filter:grayscale(.55)}
+/* indisponível: véu branco por cima, opaco (não deixa ver a carta de trás) */
+.mini.caro::before,.mini.novo::before{content:"";position:absolute;inset:0;background:rgba(255,255,255,.5);z-index:4;pointer-events:none}
 .mini.brilho{animation:brilho 1.1s ease-out}
 @keyframes brilho{0%{box-shadow:0 0 0 0 rgba(255,236,150,.95),0 0 0 0 var(--bc,#e9b93f)}100%{box-shadow:0 0 0 14px rgba(255,236,150,0),0 0 30px 6px transparent}}
 .backs{display:flex;gap:3px;align-items:center}
@@ -195,7 +197,7 @@ button:disabled{cursor:not-allowed;opacity:.45}
 
 /* carta ampliada */
 .big{position:relative;border-radius:16px;overflow:hidden;background:linear-gradient(160deg,var(--e1),var(--e2));color:#fff;min-height:560px;border:3px solid #fff;box-shadow:0 12px 40px rgba(0,0,0,.6)}
-.big .foto{position:absolute;left:0;top:0;bottom:0;width:52%;background-size:104% auto;background-position:50% 64px;background-repeat:no-repeat;background-color:color-mix(in srgb,var(--e1) 45%,#f4efe4)}
+.big .foto{position:absolute;left:0;top:0;bottom:0;width:52%;background-size:118% auto;background-position:50% 30px;background-repeat:no-repeat;background-color:color-mix(in srgb,var(--e1) 45%,#f4efe4)}
 .big .foto::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent 62%,var(--e2) 100%),linear-gradient(180deg,rgba(0,0,0,.28) 0,transparent 14%,transparent 78%,rgba(0,0,0,.35) 100%)}
 .big .bc{position:absolute;left:12px;top:12px;width:44px;height:44px;border-radius:10px;background:#fff;color:#23201a;border:3px solid var(--e1);font-family:var(--serif);font-weight:900;font-size:27px;display:flex;align-items:center;justify-content:center;z-index:2}
 .big .head{position:absolute;left:66px;top:8px;z-index:2;text-shadow:0 2px 6px rgba(0,0,0,.8)}
@@ -238,7 +240,7 @@ button:disabled{cursor:not-allowed;opacity:.45}
 .fala .tipo{display:inline-block;font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.9px;color:#fff;background:#8a6a2a;border-radius:5px;padding:1px 6px;margin-left:6px;vertical-align:2px}
 .fala .tipo.i{background:#6d6f85}.fala .tipo.c{background:#2c6e49}
 .fala .rel{margin-top:10px;padding:8px 10px;border-radius:10px;background:#f3ead2;font-size:15px;display:flex;gap:10px;align-items:center}
-.fala .rel .mini-ret{flex:none;width:46px;height:46px;border-radius:50%;background-size:165% auto;background-position:50% 6%;background-repeat:no-repeat;background-color:color-mix(in srgb,var(--e1) 42%,#f1ebde);border:2px solid #8a6a2a}
+.fala .rel .mini-ret{flex:none;width:46px;height:46px;border-radius:50%;background-size:190% auto;background-position:50% 22%;background-repeat:no-repeat;background-color:color-mix(in srgb,var(--e1) 42%,#f1ebde);border:2px solid #8a6a2a}
 .fala .rel b{font-family:var(--serif)}
 /* bibliotecário, custo no retrato, jogada e poder */
 .mini .sel.libr{background:#7a4f0c;color:#ffe9a6}
@@ -335,6 +337,7 @@ header .btn.sm:hover{background:rgba(255,255,255,.28)}
 #mesa .mini{background:none;border:0;box-shadow:none;border-radius:0;overflow:visible;transform:none;transition:none;padding:0}
 #mesa .mini:hover{box-shadow:none}
 #mesa .mini.novo,#mesa .mini.ausente{opacity:1;filter:none}
+#mesa .mini.novo::before{display:none}
 #mesa .mini .sel{position:absolute;left:50%;top:30%;right:auto;transform:translateX(-50%);padding:1px 8px;border-radius:5px;white-space:nowrap;font-size:10px;line-height:14px;background:rgba(20,16,12,.78);color:#fff;letter-spacing:.8px;pointer-events:none}
 #mesa .mini .sel.libr{background:#7a4f0c;color:#ffe9a6}
 #mesa .opp-seat .mini .sel{display:none}
@@ -466,7 +469,7 @@ body.diario .log{transform:none}
 .rodape .bib .ger .gp{display:inline-flex;align-items:center;gap:3px;padding:0 6px;border-radius:10px;background:#fff;box-shadow:inset 0 0 0 1px #c9c5be}
 .rodape .bib .ger .gp small{font-size:10.5px;font-weight:700;color:#55514b;max-width:62px;overflow:hidden;text-overflow:ellipsis}
 .rodape .bib .ger .gp.espera{opacity:.7}
-.rodape .bib .ger .rosto{width:18px;height:18px;border-radius:50%;background-size:165% auto;background-position:50% 6%;background-repeat:no-repeat;background-color:color-mix(in srgb,var(--e1) 42%,#f1ebde);box-shadow:0 0 0 1.5px #7a4f0c;flex:none}
+.rodape .bib .ger .rosto{width:18px;height:18px;border-radius:50%;background-size:190% auto;background-position:50% 22%;background-repeat:no-repeat;background-color:color-mix(in srgb,var(--e1) 42%,#f1ebde);box-shadow:0 0 0 1.5px #7a4f0c;flex:none}
 .rodape .bib .ger .gt{margin-left:auto;font-family:var(--serif);font-weight:900;font-size:15px;color:#1f1d1a}
 .rodape .bib .ger .gt small{font-family:var(--sans);font-size:10.5px;font-weight:800;color:#55514b;margin-left:1px}
 .rodape .bib.chegou .bnum b{animation:trofeu .5s var(--tranco)}
