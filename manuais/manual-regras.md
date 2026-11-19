@@ -55,14 +55,16 @@ Os 20 filósofos, por escola (custo entre parênteses):
 - **Germânicos:** Kant (5), Nietzsche (4), Schopenhauer (3), Heidegger (2), Freud (1), Arendt (1).
 - **Livres-Pensadores:** Maquiavel (1), Erasmo (1).
 
-### 2.3 Cartas de Práxis (9)
+### 2.3 Cartas temporárias (16)
 
-São cartas de uso único: pagas, aplicadas e descartadas. Há uma cópia de cada. Dividem-se em dois subtipos:
+São cartas de efeito único: pagas, aplicadas e tiradas da mão. Há uma cópia de cada, e todas têm a mesma textura de borda, que as distingue dos filósofos. Dividem-se em quatro famílias:
 
-- **Falácias (6):** Argumento de Autoridade, Espantalho, Ad Hominem, Sofisma, Petitio Principii, Mutatio Controversiae.
-- **Técnicas (3):** Retorsio Argumenti, Reductio ad Absurdum, Falseabilidade.
+- **Falácias (7):** Argumento de Autoridade, Espantalho, Ad Hominem, Sofisma, Petitio Principii, Mutatio Controversiae, Non Sequitur. Borda vermelho-escura, caveira e o rótulo FALÁCIA. Depois de usadas, **saem do jogo** e tiram 1 ou 2 pontos de quem as usou.
+- **Argumentos (5):** Retorsio Argumenti, Reductio ad Absurdum, Falseabilidade, Tautologia, Paradoxo Lógico. Técnicas legítimas de prova e refutação.
+- **Cartas de escola (3):** Cicuta (contra os Gregos), Dogma (contra os Materialistas e Empiristas), Niilismo (contra os Germânicos). Cada uma só entra no baralho quando a escola que ela ataca está em jogo.
+- **Práxis (1):** Ceticismo. Ideias filosóficas que viram manobra.
 
-A diferença importa para o poder de Freud, que só reage a falácias. Efeitos na seção 9.
+Argumentos, cartas de escola e Práxis vão para o descarte e voltam ao monte quando ele é reembaralhado. A família importa para o poder de Freud, que só reage a falácias. Efeitos na seção 9.
 
 ### 2.4 Debates (24)
 
@@ -73,7 +75,7 @@ Cada debate é uma pergunta de uma das quatro áreas, com um **valor**: 15, 12, 
 - **Ágora:** onde ficam os debates abertos (no máximo três).
 - **Grupo:** quatro cadeiras por jogador. Todo filósofo baixado ocupa uma cadeira. A ordem das cadeiras importa para alguns poderes (vizinhos de Epicuro, ordem em que os poderes disparam).
 - **Biblioteca:** o estoque de ideias do jogador.
-- **Pilha e descarte:** uma pilha comum, com filósofos e Práxis misturados. Quando a pilha acaba, o descarte é embaralhado e vira pilha nova.
+- **Pilha e descarte:** uma pilha comum, com filósofos e cartas temporárias misturados. As falácias usadas não vão para o descarte: saem do jogo. Quando a pilha acaba, o descarte é embaralhado e vira pilha nova.
 
 ---
 
@@ -93,7 +95,7 @@ Cada debate é uma pergunta de uma das quatro áreas, com um **valor**: 15, 12, 
 
 ## 4. Preparação
 
-1. Embaralhe a pilha: os 20 filósofos e as 9 Práxis.
+1. Embaralhe a pilha: os 20 filósofos e as 16 cartas temporárias (as cartas de escola só se a escola que atacam estiver em jogo).
 2. Cada jogador recebe um filósofo de custo 1, tirado ao acaso da pilha, e mais 3 cartas do topo. Todos começam com 4 cartas na mão. O filósofo de custo 1 garante que todos baixem uma carta na primeira rodada.
 3. Embaralhe os 24 debates e abra 2 na Ágora.
 4. As Bibliotecas começam vazias. Os grupos começam vazios.
@@ -109,11 +111,11 @@ O turno tem três partes: a **abertura** (automática), as **ações** (à escol
 
 ### 5.1 Os recém-chegados entram em ação
 
-Todo filósofo do seu grupo que estava recém-chegado passa a estar em ação.
+Todo filósofo do seu grupo que estava recém-chegado passa a estar em ação. Os debates que **você** trancou com o Paradoxo Lógico destrancam agora, antes da sustentação. Se um adversário jogou Niilismo contra você no turno dele, o efeito começa agora e vale até o fim deste turno.
 
 ### 5.2 Vitórias por sustentação
 
-Para cada debate que você **lidera** neste momento, você vence o debate (seção 7). Isso acontece antes de qualquer outra coisa do turno: antes da compra, da Biblioteca e da Reflexão.
+Para cada debate que você **lidera** neste momento, você vence o debate (seção 7). Debate trancado por um adversário não é vencido enquanto estiver trancado. Isso acontece antes de qualquer outra coisa do turno: antes da compra, da Biblioteca e da Reflexão.
 
 ### 5.3 Compra e Biblioteca
 
@@ -132,6 +134,8 @@ Somam-se a isso:
 
 - **Escola:** +1 para o filósofo que tem pelo menos um colega da mesma escola no grupo (é +1 só, qualquer que seja o número de colegas).
 - **Dupla clássica:** +1 para cada filósofo de uma dupla completa no grupo. As duplas são cinco: Platão e Sócrates; Aristóteles e Platão; Marx e Hegel; Schopenhauer e Kant; Arendt e Heidegger. Os dois membros recebem +1. Platão, que está em duas duplas, recebe +1 por dupla completa (com Sócrates e Aristóteles no grupo, +2). As cinco duplas são de colegas de escola, então cada membro recebe também o bônus de escola.
+
+**Dogma:** os dois filósofos atingidos pela carta não recebem nada neste momento de Reflexão (seção 9).
 
 **Teto de 10:** se a Reflexão levaria um filósofo acima de 10 ideias, ele fica com 10 e o resto se perde.
 
@@ -188,14 +192,17 @@ Depois da abertura, o jogador faz, **em qualquer ordem e quantas vezes puder**, 
 - Pode ir a um debate de qualquer valor, mesmo que já tenha ido a ele em turnos anteriores.
 - As ideias levadas passam a ser do jogador naquele debate (seção 2.1).
 - Exceções, nos poderes de Hegel, Kant e Nietzsche (seção 8).
+- Nenhum filósofo vai a um debate trancado pelo Paradoxo Lógico. No turno sob Niilismo, os Germânicos não vão a debates.
 - Depois de cada ida a um debate, confere-se a vitória imediata (dobro do valor) para quem jogou.
 
-### 6.5 Usar uma Práxis
+### 6.5 Usar uma carta temporária
 
-- Pague o custo com ideias da Biblioteca, aplique o efeito e descarte a carta.
+- Pague o custo com ideias da Biblioteca e aplique o efeito.
+- Argumentos, cartas de escola e Práxis vão para o descarte.
+- **Falácias saem do jogo** e cobram pontos de quem as usou: −2 por Ad Hominem e Espantalho, −1 pelas demais. O placar pode ficar **negativo**. Ao lado dos troféus, as caveiras registram quantos pontos as falácias já custaram (caveira ×3, por exemplo).
 - A maioria exige que você **participe** do debate escolhido (seção 9).
-- Não há limite de Práxis por turno.
-- Depois de cada Práxis: Locke reage (se estiver no seu grupo e em ação); Freud reage, se estiver no grupo de um adversário e a carta for uma falácia; confere-se a vitória imediata para quem jogou.
+- Não há limite de cartas temporárias por turno.
+- Depois de cada carta: Locke reage (se estiver no seu grupo e em ação); Freud reage, se estiver no grupo de um adversário e a carta for uma falácia; confere-se a vitória imediata para quem jogou.
 
 ### 6.6 Trocar um filósofo
 
@@ -230,7 +237,7 @@ O jogador encerra o turno quando quiser. Não é obrigado a gastar as ideias da 
 Há dois modos:
 
 - **Por sustentação:** no início do seu turno (seção 5.2), você vence todo debate que **lidera**: tem ali ideias em número igual ou maior que o valor **e pelo menos uma a mais que cada adversário**. **Empate não vence**, nem para quem chegou primeiro.
-- **Vitória imediata:** se, durante o seu turno, você chegar ao **dobro do valor** ou mais num debate, vence na hora. Ela é conferida no fim da abertura, depois de cada ida a um debate e depois de cada Práxis, sempre só para o jogador da vez. O primeiro a chegar ao dobro leva o debate (dois jogadores nunca chegam juntos).
+- **Vitória imediata:** se, durante o seu turno, você chegar ao **dobro do valor** ou mais num debate, vence na hora. Ela é conferida no fim da abertura, depois de cada ida a um debate e depois de cada carta temporária, sempre só para o jogador da vez. O primeiro a chegar ao dobro leva o debate (dois jogadores nunca chegam juntos).
 
 Exemplo. Debate de valor 10. Você tem 12; Hipátia, 11; Sêneca, 4. No início do seu turno, você lidera (12 ≥ 10 e 12 > 11) e vence. Se Hipátia tivesse 12, ninguém venceria: empate não vence. Se você tivesse 20 em qualquer momento do seu turno, venceria na hora.
 
@@ -262,7 +269,7 @@ Os poderes valem enquanto o filósofo está no grupo. Os que agem "no momento de
 - **Hegel — Dialética.** Hegel é o único que pode ir a um debate com menos ideias que o seu valor na área: leva o que tiver, até esse valor. Precisa ter pelo menos 1 ideia. No digital, ele sempre leva o máximo possível. **Síntese:** ao entrar num debate em que um adversário tem mais ideias que você (antes de Hegel chegar), +1 ideia sua nesse debate. A tese encontra a antítese.
 - **Hobbes — Guerra de todos contra todos.** No momento de Reflexão, o adversário com mais ideias num debate, de qualquer área, perde 1 ideia nesse debate. Computador: o maior número de ideias de um adversário entre todos os debates (empate: o primeiro debate). Nome do poder tirado do Leviatã, cap. XIII (a verificar); até 18/11/2026 o poder valia só para debates de Lógica e se chamava "Tudo no Universo é físico".
 - **Bacon — "Conhecimento é poder".** No momento de Reflexão, você espia duas cartas da mão de um adversário. Computador: o adversário com mais cartas, duas cartas ao acaso. No digital, por enquanto, só tem efeito quando é do jogador humano.
-- **Locke — Tábula Rasa.** Locke recebe +1 ideia sempre que você baixa uma carta, um filósofo (inclusive como Bibliotecário, exceto o próprio Locke) ou uma Práxis, e sempre que um adversário baixa um filósofo (as Práxis dos adversários não contam). Locke precisa estar em ação. As ideias vêm da experiência.
+- **Locke — Tábula Rasa.** Locke recebe +1 ideia sempre que você baixa uma carta, um filósofo (inclusive como Bibliotecário, exceto o próprio Locke) ou uma carta temporária, e sempre que um adversário baixa um filósofo (as cartas temporárias dos adversários não contam). Locke precisa estar em ação. As ideias vêm da experiência.
 - **Rousseau — Contrato Social.** No momento de Reflexão, todos os filósofos de custo 1 da mesa recebem +1 ideia, inclusive os dos adversários e o próprio Rousseau. Ficam de fora os recém-chegados e os Bibliotecários.
 
 ### Germânicos
@@ -271,7 +278,7 @@ Os poderes valem enquanto o filósofo está no grupo. Os que agem "no momento de
 - **Nietzsche — Filosofar com o martelo.** Toda vez que Nietzsche entra num debate, o adversário com mais ideias nesse debate perde 2 (ou o que tiver, se tiver menos). Nome tirado do subtítulo de *Crepúsculo dos Ídolos* (a verificar).
 - **Schopenhauer — Negação da Vontade.** No momento de Reflexão, recebe +1 ideia se não foi a nenhum debate no turno anterior do dono. Como Bibliotecário, rende +1 por turno para a Biblioteca.
 - **Heidegger — Ser-no-mundo.** No momento de Reflexão, recebe +1 ideia para cada debate em que você tem ideias.
-- **Freud — Ato Falho.** Freud recebe +1 ideia sempre que um adversário usa uma **falácia** (as seis da seção 2.3; as técnicas não contam). Freud precisa estar em ação. O ganho acontece no turno do adversário.
+- **Freud — Ato Falho.** Freud recebe +1 ideia sempre que um adversário usa uma **falácia** (as sete da seção 2.3; as outras famílias não contam). Freud precisa estar em ação. O ganho acontece no turno do adversário.
 - **Arendt — A Condição Humana.** No momento de Reflexão, recebe +1 ideia se houver um debate de Ética / Política na Ágora.
 
 ### Livres-Pensadores
@@ -281,24 +288,49 @@ Os poderes valem enquanto o filósofo está no grupo. Os que agem "no momento de
 
 ---
 
-## 9. As 9 cartas de Práxis
+## 9. As 16 cartas temporárias
 
-Em todas, "debate do qual você participa" quer dizer: debate em que você tem pelo menos 1 ideia. Efeitos que tiram ideias nunca deixam ninguém abaixo de zero.
+Em todas, "debate do qual você participa" quer dizer: debate em que você tem pelo menos 1 ideia. Efeitos que tiram ideias nunca deixam ninguém abaixo de zero. Nenhuma carta age num debate trancado pelo Paradoxo Lógico (nem como origem, nem como destino). Cada carta tem dois textos: o **Jogo**, com a mecânica, e o **O que é**, um parágrafo curto que explica a ideia (referências a verificar).
 
 ### Falácias
 
-- **Argumento de Autoridade** (custo 4; "Doutor falou"). Num debate do qual você participa: +5 ideias suas.
-- **Espantalho** (custo 5; caricatura do oponente). Num debate do qual você e um oponente participam: +4 para você e −4 para ele.
-- **Ad Hominem** (custo 2; ataque pessoal). Tire **até 5** ideias de um filósofo adversário e acrescente a mesma quantidade num debate do qual você participa. Não pode mirar Diógenes. Você precisa participar de algum debate.
-- **Sofisma** (custo 2; argumento enganoso). Num debate do qual você e um oponente participam: +2 para você e −3 para ele.
-- **Petitio Principii** (custo 3; petição de princípio). Coloque 5 ideias num filósofo seu que já esteja em ação e não tenha ideias. Não vale para recém-chegados nem para o Bibliotecário.
-- **Mutatio Controversiae** (custo 3; mudando de assunto). Retire até 4 ideias suas de um debate e ponha-as em outro debate da Ágora. No digital, move sempre 4 (ou todas, se tiver menos).
+Saem do jogo depois de usadas e tiram pontos de quem as usa (seção 6.5).
 
-### Técnicas
+- **Argumento de Autoridade** (custo 4; −1 ponto). Num debate do qual você participa: +5 ideias suas.
+- **Espantalho** (custo 5; −2 pontos). Num debate do qual você e um oponente participam: +4 para você e −4 para ele.
+- **Ad Hominem** (custo 2; −2 pontos). Tire **até 5** ideias de um filósofo adversário e acrescente a mesma quantidade num debate do qual você participa. Não pode mirar Diógenes. Você precisa participar de algum debate.
+- **Sofisma** (custo 2; −1 ponto). Num debate do qual você e um oponente participam: +2 para você e −3 para ele.
+- **Petitio Principii** (custo 3; −1 ponto). Coloque 5 ideias num filósofo seu que já esteja em ação e não tenha ideias. Não vale para recém-chegados nem para o Bibliotecário.
+- **Mutatio Controversiae** (custo 3; −1 ponto). Retire até 4 ideias suas de um debate e ponha-as em outro debate da Ágora. No digital, move sempre 4 (ou todas, se tiver menos).
+- **Non Sequitur** (custo 2; −1 ponto). Um oponente descarta até 2 cartas temporárias da mão, sorteadas. Os filósofos da mão ficam.
 
-- **Retorsio Argumenti** (custo 3; bumerangue). Num debate do qual você participa e em que um oponente tenha pelo menos 3 ideias: 3 ideias dele passam para você.
-- **Reductio ad Absurdum** (custo 3; redução ao absurdo). Num debate do qual você participa, um oponente com 2 ou mais ideias fica com a metade, arredondada para cima (9 → 5; 15 → 8; 2 → 1).
-- **Falseabilidade** (custo 2; critério de Popper). Num debate de Lógica / Ciência do qual você participa: um oponente perde 5 ideias.
+### Argumentos
+
+Técnicas legítimas de prova e refutação. Voltam ao monte pelo descarte.
+
+- **Retorsio Argumenti** (custo 3). Num debate do qual você participa e em que um oponente tenha pelo menos 3 ideias: 3 ideias dele passam para você.
+- **Reductio ad Absurdum** (custo 3). Num debate do qual você participa, um oponente com 2 ou mais ideias fica com a metade, arredondada para cima (9 → 5; 15 → 8; 2 → 1).
+- **Falseabilidade** (custo 2). Num debate de Lógica / Ciência do qual você participa: um oponente perde 5 ideias.
+- **Tautologia** (custo 2). Pague 2 e receba 2 ideias. Ponha-as num filósofo seu, mesmo recém-chegado (não no Bibliotecário), ou num debate do qual você participa. O teto de 10 vale para o filósofo.
+- **Paradoxo Lógico** (custo 4). Tranque um debate, qualquer um, até o início do seu próximo turno. Enquanto estiver trancado, ninguém põe nem tira ideias dele (filósofos, cartas e poderes da Reflexão) e ninguém o vence por sustentação. No início do seu próximo turno, o debate destranca **antes** da sustentação: se você o lidera, vence. Serve para proteger uma liderança ou para impedir que um adversário que lidera vença no turno dele. Não há exceção: a carta pode garantir uma vitória.
+
+### Cartas de escola
+
+Cada uma ataca uma escola e só entra no baralho quando essa escola está em jogo. Voltam ao monte pelo descarte.
+
+- **Cicuta** (Gregos; custo 3, ou **1** se o alvo for Sócrates). Elimine um filósofo grego do grupo de um adversário. Ele vai para o descarte; as ideias que tinha se perdem (as que já levou a debates ficam). Diógenes é imune. O Bibliotecário não é alvo.
+- **Dogma** (Materialistas; custo 4). Escolha um adversário: dois Materialistas e Empiristas do grupo dele não recebem ideias no próximo momento de Reflexão dele (nem da Reflexão, nem de bônus, nem de poderes de colegas). Os poderes deles continuam agindo. No digital, a carta atinge os dois de maior custo; no impresso, quem joga escolhe.
+- **Niilismo** (Germânicos; custo 3). No próximo turno de um adversário, nenhum filósofo Germânico dele leva ideias a debates. Continuam recebendo ideias e usando poderes da Reflexão.
+
+### Práxis
+
+Ideias filosóficas que viram manobra. Voltam ao monte pelo descarte.
+
+- **Ceticismo** (custo 1). Num debate de Metafísica / Religião do qual você participa, um oponente perde 2 ideias, ou 4 se você tiver um Materialista e Empirista no grupo (o Bibliotecário conta).
+
+### Próximas cartas
+
+Segunda leva (textos prontos em claude/textos-temporarias.md, mecânica a confirmar): Em busca do mestre, Reciclagem Cultural, Condenado à liberdade, Verdades. Nível 3: Estoicismo e Limpando a Estante. As cartas das escolas Teístas, Franceses e Orientais entram com as escolas. Arqueologia do Saber ficou fora.
 
 ---
 
@@ -333,6 +365,9 @@ Em todas, "debate do qual você participa" quer dizer: debate em que você tem p
 - **O Bibliotecário pode ser alvo da Mais-Valia ou do Ad Hominem?** Na prática, não: ele nunca tem ideias (tudo o que ganharia vai para a Biblioteca).
 - **Recém-chegado faz a Reflexão?** Não há recém-chegado na Reflexão do dono: ele entra em ação no início do turno, antes dela (seção 5.1). Durante os turnos dos adversários, continua fora de ação (não recebe o +1 do Contrato Social de Rousseau, e Freud recém-chegado não reage a falácias).
 - **A pilha acabou e o descarte também.** Ninguém compra; o resto do turno segue normalmente.
+- **Com pontos negativos, ainda posso vencer?** Sim. Os pontos dos debates somam-se ao placar negativo normalmente.
+- **Descartei uma falácia sem usá-la (limite da mão, Non Sequitur).** Ela vai para o descarte como qualquer carta. Só sai do jogo a falácia usada.
+- **Um debate trancado pode ser vencido com o dobro do valor?** Não há como: ninguém põe ideias nele enquanto está trancado.
 
 ---
 
@@ -379,4 +414,4 @@ Ordem: Metafísica, Lógica, Ética, Psicologia.
 - **Hegel:** no digital, leva sempre o máximo; no impresso, o jogador poderia escolher quanto levar.
 - **Vantagem por assento:** ainda irregular nas simulações.
 - **Cartas de custo 4 e 5:** rendem pouco com a economia atual.
-- **Planilha "Cartas v5":** atualizar Reductio, Nietzsche, Diógenes, Petitio, subtipos das Práxis e duplas.
+- **Planilha "Cartas v5":** atualizar Reductio, Nietzsche, Diógenes, Petitio, famílias e penalidades das cartas temporárias, as cartas novas e as duplas.

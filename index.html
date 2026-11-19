@@ -621,6 +621,43 @@ body.escolhendo .rodape .mao .selecionado,body.escolhendo .cmd.selecionado{box-s
 .medidor.min .v,.medidor.min textarea{display:none}
 @media(max-width:1100px){.rodape{gap:10px;padding-left:8px;padding-right:8px}.rodape .bib{width:226px}.rodape .mao{--w:104px}.cmds{width:200px}.cmd{font-size:13px}.cmd.fim{font-size:17px}}
 @media(max-height:780px){.rodape{height:118px;padding-top:14px}.rodape .ident{width:164px;height:92px}.rodape .bib .estante{max-height:44px}.rodape .mao{--w:102px}.rodape .bib .estante{row-gap:4px}.cmd.fim{padding:6px 14px 6px 10px}.cmds{gap:5px}}
+
+/* ============================================================
+   CARTAS TEMPORÁRIAS (19/11/2026): famílias, borda hachurada comum, caveiras no placar, debate trancado
+   Símbolos provisórios em SVG, até chegarem os definitivos.
+   ============================================================ */
+.mini.P{--fam:#5a4a2c;border:4px solid transparent;
+  background:linear-gradient(180deg,#fbf6ea,#eadfc6) padding-box,repeating-linear-gradient(135deg,var(--fam) 0 3px,color-mix(in srgb,var(--fam) 45%,#fff) 3px 6px) border-box}
+.mini.P.fam-falacia{background:linear-gradient(180deg,#f8ebe7,#ead2cb) padding-box,repeating-linear-gradient(135deg,var(--fam) 0 3px,color-mix(in srgb,var(--fam) 45%,#fff) 3px 6px) border-box}
+.mini.P .custo{border-color:var(--fam)}
+.mini.P .famrot{position:absolute;left:29px;right:2px;top:6px;display:flex;align-items:center;gap:2px;font-size:8px;font-weight:900;letter-spacing:.1px;overflow:hidden;white-space:nowrap;text-transform:uppercase;color:var(--fam);line-height:1}
+.mini.P .famrot svg{width:11px;height:11px;flex:none}
+.mini.P .penal{position:absolute;right:3px;top:19px;background:var(--fam);color:#fff;border-radius:7px;padding:0 4px;font-size:10px;font-weight:900;line-height:14px}
+.mini.P .pt{padding-top:30px}
+.mini.P .pd{padding-top:4px}
+.bigP{--fam:#5a4a2c;border:6px solid transparent;
+  background:linear-gradient(180deg,#fbf6ea,#e6d9bb) padding-box,repeating-linear-gradient(135deg,var(--fam) 0 4px,color-mix(in srgb,var(--fam) 45%,#fff) 4px 8px) border-box}
+.bigP.fam-falacia{background:linear-gradient(180deg,#f8ebe7,#e6cbc2) padding-box,repeating-linear-gradient(135deg,var(--fam) 0 4px,color-mix(in srgb,var(--fam) 45%,#fff) 4px 8px) border-box}
+.bigP .bc{border-color:var(--fam)}
+.bigP .famrot{margin:0 0 4px 56px;display:flex;align-items:center;gap:6px;color:var(--fam);font-weight:900;text-transform:uppercase;letter-spacing:.8px;font-size:12px;min-height:20px}
+.bigP .famrot svg{width:18px;height:18px;flex:none}
+.bigP .famrot b{color:#fff;background:var(--fam);border-radius:6px;padding:0 5px}
+.bigP p.jogo{margin-top:14px}
+.bigP .pena{display:block;margin-top:6px;font-size:.82em;font-weight:700;color:var(--fam)}
+.bigP p.oq{font-size:14.5px;line-height:1.35;color:#4a4232;font-style:italic;margin-top:10px;border-top:1px solid color-mix(in srgb,var(--fam) 35%,transparent);padding-top:8px}
+.bigP p.oq b{font-style:normal}
+.cena.usada .cartaU .bigP p.oq{font-size:13.5px}
+/* caveiras: os pontos que as falácias já custaram, ao lado dos troféus */
+.cav{display:inline-flex;align-items:center;gap:1px;color:#fbe3dd;background:#7a1420;border:1px solid #c0485a;border-radius:9px;padding:0 5px 0 3px;font-weight:900;font-family:var(--serif);font-size:12px;line-height:17px}
+.cav svg{width:13px;height:13px}
+.ident .cav{font-size:13cqh;line-height:17cqh;border-radius:8cqh;padding:0 3cqh 0 1.5cqh}
+.ident .cav svg{width:13cqh;height:13cqh}
+.cai{animation:cai .8s var(--tranco,ease)}
+@keyframes cai{0%{transform:scale(1)}30%{transform:scale(1.35) rotate(-6deg);color:#ff8a8a}60%{transform:scale(.95) rotate(4deg)}100%{transform:scale(1)}}
+/* Paradoxo Lógico: debate trancado */
+.deb .tranca{position:absolute;left:50%;top:2%;transform:translate(-50%,0);display:flex;align-items:center;gap:4px;white-space:nowrap;pointer-events:none;
+  background:rgba(30,22,40,.88);color:#f3ecff;border:2px solid var(--pc);border-radius:10px;padding:2px 8px;font-size:11.5px;font-weight:800;letter-spacing:.3px;box-shadow:0 3px 10px rgba(0,0,0,.5);z-index:3}
+.deb .tranca svg{width:14px;height:14px}
 </style>
 </head>
 <body>

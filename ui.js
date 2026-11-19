@@ -34,6 +34,16 @@ function emblema(p){
 }
 // placar: pontos acumulados e o objetivo (30)
 function placar(p){ var pl=S.players[p], pts=pl.points-(ocultos['pts:'+p]||0); return '<div class="pts" data-pts="'+p+'" title="Pontos: '+pts+' de '+S.cfg.pontos+'"><b>'+pts+'</b><small>/'+S.cfg.pontos+'</small></div>'; }
+// símbolos provisórios das cartas temporárias (os definitivos virão do Flavio)
+var CAVEIRA='<svg class="caveira" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2C7 2 3.5 5.6 3.5 10.2c0 2.7 1.2 4.6 3 5.8V19c0 .6.4 1 1 1h1.3v-2h1.4v2h3.6v-2h1.4v2h1.3c.6 0 1-.4 1-1v-3c1.8-1.2 3-3.1 3-5.8C20.5 5.6 17 2 12 2zm-3.6 11.2a2.1 2.1 0 1 1 0-4.2 2.1 2.1 0 0 1 0 4.2zm7.2 0a2.1 2.1 0 1 1 0-4.2 2.1 2.1 0 0 1 0 4.2zM12 13.4l1.2 2.2h-2.4z"/></svg>';
+var CADEADO='<svg class="cadeado" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7 10V7a5 5 0 0 1 10 0v3h1.5c.8 0 1.5.7 1.5 1.5v9c0 .8-.7 1.5-1.5 1.5h-13C4.7 22 4 21.3 4 20.5v-9c0-.8.7-1.5 1.5-1.5H7zm2 0h6V7a3 3 0 0 0-6 0v3zm3 4a1.6 1.6 0 0 0-.8 3V19h1.6v-2a1.6 1.6 0 0 0-.8-3z"/></svg>';
+var SIMB_FAM={falacia:CAVEIRA,
+  argumento:'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M11 3h2v3h6l-3 6.5a3.5 3.5 0 0 0 7 0L20 6h-1V4h-6v15h4v2H7v-2h4V4H5v2H4l-3 6.5a3.5 3.5 0 0 0 7 0L5 6h6z"/></svg>',
+  escola:'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2 2 7v2h20V7zM4 10v8h3v-8zm6.5 0v8h3v-8zM17 10v8h3v-8zM2 19v3h20v-3z"/></svg>',
+  praxis:'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M9 21h6v-1H9zm3-19a7 7 0 0 0-4 12.7V18h8v-3.3A7 7 0 0 0 12 2zm2.5 11.4-.5.3V16h-4v-2.3l-.5-.3a5 5 0 1 1 5 0z"/></svg>'};
+// rótulo da família: Falácia, Argumento, Práxis ou o nome da escola atacada
+function rotFam(c){ return c.fam==='escola'?'Carta de escola · '+(ESC[c.esc]?ESC[c.esc].nome:''):BF.FAMILIA[c.fam].nome; }
+function caveiras(p){ var n=S.players[p].caveiras-(ocultos['cav:'+p]||0); return n>0?'<span class="cav" data-cav="'+p+'" title="Falácias usadas: '+n+' ponto'+(n>1?'s':'')+' perdido'+(n>1?'s':'')+'">'+CAVEIRA+'×'+n+'</span>':''; }
 // livros da Biblioteca em HTML (Minha Biblioteca, na faixa de baixo): em grupos de cinco, para contar a olho
 function livrosHTML(n){ var h=''; for(var i=0;i<Math.min(n,60);i++)h+='<i class="liv"></i>'; return h; }
 var TIPO={c:'Citação · tradução livre',p:'Paráfrase',i:'Inferência a partir da doutrina'};
@@ -67,9 +77,12 @@ function ancF(g,c,attrs,anc,figAnc){
     +(g.lib?'<div class="sel libr">Bibliotecário</div>':inerte?'<div class="sel">chegando</div>':feito?'<div class="sel">já debateu</div>':'')+'</button>';
 }
 function miniP(c,attrs,cls){
-  return '<button class="mini P '+(cls||'')+'" data-cid="'+c.id+'" '+attrs+' aria-label="'+esc(c.nome)+'"><span class="custo">'+c.custo+'</span>'
-    +'<div class="pt">'+esc(c.nome)+'</div><div class="ps">'+esc(c.sub)+'</div><div class="pd">'+esc(c.d)+'</div></button>';
+  return '<button class="mini P fam-'+c.fam+' '+(cls||'')+'" data-cid="'+c.id+'" '+attrs+' aria-label="'+esc(rotFam(c)+': '+c.nome)+'"'+famStyle(c)+'><span class="custo">'+c.custo+'</span>'
+    +'<span class="famrot">'+SIMB_FAM[c.fam]+(c.fam==='escola'?'Escola':BF.FAMILIA[c.fam].nome)+'</span>'+(c.pen?'<span class="penal" title="Ao usar: −'+c.pen+' ponto'+(c.pen>1?'s':'')+'; a carta sai do jogo">−'+c.pen+'</span>':'')
+    +'<div class="pt">'+esc(c.nome)+'</div><div class="pd">'+esc(c.d)+'</div></button>';
 }
+function custoMao(c){ return c.tipo==='P'?BF.custoMin(c.id):c.custo; }
+function famStyle(c){ return ' style="--fam:'+(c.fam==='escola'&&ESC[c.esc]?ESC[c.esc].cor2:BF.FAMILIA[c.fam].cor)+'"'; }
 function seat(g,p,i,meu){
   var c=C(g.id), pl=S.players[p], dar=meu&&S.turn===0&&!S.over&&BF.ativo(g)&&!g.lib, vi=g.ideas-(ocultos['ide:'+p+':'+g.id]||0);
   var h='<div class="seat'+(meu?'':' opp-seat')+'" style="--pc:'+pl.cor+'" '+(meu?'data-seat="'+i+'"':'data-op="'+p+'" data-oi="'+i+'"')+'>'
@@ -87,7 +100,7 @@ function renderOpps(){
     var pl=S.players[p], vez=S.turn===p&&!S.over, bk='';
     for(var b=0;b<pl.hand.length;b++)bk+='<span class="back"></span>';
     h+='<div class="ident'+(vez?' vez':'')+'" data-painel="'+p+'" data-anc="ident:'+p+'" style="--pc:'+pl.cor+'">'+emblema(p)+placar(p)
-      +'<div class="extras">'+trofeus(p)+'<span class="backs" title="Cartas na mão: '+pl.hand.length+'">'+bk+'</span></div>'+(vez?'<span class="jog">jogando…</span>':'')+'</div>';
+      +'<div class="extras">'+trofeus(p)+caveiras(p)+'<span class="backs" title="Cartas na mão: '+pl.hand.length+'">'+bk+'</span></div>'+(vez?'<span class="jog">jogando…</span>':'')+'</div>';
     pl.group.forEach(function(g,i){h+=seat(g,p,i,false);});
     h+='<div class="bibop" data-anc="bibop:'+p+'" style="--pc:'+pl.cor+'" title="Biblioteca de '+esc(pl.nome)+': '+BF.nI(pl.library)+' guardadas"><b>'+pl.library+'</b></div>';
   }
@@ -103,7 +116,8 @@ function renderAgora(){
   var h='';
   S.debates.forEach(function(d,i){
     var q=DEB[d.id], a=AREA[q.area];
-    h+='<div class="trib"><div class="deb" data-di="'+i+'" data-anc="deb:'+i+'" title="«'+esc(q.q)+'» · '+esc(a.nome)+' · vale '+q.valor+'">';
+    h+='<div class="trib'+(d.tranca?' trancado':'')+'"><div class="deb" data-di="'+i+'" data-anc="deb:'+i+'" title="«'+esc(q.q)+'» · '+esc(a.nome)+' · vale '+q.valor+(d.tranca?' · trancado pelo Paradoxo Lógico até o turno de '+esc(S.players[d.tranca.P].nome):'')+'">'
+      +(d.tranca?'<div class="tranca" style="--pc:'+S.players[d.tranca.P].cor+'">'+CADEADO+'Paradoxo · '+(d.tranca.P===0?'até o seu turno':'até o turno de '+esc(S.players[d.tranca.P].nome))+'</div>':'');
     S.players.forEach(function(pl,p){
       var n=d.stakes[p], lid=BF.lidera(S,i,p), vis=Math.min(n,2*q.valor), oc=Math.min(vis,ocultos[d.id+':'+p]||0);
       h+='<div class="est" data-row="'+i+':'+p+'" data-anc="est:'+i+':'+p+'" style="--pc:'+pl.cor+'" title="'+esc(pl.nome)+(lid?' · leva o debate no início do próprio turno':'')+'"><div class="torre'+(lid&&!oc?' lider':'')+'" data-est="'+d.id+':'+p+'"></div>'
@@ -143,13 +157,13 @@ function renderMe(){
   /* FAIXA INFERIOR (retangular, fora da perspectiva da cena): à esquerda, o jogador e Minha Biblioteca;
      no centro, a mão; à direita, os comandos */
   h+='<div class="rodape" id="rodape" style="--pc:'+pl.cor+'"><div class="r-esq">'
-    +'<div class="ident eu'+(vez?' vez':'')+'" data-painel="0">'+emblema(0)+placar(0)+'<div class="extras">'+trofeus(0)+'</div></div>'
+    +'<div class="ident eu'+(vez?' vez':'')+'" data-painel="0">'+emblema(0)+placar(0)+'<div class="extras">'+trofeus(0)+caveiras(0)+'</div></div>'
     +'<div class="bib'+(bibChegou?' chegou':'')+'" id="bib" '+(vez?'data-a="bib" data-drag="livro" title="Clique ou arraste para dar ideias aos filósofos"':'title="Minha Biblioteca"')+'>'
     +'<div class="bt">Minha Biblioteca</div><div class="bcorpo"><div class="estante'+(pl.library>30?' cheia':'')+'">'+livrosHTML(pl.library)+'</div>'
     +'<div class="bnum" title="Ideias disponíveis na Biblioteca"><b>'+pl.library+'</b><small>disponíveis</small></div></div>'+geracaoHTML()+'</div></div>';
   h+='<div class="mao" data-n="'+Math.min(pl.hand.length,9)+'" aria-label="Sua mão">';   // o limite é 5 no fim do turno; durante o turno a mão pode ter 6 ou 7
   pl.hand.forEach(function(id){
-    var c=C(id), caro=vez&&c.custo>pl.library;
+    var c=C(id), caro=vez&&custoMao(c)>pl.library;
     h+=c.tipo==='F'?miniF(null,c,'data-a="mao" data-id="'+id+'" data-drag="mao"',caro?'caro':''):miniP(c,'data-a="mao" data-id="'+id+'" data-drag="mao"',caro?'caro':'');
   });
   if(!pl.hand.length)h+='<span class="vaziaM">Sem cartas na mão.</span>';
@@ -309,12 +323,19 @@ function palcoRel(f){
 /* Falácia ou Práxis usada (por você ou por um adversário): a própria carta no centro, com quem a usou, o alvo e
    o resultado. Provisório: as cenas 3D específicas virão depois. Um clique fecha; o efeito já foi aplicado. */
 function palcoCarta(f){
-  var c=C(f.id), pl=S.players[f.P], fal=/^Fal/.test(c.sub||''), q=f.did?DEB[f.did]:null, res=[];
-  if(f.perda>0&&f.prm&&f.prm.o!==undefined)res.push(S.players[f.prm.o].nome+' perde '+BF.nI(f.perda)+(q?' em «'+q.q+'»':''));
+  var c=C(f.id), pl=S.players[f.P], q=f.did?DEB[f.did]:null, res=[], prm=f.prm||{}, alvo=prm.o!==undefined?S.players[prm.o].nome:'';
+  if(f.perda>0&&prm.o!==undefined)res.push(alvo+' perde '+BF.nI(f.perda)+(q?' em «'+q.q+'»':''));
   if(f.ganho>0)res.push(pl.nome+' ganha '+BF.nI(f.ganho)+(q?' em «'+q.q+'»':''));
-  var jog='<div class="jogada" style="--pc:'+pl.cor+'"><b>'+esc(pl.nome)+'</b> ▸ usa '+(fal?'uma falácia':'uma carta de Práxis')+(f.label?'<span>'+esc(f.label)+'</span>':'')+'</div>';
+  if(c.id==='nonsequitur')res.push(prm.foram&&prm.foram.length?alvo+' descarta '+prm.foram.map(function(x){return C(x).nome;}).join(' e '):alvo+' não tinha cartas temporárias');
+  if(c.id==='cicuta'&&prm.morto)res.push(C(prm.morto).nome+(prm.o===0?' deixa a sua mesa':' deixa a mesa de '+alvo)+(f.custo<c.custo?' (contra Sócrates, a cicuta custa 1)':''));
+  if(c.id==='paradoxo'&&q)res.push('«'+q.q+'» fica trancado até o próximo turno de '+pl.nome);
+  if(c.id==='dogma'||c.id==='niilismo')res.push(f.label);
+  if(c.id==='tautologia'&&prm.fi!==undefined)res.push(f.label);
+  if(c.pen)res.push(pl.nome+' perde '+c.pen+' ponto'+(c.pen>1?'s':'')+'; a carta sai do jogo');
+  var art={falacia:'uma falácia',argumento:'um argumento',escola:'uma carta de escola',praxis:'uma Práxis'}[c.fam];
+  var jog='<div class="jogada" style="--pc:'+pl.cor+'"><b>'+esc(pl.nome)+'</b> ▸ usa '+art+(f.label?'<span>'+esc(f.label)+'</span>':'')+'</div>';
   return palco('<div class="cena usada"><div class="cartaU">'+bigHTML(c)+'</div><div class="fala">'+jog
-    +'<div class="et">'+esc(c.sub||'')+'</div><h3>'+esc(c.nome)+'</h3><p>'+esc(c.d)+'</p>'
+    +'<div class="et">'+esc(rotFam(c))+'</div><h3>'+esc(c.nome)+'</h3><p>'+esc(c.d)+'</p>'
     +(res.length?'<div class="refl"><b>Resultado:</b><ul>'+res.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul></div>':'')+'%CONT%</div></div>');
 }
 
@@ -323,7 +344,7 @@ function palcoCarta(f){
 var avisoChave=null;
 function podeUsarIdeias(){
   var pl=S.players[0], i, c;
-  for(i=0;i<pl.hand.length;i++){ c=C(pl.hand[i]); if(c.custo>pl.library)continue;
+  for(i=0;i<pl.hand.length;i++){ c=C(pl.hand[i]); if(custoMao(c)>pl.library)continue;
     if(c.tipo==='F')return true;
     if(BF.praxisOptions(S,0,c.id).length)return true; }
   for(i=0;i<pl.group.length;i++){ if(BF.moveOptions(S,0,i).length||BF.canGive(S,0,i))return true; }
@@ -354,6 +375,7 @@ function prepararOcultos(lista){
     else if(f.k==='segue'&&f.did)add(f.did+':'+f.P,1);
     else if(f.k==='praxis'&&f.did&&f.ganho>0)add(f.did+':'+f.P,f.ganho);
     else if(f.k==='pop'&&f.mud&&f.mud.length){ f.mud.forEach(function(m){ var key=chaveMud(m); ocultos[key]=(ocultos[key]||0)+m.n; }); n++; }
+    else if(f.k==='caveira'){ ocultos['pts:'+f.P]=(ocultos['pts:'+f.P]||0)-f.n; ocultos['cav:'+f.P]=(ocultos['cav:'+f.P]||0)+f.n; n++; }
     else if(f.k==='vit'){ add('trof:'+f.P,1); add('pts:'+f.P,f.valor); ocultos['placa:'+f.di]={id:f.did,stakes:f.stakes||[0,0,0]}; n++; }
   });
   if(n){redesenhar();if(sel)reaplicarSel();}
@@ -418,6 +440,12 @@ async function tocar(lista){
         if(M3()) await M3().virarPlaca(f.di,function(){ delete ocultos['placa:'+f.di]; m3d(); }); else { delete ocultos['placa:'+f.di]; m3d(); }
         break;
       case 'praxis': await esperarBaloes(); await palcoCarta(f); await BFX.cena('falacia',f); break;
+      case 'caveira':   // a falácia cobra: o placar cai e a caveira aparece ao lado dos troféus
+        ocultos['pts:'+f.P]=(ocultos['pts:'+f.P]||0)+f.n; ocultos['cav:'+f.P]=Math.max(0,(ocultos['cav:'+f.P]||0)-f.n);
+        redesenhar(); som('perda');
+        document.querySelectorAll('[data-pts="'+f.P+'"] b,[data-cav="'+f.P+'"]').forEach(function(b){ b.classList.remove('cai'); void b.offsetWidth; b.classList.add('cai'); });
+        await sleep(veloz?300:700); break;
+      case 'destranca': break;
       case 'dupla': som('dupla'); [f.a,f.b].forEach(function(id){brilhar(f.P,id,'#c2410c');}); BFX.coro('aplauso','Dupla clássica!',1300); break;
     }
   }
@@ -431,7 +459,8 @@ function agir(fn){ cancelarSel(); fn(); aberto=null; $('ov').classList.remove('o
 
 // ---------- carta ampliada (só leitura) ----------
 function bigHTML(c){
-  if(c.tipo==='P')return '<div class="bigP"><span class="bc">'+c.custo+'</span><h3>'+esc(c.nome)+'</h3><div class="ps">'+esc(c.sub)+'</div><p>'+esc(c.d)+'</p></div>';
+  if(c.tipo==='P')return '<div class="bigP fam-'+c.fam+'"'+famStyle(c)+'><span class="bc">'+c.custo+'</span><div class="famrot">'+SIMB_FAM[c.fam]+esc(rotFam(c))+(c.pen?' <b>−'+c.pen+' ponto'+(c.pen>1?'s':'')+'</b>':'')+'</div><h3>'+esc(c.nome)+'</h3>'
+    +'<div class="ps">'+esc(c.sub.replace(/^[^—]*—\s*/,''))+'</div><p class="jogo"><b>Jogo.</b> '+esc(c.d)+(c.pen?' <span class="pena">Quem usa perde '+c.pen+' ponto'+(c.pen>1?'s':'')+', e a carta sai do jogo.</span>':'')+'</p>'+(c.oq?'<p class="oq"><b>O que é.</b> '+esc(c.oq)+'</p>':'')+'</div>';
   var e=ESC[c.escola], ds=BF.duplasDe(c.id);
   var pills=BF.AREAS.map(function(a){return '<div class="pill" style="--c:'+AREA[a].cor+'">'+AREA[a].nome+'<b>'+c.vals[a]+'</b></div>';}).join('');
   // complemento do nome: prenome vem antes (Sigmund Freud); "de Sínope" e afins vêm depois (Diógenes de Sínope)
@@ -480,7 +509,7 @@ function alvosDe(tipo,ref){
     });
   } else if(tipo==='mao'){
     var id=ref; c=C(id);
-    if(c.custo>pl.library)return out;
+    if(custoMao(c)>pl.library)return out;
     if(c.tipo==='F'){
       if(pl.group.length<4)out.push({el:$('megrupo'),fn:function(){BF.playPhilosopher(S,0,id);}});
       else pl.group.forEach(function(g,k){var s=q$('[data-seat="'+k+'"] .mini'); if(s)out.push({el:s,fn:function(){BF.playPhilosopher(S,0,id,k);}});});
@@ -490,7 +519,11 @@ function alvosDe(tipo,ref){
       function jogar(o){return function(){BF.playPraxis(S,0,id,o.prm,o.label);};}
       if(c.id==='autoridade') po.forEach(function(o){var e=q$('.deb[data-di="'+o.prm.d+'"]'); if(e)out.push({el:e,fn:jogar(o)});});
       else if(c.id==='petitio') po.forEach(function(o){var e=q$('[data-seat="'+o.prm.fi+'"] .mini'); if(e)out.push({el:e,fn:jogar(o)});});
-      else if(['espantalho','sofisma','reductio','retorsio','falseabilidade'].indexOf(c.id)>=0)
+      else if(c.id==='paradoxo') po.forEach(function(o){var e=q$('.deb[data-di="'+o.prm.d+'"]'); if(e)out.push({el:e,fn:jogar(o)});});
+      else if(c.id==='tautologia') po.forEach(function(o){var e=o.prm.d!==undefined?q$('.deb[data-di="'+o.prm.d+'"]'):q$('[data-seat="'+o.prm.fi+'"] .mini'); if(e)out.push({el:e,fn:jogar(o)});});
+      else if(c.id==='cicuta') po.forEach(function(o){var e=q$('[data-op="'+o.prm.o+'"][data-oi="'+o.prm.fi+'"] .mini'); if(e)out.push({el:e,fn:jogar(o)});});
+      else if(['nonsequitur','dogma','niilismo'].indexOf(c.id)>=0) po.forEach(function(o){var e=q$('#opps .ident[data-painel="'+o.prm.o+'"]'); if(e)out.push({el:e,fn:jogar(o)});});
+      else if(['espantalho','sofisma','reductio','retorsio','falseabilidade','ceticismo'].indexOf(c.id)>=0)
         po.forEach(function(o){var e=q$('.est[data-row="'+o.prm.d+':'+o.prm.o+'"]'); if(e)out.push({el:e,fn:jogar(o)});});
       else if(c.id==='adhominem'){
         var vistos={};
@@ -513,6 +546,16 @@ function alvosDe(tipo,ref){
   }
   return out;
 }
+var SEM_ALVO={
+  autoridade:'Sem alvo: esta carta age num debate em que você já tem ideias.', espantalho:'Sem alvo: precisa de um debate em que você e um oponente tenham ideias.',
+  sofisma:'Sem alvo: precisa de um debate em que você e um oponente tenham ideias.', adhominem:'Sem alvo: precisa de um debate seu e de um filósofo adversário com ideias.',
+  petitio:'Sem alvo: precisa de um filósofo seu, já em ação, sem nenhuma ideia.', mutatio:'Sem alvo: precisa de ideias suas num debate e de outro debate livre.',
+  nonsequitur:'Nenhum oponente tem cartas temporárias na mão.', retorsio:'Sem alvo: num debate seu, um oponente precisa ter ao menos 3 ideias.',
+  reductio:'Sem alvo: num debate seu, um oponente precisa ter ao menos 2 ideias.', falseabilidade:'Sem alvo: precisa de um debate de Lógica / Ciência em que você e um oponente tenham ideias.',
+  tautologia:'Sem alvo agora.', paradoxo:'Todos os debates já estão trancados.', cicuta:'Nenhum adversário tem um filósofo grego que possa ser alvo (Diógenes é imune).',
+  dogma:'Nenhum adversário tem Materialistas e Empiristas.', niilismo:'Nenhum adversário tem Germânicos (ou já estão sob o Niilismo).',
+  ceticismo:'Sem alvo: precisa de um debate de Metafísica / Religião em que você e um oponente tenham ideias.'
+};
 var DICAS={
   fil:function(r){var c=C(S.players[0].group[r].id);return '<b>'+esc(c.nome)+'</b>: escolha um debate aceso.';},
   livro:function(){return '<b>Biblioteca</b>: clique num filósofo para dar 1 ideia ('+S.players[0].library+' restantes).';},
@@ -525,8 +568,8 @@ function motivoSemAlvo(tipo,ref){
   if(tipo==='livro')return pl.library?'Nenhum filósofo pode receber ideias agora.':'A Biblioteca está vazia.';
   if(tipo==='troca')return 'Troca indisponível.';
   var c=C(ref);
-  if(c.custo>pl.library)return 'Custa '+BF.nI(c.custo)+'; a Biblioteca tem '+BF.nI(pl.library)+'.';
-  if(c.tipo==='P')return 'Sem alvo válido agora. Falácias só agem em debates em que você já tem ideias.';
+  if(custoMao(c)>pl.library)return 'Custa '+BF.nI(c.custo)+'; a Biblioteca tem '+BF.nI(pl.library)+'.';
+  if(c.tipo==='P')return SEM_ALVO[c.id]||'Sem alvo válido agora.';
   return 'Não há onde baixar.';
 }
 function origemEl(tipo,ref){
@@ -584,7 +627,7 @@ function rodarIA(){
 function cartaJogavel(){
   var pl=S.players[0];
   for(var i=0;i<pl.hand.length;i++){var c=C(pl.hand[i]);
-    if(c.custo>pl.library)continue;
+    if(custoMao(c)>pl.library)continue;
     if(c.tipo==='F'&&pl.group.length<4)return c;
     if(c.tipo==='P'&&BF.praxisOptions(S,0,c.id).length)return c;}
   return null;
@@ -615,10 +658,11 @@ function telaFim(){
 function regrasHTML(){
   return '<ul><li><b>Ideias</b> são a única moeda do jogo (na mesa, cada ideia é um livro). Pagam cartas e vão para os debates.</li>'
     +'<li><b>Início do turno</b> (automático): você vence os debates que liderava, compra uma carta, a Biblioteca recebe 3 ideias (e guarda as sobras) e cada filósofo reflete: +1 ideia (custo 1 ou 2), +2 (custo 3 ou 4) ou +3 (custo 5). Quem tem colega da mesma escola ganha +1; cada filósofo de uma dupla clássica, +1. Depois disparam os poderes. Nenhum filósofo passa de 10 ideias: o excedente se perde.</li>'
-    +'<li><b>Sua vez, em qualquer ordem:</b> baixar cartas, dar ideias da Biblioteca aos filósofos, levá-los aos debates, usar falácias e técnicas, comprar uma carta extra (2 ideias). Clique numa carta e a mesa mostra onde ela pode agir; ou arraste.</li>'
+    +'<li><b>Sua vez, em qualquer ordem:</b> baixar cartas, dar ideias da Biblioteca aos filósofos, levá-los aos debates, usar cartas temporárias, comprar uma carta extra (2 ideias). Clique numa carta e a mesa mostra onde ela pode agir; ou arraste.</li>'
     +'<li><b>Debate:</b> o filósofo leva exatamente o valor que tem na área da pergunta. Sem esse tanto de ideias, não vai. Cada um debate uma vez por turno.</li>'
     +'<li><b>Recém-chegado</b> (baixado ou recebido em troca): entra em ação no próximo turno do dono.</li>'
     +'<li><b>Bibliotecário:</b> solte um filósofo na Biblioteca para nomeá-lo. Ocupa uma cadeira, não debate e produz, a cada turno, tantas ideias quanto o seu custo, direto para a Biblioteca.</li>'
+    +'<li><b>Cartas temporárias</b>, em quatro famílias. <b>Argumentos</b> (técnicas legítimas), <b>cartas de escola</b> (cada uma ataca uma escola) e <b>Práxis</b> (ideias que viram manobra) voltam ao monte pelo descarte. <b>Falácias</b> (borda vermelho-escura, caveira) saem do jogo depois de usadas e tiram 1 ou 2 pontos de quem as usa; o placar pode ficar negativo, e as caveiras ao lado dos troféus mostram quanto já custaram.</li>'
     +'<li><b>Troca</b> (5 ideias, uma vez por partida): troque um filósofo seu por um de um adversário. Os dois perdem as ideias. Bibliotecário e Diógenes não são trocados.</li>'
     +'<li><b>Vencer um debate:</b> no início do seu turno, ter ideias iguais ou acima do valor e pelo menos uma a mais que cada adversário (empate não vence). Quem lidera precisa esperar uma volta inteira da mesa, para que os outros possam responder. Com o dobro do valor, a vitória é imediata.</li>'
     +'<li><b>Fim:</b> ao completar a rodada em que alguém chega a 30 pontos, ou ao fim da 12ª rodada. Mão com no máximo 5 cartas ao encerrar o turno. Duplo clique (ou botão direito) numa carta mostra a carta ampliada.</li></ul>';

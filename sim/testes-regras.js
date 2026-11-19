@@ -53,6 +53,73 @@ function passaPara1(s) { s.players[0].hand = s.players[0].hand.slice(0, 5); BF.e
 { const s = jogo(6); zera(s); s.players[0].group = [G('hegel', 4)]; s.debates[0].stakes[0] = 5; s.debates[0].stakes[1] = 3; const v = (Array.isArray(BF.C('hegel').vals)?BF.C('hegel').vals[BF.AREAS.indexOf(BF.DEB[s.debates[0].id].area)]:BF.C('hegel').vals[BF.DEB[s.debates[0].id].area]);
   BF.moveToDebate(s, 0, 0, 0); confere('Hegel já à frente: sem Síntese', s.debates[0].stakes[0] === 5 + Math.min(4, v), s.debates[0].stakes[0]); }
 
+// 8. cartas temporárias (19/11/2026)
+function daCarta(s, P, id, lib) { s.players[P].hand.push(id + '#1'); s.players[P].library = lib === undefined ? 10 : lib; return id + '#1'; }
+function opc(s, P, id, f) { return BF.praxisOptions(s, P, id).find(f || (() => true)); }
+{ // falácia: sai do jogo, tira pontos (pode ficar negativo) e registra caveiras
+  const s = jogo(8); zera(s); s.debates[0].stakes[0] = 2; s.debates[0].stakes[1] = 4; const c = daCarta(s, 0, 'espantalho');
+  const o = opc(s, 0, 'espantalho', x => x.prm.o === 1); BF.playPraxis(s, 0, c, o.prm);
+  confere('Espantalho: +4/−4', s.debates[0].stakes[0] === 6 && s.debates[0].stakes[1] === 0);
+  confere('Espantalho: −2 pontos, placar negativo', s.players[0].points === -2, s.players[0].points);
+  confere('Espantalho: 2 caveiras', s.players[0].caveiras === 2);
+  confere('Espantalho: sai do jogo', s.exiladas.indexOf(c) >= 0 && s.discard.indexOf(c) < 0);
+  const c2 = daCarta(s, 0, 'retorsio'); s.debates[0].stakes[1] = 3; BF.playPraxis(s, 0, c2, opc(s, 0, 'retorsio').prm);
+  confere('Argumento volta com o descarte e não tira pontos', s.discard.indexOf(c2) >= 0 && s.players[0].points === -2); }
+{ // Non Sequitur: descarta até 2 temporárias sorteadas
+  const s = jogo(9); zera(s); s.players[1].hand = ['kant', 'sofisma#1', 'reductio#1', 'tautologia#1'];
+  const c = daCarta(s, 0, 'nonsequitur'); BF.playPraxis(s, 0, c, opc(s, 0, 'nonsequitur', x => x.prm.o === 1).prm);
+  confere('Non Sequitur: fica o filósofo e 1 temporária', s.players[1].hand.length === 2 && s.players[1].hand.indexOf('kant') >= 0, s.players[1].hand);
+  confere('Non Sequitur: −1 ponto', s.players[0].points === -1); }
+{ // Tautologia: no recém-chegado ou no debate
+  const s = jogo(10); zera(s); s.players[0].group = [Object.assign(G('kant'), { novo: true })]; const c = daCarta(s, 0, 'tautologia', 2);
+  BF.playPraxis(s, 0, c, opc(s, 0, 'tautologia', x => x.prm.fi === 0).prm);
+  confere('Tautologia: 2 ideias no recém-chegado, Biblioteca paga 2', s.players[0].group[0].ideas === 2 && s.players[0].library === 0); }
+{ const s = jogo(10); zera(s); s.debates[1].stakes[0] = 1; const c = daCarta(s, 0, 'tautologia', 2);
+  BF.playPraxis(s, 0, c, opc(s, 0, 'tautologia', x => x.prm.d === 1).prm);
+  confere('Tautologia: +2 no debate', s.debates[1].stakes[0] === 3); }
+{ // Paradoxo: trava, protege a liderança, bloqueia vitória alheia e se desfaz no próximo turno de quem trancou
+  const s = jogo(11); zera(s); const v = BF.DEB[s.debates[0].id].valor; s.debates[0].stakes[1] = v; // o 2º jogador lidera e venceria no turno dele
+  s.players[0].group = [G('kant', 9)]; const c = daCarta(s, 0, 'paradoxo', 4);
+  BF.playPraxis(s, 0, c, { d: 0 });
+  confere('Paradoxo: debate trancado', !!s.debates[0].tranca && !BF.livre(s.debates[0]));
+  confere('Paradoxo: ninguém leva ideias ao debate trancado', BF.moveOptions(s, 0, 0).every(o => o.di !== 0));
+  const id0 = s.debates[0].id; s.players[0].hand = []; BF.endTurn(s, []);
+  confere('Paradoxo: o líder adversário não vence enquanto trancado', s.debates.some(d => d.id === id0) && s.players[1].points === 0, s.players[1].points);
+  s.players[1].hand = []; BF.endTurn(s, []); s.players[2].hand = []; BF.endTurn(s, []);
+  const d0 = s.debates.find(d => d.id === id0); confere('Paradoxo: destrava no início do turno de quem trancou', d0 && !d0.tranca); }
+{ const s = jogo(12); zera(s); const v = BF.DEB[s.debates[0].id].valor; s.debates[0].stakes[0] = v; const c = daCarta(s, 0, 'paradoxo', 4);
+  BF.playPraxis(s, 0, c, { d: 0 }); s.players[0].hand = []; BF.endTurn(s, []); s.players[1].hand = []; BF.endTurn(s, []); s.players[2].hand = []; BF.endTurn(s, []);
+  confere('Paradoxo: quem trancou e lidera vence ao destravar', s.players[0].points === v, s.players[0].points); }
+{ // Cicuta
+  const s = jogo(13); zera(s); s.players[1].group = [G('socrates', 3), G('diogenes', 2), G('kant', 1)]; const c = daCarta(s, 0, 'cicuta', 1);
+  const os = BF.praxisOptions(s, 0, 'cicuta');
+  confere('Cicuta com 1 na Biblioteca: só Sócrates', os.length === 1 && os[0].prm.fi === 0, os.map(o => o.label));
+  BF.playPraxis(s, 0, c, os[0].prm);
+  confere('Cicuta: Sócrates sai da mesa, custa 1', s.players[1].group.length === 2 && !s.players[1].group.some(g => g.id === 'socrates') && s.players[0].library === 0); }
+{ const s = jogo(13); zera(s); s.players[1].group = [G('platao', 3), G('diogenes', 2)]; daCarta(s, 0, 'cicuta', 10);
+  confere('Cicuta: Diógenes é imune; Platão custa 3', BF.praxisOptions(s, 0, 'cicuta').length === 1 && BF.custoPraxis(s, 0, 'cicuta#1', { o: 1, fi: 0 }) === 3); }
+{ // Dogma: os dois materialistas não recebem ideias no próximo momento de Reflexão
+  const s = jogo(14); zera(s); s.players[1].group = [G('marx', 0), G('locke', 0), G('hobbes', 0)]; const c = daCarta(s, 0, 'dogma', 4);
+  BF.playPraxis(s, 0, c, { o: 1 }); s.players[0].hand = []; BF.endTurn(s, []);
+  const g = s.players[1].group, z = g.filter(x => x.ideas === 0).length;
+  confere('Dogma: dois sem Reflexão, um recebe', z === 2, g.map(x => x.id + ':' + x.ideas));
+  s.players[1].hand = []; BF.endTurn(s, []); s.players[2].hand = []; BF.endTurn(s, []); s.players[0].hand = []; BF.endTurn(s, []);
+  confere('Dogma: vale uma só vez', s.players[1].group.every(x => x.ideas > 0), s.players[1].group.map(x => x.id + ':' + x.ideas)); }
+{ // Niilismo
+  const s = jogo(15); zera(s); s.players[1].group = [G('kant', 9), G('marx', 9)]; const c = daCarta(s, 0, 'niilismo', 3);
+  BF.playPraxis(s, 0, c, { o: 1 }); s.players[0].hand = []; BF.endTurn(s, []);
+  confere('Niilismo: o Germânico não debate', BF.moveOptions(s, 1, 0).length === 0 && /Niilismo/.test(BF.porqueNao(s, 1, 0)));
+  confere('Niilismo: os outros debatem', BF.moveOptions(s, 1, 1).length > 0);
+  s.players[1].hand = []; BF.endTurn(s, []); s.players[2].hand = []; BF.endTurn(s, []); s.players[0].hand = []; BF.endTurn(s, []);
+  confere('Niilismo: passa depois de um turno', BF.moveOptions(s, 1, 0).length > 0); }
+{ // Ceticismo
+  const s = jogo(16); zera(s); let di = s.debates.findIndex(d => BF.DEB[d.id].area === 'meta');
+  if (di < 0) { s.debates[0].id = 'd04'; di = 0; }
+  s.debates[di].stakes[0] = 1; s.debates[di].stakes[1] = 6; let c = daCarta(s, 0, 'ceticismo', 2);
+  BF.playPraxis(s, 0, c, { d: di, o: 1 }); confere('Ceticismo sem materialista: −2', s.debates[di].stakes[1] === 4);
+  s.players[0].group = [G('locke')]; c = daCarta(s, 0, 'ceticismo', 1); s.players[0].hand = s.players[0].hand.filter(x => x !== 'ceticismo#1').concat(['ceticismo#1']);
+  BF.playPraxis(s, 0, 'ceticismo#1', { d: di, o: 1 }); confere('Ceticismo com materialista: −4', s.debates[di].stakes[1] === 0, s.debates[di].stakes[1]); }
+
 // 7. partidas só de IA
 { let erros = 0, rod = 0, venc = [0, 0, 0], N = 300;
   for (let sd = 1; sd <= N; sd++) {
@@ -60,6 +127,7 @@ function passaPara1(s) { s.players[0].hand = s.players[0].hand.slice(0, 5); BF.e
       let k = 0; while (!s.over && k < 6000) { BF.aiStep(s); k++; }
       if (!s.over) erros++; rod += s.round; if (s.vencedor >= 0) venc[s.vencedor]++;
       s.players.forEach(p => p.group.forEach(g => { if (g.ideas < 0 || g.ideas > 10) erros++; })); s.debates.forEach(d => d.stakes.forEach(x => { if (x < 0) erros++; }));
+      if (s.exiladas.some(id => !BF.C(id).falacia)) erros++;
     } catch (e) { erros++; console.log(e); } }
   confere('300 partidas só de IA sem erro', erros === 0, erros);
   console.log('partidas: rodadas', (rod / N).toFixed(2), 'vitórias por assento', venc.map(v => (100 * v / N).toFixed(1) + '%').join(' / ')); }
