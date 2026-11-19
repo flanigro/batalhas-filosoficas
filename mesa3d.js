@@ -669,7 +669,7 @@ function ocupar(s, g, P) {
     const pulando = (OC['fig:' + P + ':' + id] > 0) || S.fx.some(f => f.k === 'debate' && f.P === P && f.id === id);   // só escurece depois do salto
     s.matFig.color.set(inerte ? (s.busto ? '#ffffff' : '#d4d6dd') : g.acted && !pulando ? '#a8a49c' : '#ffffff'); s.matFig.opacity = 1;
     if (s.matFig.transparent) { s.matFig.transparent = false; s.matFig.needsUpdate = true; } }
-  ajustarPilha(s, g && !g.lib ? g.ideas : 0, P);
+  ajustarPilha(s, g && !g.lib ? Math.max(0, g.ideas - (OC['ide:' + P + ':' + g.id] || 0)) : 0, P);   // ideias ainda não "pensadas" no momento de Reflexão
 }
 
 // ---------- câmera: estável, sem paralaxe; a distância e o deslocamento vertical enquadram as faixas ----------

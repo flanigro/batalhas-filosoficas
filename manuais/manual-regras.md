@@ -139,7 +139,7 @@ O **Bibliotecário** não faz a Reflexão: em vez disso, produz para a Bibliotec
 
 ### 5.5 Poderes da Reflexão
 
-Depois da Reflexão, disparam os poderes que agem "na fase de Reflexão", um por filósofo, **na ordem das cadeiras**. O Bibliotecário também dispara o seu; o que ele ganharia para si vai para a Biblioteca.
+Depois da Reflexão, disparam os poderes que agem "no momento de Reflexão", um por filósofo, **na ordem das cadeiras**. O Bibliotecário também dispara o seu; o que ele ganharia para si vai para a Biblioteca.
 
 ### 5.6 Vitória imediata
 
@@ -245,39 +245,39 @@ Exemplo. Debate de valor 10. Você tem 12; Hipátia, 11; Sêneca, 4. No início 
 
 ## 8. Os poderes dos 20 filósofos
 
-Os poderes valem enquanto o filósofo está no grupo. Os que agem "na fase de Reflexão" disparam uma vez por turno do dono, na ordem das cadeiras (seção 5.5). Quando o poder pede uma escolha (um alvo, um debate, um vizinho), **no digital quem escolhe é o computador**, pelo critério indicado; **no impresso, escolhe o dono do filósofo**. Em empates, o computador fica com o primeiro na ordem das cadeiras ou dos jogadores.
+Os poderes valem enquanto o filósofo está no grupo. Os que agem "no momento de Reflexão" disparam uma vez por turno do dono, na ordem das cadeiras (seção 5.5). Quando o poder pede uma escolha (um alvo, um debate, um vizinho), **no digital quem escolhe é o computador**, pelo critério indicado; **no impresso, escolhe o dono do filósofo**. Em empates, o computador fica com o primeiro na ordem das cadeiras ou dos jogadores.
 
 ### Grécia Clássica
 
-- **Aristóteles — Silogismo – Premissa.** Na fase de Reflexão, põe +1 ideia sua num debate de Lógica, mesmo que você ainda não participe dele. Computador: o debate de Lógica em que você tem mais ideias (empate: o de maior valor). Sem debate de Lógica na Ágora, nada acontece. Essa ideia entra depois da conferência de sustentação: só conta no turno seguinte (seção 5).
-- **Platão — A República.** Na fase de Reflexão, o filósofo de maior custo do seu grupo, o Rei Filósofo, recebe +1 ideia. Pode ser o próprio Platão. O Bibliotecário não entra na escolha.
-- **Sócrates — Maiêutica.** Na fase de Reflexão, o colega com menos ideias recebe +1. Não vale para o próprio Sócrates nem para o Bibliotecário.
-- **Epicuro — Laço de Amizade.** Na fase de Reflexão, um vizinho de cadeira recebe +1 ideia, e Epicuro também: a amizade é recíproca. Sem vizinho, nada acontece. Computador: o vizinho com menos ideias (empate: o da cadeira anterior). O Bibliotecário não recebe.
-- **Pitágoras — Harmonia das Esferas.** Na fase de Reflexão, põe +1 ideia sua num debate cujo valor seja número primo (5 ou 7). Computador: o debate de valor primo em que você tem mais ideias (empate: o de maior valor). Só conta para a sustentação no turno seguinte.
-- **Diógenes — Barrica de Diógenes.** Nenhum adversário pode escolher Diógenes como alvo nem tirar ideias dele. Não pode ser trocado: nem tomado por um adversário, nem dado pelo dono. Continua recebendo efeitos favoráveis gerais (como o Contrato Social de Rousseau) e os efeitos do próprio grupo (Sócrates e Platão podem lhe dar ideias; Kant pode puxar uma ideia dele). A proteção vale para Diógenes e para as ideias **que estão nele**; as que ele já levou a um debate pertencem ao jogador e não são protegidas. Hoje a proteção afasta a Mais-Valia de Marx, a falácia Ad Hominem e a troca; vale também para as cartas que vierem. **Vive com o mínimo:** na fase de Reflexão, se tiver 2 ideias ou menos (já contada a Reflexão), recebe +1.
+- **Aristóteles — Silogismo – Premissa.** No momento de Reflexão, põe +1 ideia sua num debate de Lógica, mesmo que você ainda não participe dele. Computador: o debate de Lógica em que você tem mais ideias (empate: o de maior valor). Sem debate de Lógica na Ágora, nada acontece. Essa ideia entra depois da conferência de sustentação: só conta no turno seguinte (seção 5).
+- **Platão — A República.** No momento de Reflexão, o filósofo de maior custo do seu grupo, o Rei Filósofo, recebe +1 ideia. Pode ser o próprio Platão. O Bibliotecário não entra na escolha.
+- **Sócrates — Maiêutica.** No momento de Reflexão, o colega com menos ideias recebe +1. Não vale para o próprio Sócrates nem para o Bibliotecário.
+- **Epicuro — Laço de Amizade.** No momento de Reflexão, um vizinho de cadeira recebe +1 ideia, e Epicuro também: a amizade é recíproca. Sem vizinho, nada acontece. Computador: o vizinho com menos ideias (empate: o da cadeira anterior). O Bibliotecário não recebe.
+- **Pitágoras — Harmonia das Esferas.** No momento de Reflexão, põe +1 ideia sua num debate cujo valor seja número primo (5 ou 7). Computador: o debate de valor primo em que você tem mais ideias (empate: o de maior valor). Só conta para a sustentação no turno seguinte.
+- **Diógenes — Barrica de Diógenes.** Nenhum adversário pode escolher Diógenes como alvo nem tirar ideias dele. Não pode ser trocado: nem tomado por um adversário, nem dado pelo dono. Continua recebendo efeitos favoráveis gerais (como o Contrato Social de Rousseau) e os efeitos do próprio grupo (Sócrates e Platão podem lhe dar ideias; Kant pode puxar uma ideia dele). A proteção vale para Diógenes e para as ideias **que estão nele**; as que ele já levou a um debate pertencem ao jogador e não são protegidas. Hoje a proteção afasta a Mais-Valia de Marx, a falácia Ad Hominem e a troca; vale também para as cartas que vierem. **Vive com o mínimo:** no momento de Reflexão, se tiver 2 ideias ou menos (já contada a Reflexão), recebe +1.
 
 ### Materialistas e Empiristas
 
-- **Marx — Mais-Valia.** Na fase de Reflexão, o filósofo adversário com mais ideias perde 1. Ignora Diógenes e os Bibliotecários.
+- **Marx — Mais-Valia.** No momento de Reflexão, o filósofo adversário com mais ideias perde 1. Ignora Diógenes e os Bibliotecários.
 - **Hegel — Dialética.** Hegel é o único que pode ir a um debate com menos ideias que o seu valor na área: leva o que tiver, até esse valor. Precisa ter pelo menos 1 ideia. No digital, ele sempre leva o máximo possível. **Síntese:** ao entrar num debate em que um adversário tem mais ideias que você (antes de Hegel chegar), +1 ideia sua nesse debate. A tese encontra a antítese.
-- **Hobbes — Guerra de todos contra todos.** Na fase de Reflexão, o adversário com mais ideias num debate, de qualquer área, perde 1 ideia nesse debate. Computador: o maior número de ideias de um adversário entre todos os debates (empate: o primeiro debate). Nome do poder tirado do Leviatã, cap. XIII (a verificar); até 18/11/2026 o poder valia só para debates de Lógica e se chamava "Tudo no Universo é físico".
-- **Bacon — "Conhecimento é poder".** Na fase de Reflexão, você espia duas cartas da mão de um adversário. Computador: o adversário com mais cartas, duas cartas ao acaso. No digital, por enquanto, só tem efeito quando é do jogador humano.
+- **Hobbes — Guerra de todos contra todos.** No momento de Reflexão, o adversário com mais ideias num debate, de qualquer área, perde 1 ideia nesse debate. Computador: o maior número de ideias de um adversário entre todos os debates (empate: o primeiro debate). Nome do poder tirado do Leviatã, cap. XIII (a verificar); até 18/11/2026 o poder valia só para debates de Lógica e se chamava "Tudo no Universo é físico".
+- **Bacon — "Conhecimento é poder".** No momento de Reflexão, você espia duas cartas da mão de um adversário. Computador: o adversário com mais cartas, duas cartas ao acaso. No digital, por enquanto, só tem efeito quando é do jogador humano.
 - **Locke — Tábula Rasa.** Locke recebe +1 ideia sempre que você baixa uma carta, um filósofo (inclusive como Bibliotecário, exceto o próprio Locke) ou uma Práxis, e sempre que um adversário baixa um filósofo (as Práxis dos adversários não contam). Locke precisa estar em ação. As ideias vêm da experiência.
-- **Rousseau — Contrato Social.** Na fase de Reflexão, todos os filósofos de custo 1 da mesa recebem +1 ideia, inclusive os dos adversários e o próprio Rousseau. Ficam de fora os recém-chegados e os Bibliotecários.
+- **Rousseau — Contrato Social.** No momento de Reflexão, todos os filósofos de custo 1 da mesa recebem +1 ideia, inclusive os dos adversários e o próprio Rousseau. Ficam de fora os recém-chegados e os Bibliotecários.
 
 ### Germânicos
 
 - **Kant — Imperativo Categórico.** Quando Kant leva ideias a um debate de Ética / Política, cada colega em ação que tenha ideias põe 1 delas no mesmo debate, **queira ou não**. A ideia sai do próprio colega. Vale também para colegas que já debateram neste turno, e não gasta a ação deles. O Bibliotecário fica de fora. É um poder difícil de usar: pode desfazer a jogada de um colega que estava juntando ideias para outro debate.
 - **Nietzsche — Filosofar com o martelo.** Toda vez que Nietzsche entra num debate, o adversário com mais ideias nesse debate perde 2 (ou o que tiver, se tiver menos). Nome tirado do subtítulo de *Crepúsculo dos Ídolos* (a verificar).
-- **Schopenhauer — Negação da Vontade.** Na fase de Reflexão, recebe +1 ideia se não foi a nenhum debate no turno anterior do dono. Como Bibliotecário, rende +1 por turno para a Biblioteca.
-- **Heidegger — Ser-no-mundo.** Na fase de Reflexão, recebe +1 ideia para cada debate em que você tem ideias.
+- **Schopenhauer — Negação da Vontade.** No momento de Reflexão, recebe +1 ideia se não foi a nenhum debate no turno anterior do dono. Como Bibliotecário, rende +1 por turno para a Biblioteca.
+- **Heidegger — Ser-no-mundo.** No momento de Reflexão, recebe +1 ideia para cada debate em que você tem ideias.
 - **Freud — Ato Falho.** Freud recebe +1 ideia sempre que um adversário usa uma **falácia** (as seis da seção 2.3; as técnicas não contam). Freud precisa estar em ação. O ganho acontece no turno do adversário.
-- **Arendt — A Condição Humana.** Na fase de Reflexão, recebe +1 ideia se houver um debate de Ética / Política na Ágora.
+- **Arendt — A Condição Humana.** No momento de Reflexão, recebe +1 ideia se houver um debate de Ética / Política na Ágora.
 
 ### Livres-Pensadores
 
-- **Maquiavel — O Príncipe.** Na fase de Reflexão, o filósofo com mais ideias do seu grupo recebe +1. Pode ser o próprio Maquiavel. O Bibliotecário não entra na escolha.
-- **Erasmo — Elogio da Loucura.** Na fase de Reflexão, um adversário perde 1 ideia num debate de Metafísica / Religião. Computador: o adversário com mais ideias num debate dessa área. (O texto da carta diz "o adversário que lidera"; o motor escolhe o adversário com mais ideias, mesmo que ele não lidere. Ver Apêndice C.)
+- **Maquiavel — O Príncipe.** No momento de Reflexão, o filósofo com mais ideias do seu grupo recebe +1. Pode ser o próprio Maquiavel. O Bibliotecário não entra na escolha.
+- **Erasmo — Elogio da Loucura.** No momento de Reflexão, um adversário perde 1 ideia num debate de Metafísica / Religião. Computador: o adversário com mais ideias num debate dessa área. (O texto da carta diz "o adversário que lidera"; o motor escolhe o adversário com mais ideias, mesmo que ele não lidere. Ver Apêndice C.)
 
 ---
 

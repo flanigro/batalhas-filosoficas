@@ -71,11 +71,11 @@ function miniP(c,attrs,cls){
     +'<div class="pt">'+esc(c.nome)+'</div><div class="ps">'+esc(c.sub)+'</div><div class="pd">'+esc(c.d)+'</div></button>';
 }
 function seat(g,p,i,meu){
-  var c=C(g.id), pl=S.players[p], dar=meu&&S.turn===0&&!S.over&&BF.ativo(g)&&!g.lib;
+  var c=C(g.id), pl=S.players[p], dar=meu&&S.turn===0&&!S.over&&BF.ativo(g)&&!g.lib, vi=g.ideas-(ocultos['ide:'+p+':'+g.id]||0);
   var h='<div class="seat'+(meu?'':' opp-seat')+'" style="--pc:'+pl.cor+'" '+(meu?'data-seat="'+i+'"':'data-op="'+p+'" data-oi="'+i+'"')+'>'
     +ancF(g,c,(meu?'data-a="grupo" data-i="'+i+'" data-drag="fil"':'data-a="ver" data-id="'+g.id+'"')+' data-p="'+p+'"',meu?'seat:'+i:'op:'+p+':'+i,meu?'fig:0:'+i:null)
     +(g.lib?'<div class="pilha libp" data-anc="pilha:'+p+':'+i+'" title="Bibliotecário"><b>+'+c.custo+'/turno</b></div>'
-      :'<div class="pilha '+(g.ideas?'':'zero')+'" data-anc="pilha:'+p+':'+i+'" title="'+BF.nI(g.ideas)+'"><b>'+g.ideas+'</b>'
+      :'<div class="pilha '+(vi?'':'zero')+'" data-anc="pilha:'+p+':'+i+'" title="'+BF.nI(vi)+'"><b>'+vi+'</b>'
         +(dar?'<button class="mais1" data-a="dar" data-i="'+i+'" '+(BF.canGive(S,0,i)?'':'disabled')+' title="Dar 1 ideia da Biblioteca">+</button>':'')+'</div>');
   return h+'</div>';
 }
@@ -115,7 +115,7 @@ function renderAgora(){
   for(var k=S.debates.length;k<3;k++)h+='<div class="vago" data-anc="vago:'+k+'">'+(S.debDeck.length?'Novo debate ao fim da rodada '+(S.cfg.novoDebate.filter(function(r){return r>=S.round;})[0]||'—'):'—')+'</div>';
   $('agora').innerHTML=h;
 }
-// o que chega à Biblioteca a cada fase de Reflexão: as 3 fixas e a produção do Bibliotecário (se já trabalha)
+// o que chega à Biblioteca a cada momento de Reflexão: as 3 fixas e a produção do Bibliotecário (se já trabalha)
 function ganhoBib(p){
   var pl=S.players[p], n=S.cfg.bibPorTurno||3;
   pl.group.forEach(function(g){ if(g.lib&&BF.ativo(g))n+=C(g.id).custo; });
@@ -125,7 +125,7 @@ function ganhoBib(p){
 function geracaoHTML(){
   var pl=S.players[0], base=S.cfg.bibPorTurno||3, lib=null;
   pl.group.forEach(function(g){ if(g.lib)lib=g; });
-  var h='<div class="ger" title="Ideias que chegam à Biblioteca na sua fase de Reflexão"><span class="gp" title="Geração básica">+'+base+' <small>básicas</small></span>';
+  var h='<div class="ger" title="Ideias que chegam à Biblioteca no seu momento de Reflexão"><span class="gp" title="Geração básica">+'+base+' <small>básicas</small></span>';
   if(lib){
     var c=C(lib.id), at=BF.ativo(lib);
     h+='<span class="gp bibl'+(at?'':' espera')+'" title="'+esc(c.nome)+', Bibliotecário: '+(at?'produz '+BF.nI(c.custo)+' por turno':'começa a produzir no próximo turno')+'">'
@@ -186,17 +186,37 @@ function render(){
 function elMini(P,id){return document.querySelector('.mini[data-cid="'+id+'"][data-p="'+P+'"]');}
 var TONS={con:'#8a6a12',ref:'#6d6f85',esc:'#2c9a4b',dupla:'#c2410c',neg:'#b3261e',mov:'#3b4b8a',lib:'#7a4f0c'};
 function durBal(){return veloz?1500:3500;}
+function chaveMud(m){ var a=m.k.split(':'); return a[0]==='f'?'ide:'+a[1]+':'+a[2]:a[1]+':'+a[2]; }
+// o balão do momento de Reflexão traz as ideias que mudaram (f.mud): só agora os números se alteram, com PLIM
+function aplicarMud(f){
+  if(!f.mud||!f.mud.length)return;
+  var ganhou=0, perdeu=0, pulsar=[];
+  f.mud.forEach(function(m){
+    var key=chaveMud(m), a=m.k.split(':');
+    if(a[0]==='d'&&m.n>0&&ocultos[key]>0){ revelar(a[1],+a[2],Math.min(m.n,ocultos[key])); return; }   // livro cai na prateleira do debate
+    if(ocultos[key]){ ocultos[key]-=m.n; if(!ocultos[key])delete ocultos[key]; }
+    if(a[0]==='f'){ if(m.n>0)ganhou+=m.n; else perdeu-=m.n; pulsar.push(a); }
+  });
+  redesenhar();
+  pulsar.forEach(function(a){ var gi=S.players[+a[1]].group.findIndex(function(g){return g.id===a[2];});
+    var b=q$('[data-anc="pilha:'+a[1]+':'+gi+'"] b'); if(b){ b.classList.remove('soma'); void b.offsetWidth; b.classList.add('soma'); } });
+  if(ganhou)som('plim'); else if(perdeu)som('perda');
+}
 function balao(f){
   return new Promise(function(res){
-    var m=elMini(f.P,f.id); if(!m){res();return;}
+    var m=elMini(f.P,f.id); if(!m){aplicarMud(f);res();return;}
     var r=m.getBoundingClientRect(), b=document.createElement('div'), baixo=r.top<130, dur=durBal();
-    b.className='balao '+(baixo?'baixo':'');
-    b.style.cssText='--tc:'+(TONS[f.tom]||TONS.con)+';--dur:'+dur+'ms;left:'+Math.max(130,Math.min(window.innerWidth-130,r.left+r.width/2))+'px;top:'+(baixo?r.bottom+10:r.top-10)+'px';
-    b.innerHTML='<b>'+esc(f.tit)+'</b>'+esc(f.txt||'');
+    // o balão nunca cobre o número de ideias do filósofo
+    var gi=S.players[f.P].group.findIndex(function(g){return g.id===f.id;}), pe=gi>=0?q$('[data-anc="pilha:'+f.P+':'+gi+'"]'):null, pr=pe?pe.getBoundingClientRect():null;
+    var y=baixo?Math.max(r.bottom+10,pr?pr.bottom+16:0):Math.min(r.top-10,pr?pr.top-16:1e9);
+    b.className='balao'+(f.pensa?' pensa':'')+(baixo?' baixo':'');
+    b.style.cssText='--tc:'+(TONS[f.tom]||TONS.con)+';--dur:'+dur+'ms;left:'+Math.max(130,Math.min(window.innerWidth-130,r.left+r.width/2))+'px;top:'+y+'px';
+    b.innerHTML='<b>'+esc(f.tit)+'</b>'+esc(f.txt||'')+(f.pensa?'<i class="bolha b1"></i><i class="bolha b2"></i>':'');
     $('fx').appendChild(b);
     brilhar(f.P,f.id,TONS[f.tom]||TONS.con);
-    // ideia ganha (Reflexão, Bibliotecário, poderes): sempre o mesmo PLIM; perda: som de perda; outros poderes: brilho
-    if(f.tom==='neg')som('perda'); else if(f.tom!=='mov'&&/\+\s?\d/.test((f.tit||'')+' '+(f.txt||'')))som('plim'); else if(f.tom==='con')som('brilho');
+    if(f.mud&&f.mud.length){ setTimeout(function(){aplicarMud(f);},Math.round(dur*.3)); }
+    // fora do momento de Reflexão: ideia ganha, sempre o mesmo PLIM; perda: som de perda; outros poderes: brilho
+    else if(f.tom==='neg')som('perda'); else if(f.tom!=='mov'&&/\+\s?\d/.test((f.tit||'')+' '+(f.txt||'')))som('plim'); else if(f.tom==='con')som('brilho');
     setTimeout(function(){b.remove();res();},dur);
   });
 }
@@ -238,7 +258,7 @@ function relHTML(r){
   var a=C(r.a), b=C(r.b);
   return '<div class="rel"><span class="mini-ret" style="--e1:'+ESC[b.escola].cor+';background-image:url('+figURL(b.id)+')"></span><div><b>'+esc(a.nome)+' × '+esc(b.nome)+'</b> — '+esc(r.nota)+'<div class="fonte">'+esc(r.fonte)+' · a verificar</div></div></div>';
 }
-var PFX='Na fase de Reflexão, ';
+var PFX='No momento de Reflexão, ';
 function palcoBaixa(f){
   var c=C(f.id), pl=S.players[f.P], ds=BF.duplasDe(c.id), lista=[];
   var naRef=c.c1.d.indexOf(PFX)===0;
@@ -254,7 +274,7 @@ function palcoBaixa(f){
   var jog='<div class="jogada" style="--pc:'+pl.cor+'"><b>'+esc(pl.nome)+'</b> ▸ '+(f.lib?'nomeia Bibliotecário':'baixa a carta')+'<span>'+quando+'</span></div>';
   return palco('<div class="cena">'+retHTML(c)+'<div class="fala">'+jog
     +'<h3><small class="rot">Poder</small>'+esc(c.c1.t)+'</h3><p>'+esc(c.c1.d)+'</p>'
-    +'<div class="refl"><b>Na fase de Reflexão:</b><ul>'+lista.map(function(x){return '<li>'+(x.indexOf('<span')===0?x:esc(x))+'</li>';}).join('')+'</ul></div>%CONT%</div></div>');
+    +'<div class="refl"><b>No momento de Reflexão:</b><ul>'+lista.map(function(x){return '<li>'+(x.indexOf('<span')===0?x:esc(x))+'</li>';}).join('')+'</ul></div>%CONT%</div></div>');
 }
 function palcoDebate(f){
   var c=C(f.id), q=DEB[f.did], pl=S.players[f.P], x=f.fala;
@@ -318,6 +338,7 @@ function prepararOcultos(lista){
     if(f.k==='debate'){add(f.did+':'+f.P,f.amt);add('fig:'+f.P+':'+f.id,1);}
     else if(f.k==='segue'&&f.did)add(f.did+':'+f.P,1);
     else if(f.k==='praxis'&&f.did&&f.ganho>0)add(f.did+':'+f.P,f.ganho);
+    else if(f.k==='pop'&&f.mud&&f.mud.length){ f.mud.forEach(function(m){ var key=chaveMud(m); ocultos[key]=(ocultos[key]||0)+m.n; }); n++; }
     else if(f.k==='vit'){ add('trof:'+f.P,1); add('pts:'+f.P,f.valor); ocultos['placa:'+f.di]={id:f.did,stakes:f.stakes||[0,0,0]}; n++; }
   });
   if(n){redesenhar();if(sel)reaplicarSel();}
@@ -361,7 +382,7 @@ async function tocar(lista){
     var f=lista[k], pl=S.players[f.P];
     switch(f.k){
       case 'pop': if(bloq) await balao(f); else enfileirar(f); break;
-      case 'turno': if(!S.over){ som('turno'); await faixa(f.P===0?'Sua vez':pl.nome,'Rodada '+S.round+' · Fase de Reflexão',pl.cor,veloz?700:(f.P===0?1500:1200)); } break;
+      case 'turno': if(!S.over){ som('turno'); await faixa(f.P===0?'Sua vez':pl.nome,'Rodada '+S.round+' · Momento de Reflexão',pl.cor,veloz?700:(f.P===0?1500:1200)); } break;
       case 'troca': await esperarBaloes(); await faixa((f.P===0?'Você troca ':pl.nome+' troca ')+C(f.a).nome+' por '+C(f.b).nome,'Os dois perdem as ideias e entram em ação no próximo turno',pl.cor,veloz?1500:3200); break;
       case 'bib': som('plim'); if(f.P===0){var b=$('bib'); if(b){b.classList.remove('chegou');void b.offsetWidth;b.classList.add('chegou');}} if(M3())M3().chegarEstante(f.P,f.n); break;
       case 'dar': som('plim'); if(M3())voo(M3().mundoEstante(f.P),M3().mundoPilha(f.P,f.id),f.n,f.P); if(bloq) await sleep(veloz?400:900); break;
@@ -385,8 +406,9 @@ async function tocar(lista){
       case 'dupla': som('dupla'); [f.a,f.b].forEach(function(id){brilhar(f.P,id,'#c2410c');}); BFX.coro('aplauso','Dupla clássica!',1300); break;
     }
   }
-  if(bloq) await esperarBaloes();
-  var sobra=Object.keys(ocultos).some(function(k){return ocultos[k]>0;});
+  var pensando=lista.some(function(f){return f.k==='pop'&&f.mud&&f.mud.length;});
+  if(bloq||pensando) await esperarBaloes();
+  var sobra=Object.keys(ocultos).some(function(k){return typeof ocultos[k]==='number'?ocultos[k]!==0:!!ocultos[k];});
   ocultos={}; if(sobra){redesenhar();}
 }
 function agir(fn){ cancelarSel(); fn(); aberto=null; $('ov').classList.remove('on'); render();
@@ -403,7 +425,7 @@ function bigHTML(c){
     +'<span class="bc">'+c.custo+'</span><div class="head">'+(depois?'':pre)+'<b>'+esc(c.nome)+'</b>'+(depois?pre:'')+'<span class="en">'+esc(e.nome)+'</span></div><div class="areas">'+pills+'</div>'
     +'<div class="corpo">'
     +'<div class="conc c1"><span class="cc">–</span><b><small class="rot">Poder</small>'+esc(c.c1.t)+'</b>'+esc(c.c1.d)+'</div>'
-    +'<div class="conc info"><b>Na fase de Reflexão:</b> recebe '+BF.nI(BF.REFLEXAO[c.custo])+ds.map(function(d){return ' · <b>Dupla clássica</b> com '+esc(C(d.par).nome)+': +'+BF.nI(BF.BONUS_DUPLA);}).join('')+'</div>'
+    +'<div class="conc info"><b>No momento de Reflexão:</b> recebe '+BF.nI(BF.REFLEXAO[c.custo])+ds.map(function(d){return ' · <b>Dupla clássica</b> com '+esc(C(d.par).nome)+': +'+BF.nI(BF.BONUS_DUPLA);}).join('')+'</div>'
     +'<div class="conc off"><span class="cc">'+c.c2.custo+'</span><b><small class="rot">Poder 2</small>'+esc(c.c2.t)+'</b>'+esc(c.c2.d)+'</div>'
     +'<div class="conc off"><span class="cc">'+c.c3.custo+'</span><b><small class="rot">Poder 3</small>'+esc(c.c3.t)+'</b>'+esc(c.c3.d)+'</div>'
     +(c.cit?'<div class="cit">“'+esc(c.cit)+'”<small>'+esc(c.citFonte)+'</small></div>':'')

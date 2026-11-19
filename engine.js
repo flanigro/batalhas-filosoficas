@@ -32,7 +32,7 @@
   var FILOSOFOS = [
     F('aristoteles', 'de Estagira', 'Aristóteles', 5, 'grega', [4, 5, 4, 4], 'Estagira – Atenas', '384 – 322 a.C.', 'Organon',
       'Todos os homens, por natureza, desejam conhecer.', 'Metafísica, I, 1',
-      ['Silogismo – Premissa', 'Na fase de Reflexão, acrescente +1 ideia em um debate de Lógica.'],
+      ['Silogismo – Premissa', 'No momento de Reflexão, acrescente +1 ideia em um debate de Lógica.'],
       [4, 'Silogismo – Termo Médio', 'Elimine 5 ideias de um oponente em um debate no qual você participa.'],
       [7, 'Silogismo – Conclusão', 'Ganhe um debate de Lógica no qual você participe.']),
     F('platao', 'de Atenas', 'Platão', 4, 'grega', [5, 3, 5, 3], 'Atenas', '427 – 347 a.C.', 'A República',
@@ -52,7 +52,7 @@
       [6, '“A Morte não é nada para nós”', 'Ganhe um debate à sua escolha no qual você participe. Elimine a carta Epicuro.']),
     F('pitagoras', 'de Samos', 'Pitágoras', 1, 'grega', [1, 5, 1, 2], 'Samos', 'séc. VI a.C.', 'Teorema de Pitágoras',
       'Tudo é número.', 'atribuída pela tradição pitagórica',
-      ['Harmonia das Esferas', 'Na fase de Reflexão, coloque 1 ideia em um debate cujo valor seja número primo.'],
+      ['Harmonia das Esferas', 'No momento de Reflexão, coloque 1 ideia em um debate cujo valor seja número primo.'],
       [4, 'Metempsicose', 'Troque Pitágoras por um outro filósofo da mesa. Catedráticos não são afetados.'],
       [6, 'Razão Áurea', 'Todos os filósofos gregos, inclusive Pitágoras, recebem +3 ideias.']),
     F('diogenes', 'de Sínope', 'Diógenes', 1, 'grega', [2, 1, 3, 2], 'Sínope, Jônia', '412 – 323 a.C.', '—',
@@ -63,7 +63,7 @@
 
     F('marx', 'Karl', 'Marx', 5, 'mat', [4, 3, 5, 2], 'Tréveris, Prússia', '1818 – 1883', 'O Capital',
       'Os filósofos apenas interpretaram o mundo de diferentes maneiras; o que importa é transformá-lo.', 'Teses sobre Feuerbach, 11',
-      ['Mais-Valia', 'Na fase de Reflexão de Marx, um filósofo de um oponente perde 1 ideia.'],
+      ['Mais-Valia', 'No momento de Reflexão de Marx, um filósofo de um oponente perde 1 ideia.'],
       [3, 'Luta de Classes', 'Substitua todos os Catedráticos pelo filósofo de menor valor no grupo.'],
       [7, 'Comunismo', 'Expurgo! Remova todos os Catedráticos, exceto Marx.']),
     F('hegel', 'Georg', 'Hegel', 4, 'mat', [4, 4, 3, 3], 'Stuttgart, Alemanha', '1770 – 1831', 'Fenomenologia do Espírito',
@@ -73,12 +73,12 @@
       [7, 'Dialética Hegeliana', 'Converta todas as ideias adversárias de um debate de que você participa para sua cor.']),
     F('hobbes', 'Thomas', 'Hobbes', 3, 'mat', [3, 4, 4, 2], 'Malmesbury, Inglaterra', '1588 – 1679', 'Leviatã',
       'O homem é o lobo do homem.', 'Do Cidadão, dedicatória',
-      ['“Tudo no Universo é físico”', 'Na fase de Reflexão, elimine 1 ideia de um oponente em um debate de Lógica / Ciência.'],
+      ['“Tudo no Universo é físico”', 'No momento de Reflexão, elimine 1 ideia de um oponente em um debate de Lógica / Ciência.'],
       [5, '“O mais fraco tem força para matar o forte”', 'Substitua um filósofo de valor 4 ou 5 por um de valor 1 de sua mão.'],
       [6, 'Leviatã', 'Baixe o Legado. Elimine as cartas da mão de um jogador. Ativação: 4 ideias.']),
     F('bacon', 'Francis', 'Bacon', 2, 'mat', [1, 4, 2, 2], 'Londres, Inglaterra', '1561 – 1626', 'O progresso do conhecimento',
       'A natureza só é comandada se é obedecida.', 'Novum Organum, I, 3',
-      ['“Conhecimento é poder”', 'Na fase de Reflexão de Bacon, veja duas cartas na mão de um jogador.'],
+      ['“Conhecimento é poder”', 'No momento de Reflexão de Bacon, veja duas cartas na mão de um jogador.'],
       [5, '“O dinheiro é bom criado, mas mau senhor”', 'Elimine 2 ideias de todos os filósofos de uma escola à sua escolha.'],
       [6, 'O Método Científico', 'Todos os debates ficam reduzidos a 1 ideia de cada jogador.']),
     F('locke', 'John', 'Locke', 1, 'mat', [1, 4, 3, 1], 'Wrington, Inglaterra', '1632 – 1704', 'Ensaio sobre o entendimento humano',
@@ -88,7 +88,7 @@
       [7, 'Direito natural ao autogoverno', 'Mova todas as ideias de seus filósofos para um debate de Ética / Política.']),
     F('rousseau', 'Jean-Jacques', 'Rousseau', 1, 'mat', [1, 1, 4, 2], 'Genebra', '1712 – 1778', 'Do Contrato Social',
       'O homem nasce livre, e por toda parte encontra-se a ferros.', 'Do Contrato Social, I, 1',
-      ['Contrato Social', 'Na fase de Reflexão de Rousseau, todos os filósofos de custo 1 da mesa recebem +1 ideia.'],
+      ['Contrato Social', 'No momento de Reflexão de Rousseau, todos os filósofos de custo 1 da mesa recebem +1 ideia.'],
       [4, 'A propriedade privada é um roubo', 'Elimine qualquer Legado. Use apenas uma vez.'],
       [6, 'O Bom Selvagem', 'Baixe o Legado. Na Reflexão, gera +2 ideias a redistribuir.']),
 
@@ -104,7 +104,7 @@
       [5, 'Super-Homem', 'Legado. Um filósofo germânico em vaga extra, que ignora as regras alheias.']),
     F('schopenhauer', 'Arthur', 'Schopenhauer', 3, 'germ', [3, 2, 3, 4], 'Danzig', '1788 – 1860', 'O Mundo como Vontade e Representação',
       'O mundo é minha representação.', 'O Mundo como Vontade e Representação, § 1',
-      ['Mestre e discípulo', 'Na fase de Reflexão, recebe +1 ideia se Kant, Freud ou Nietzsche estiverem no grupo.'],
+      ['Mestre e discípulo', 'No momento de Reflexão, recebe +1 ideia se Kant, Freud ou Nietzsche estiverem no grupo.'],
       [5, 'Vontade Universal', 'Coloque +3 ideias em cada um dos debates de que você participa.'],
       [7, '“Os limites do mundo são os da minha visão”', 'Oponentes perdem até 5 ideias em todos os debates de que você participa.']),
     F('heidegger', 'Martin', 'Heidegger', 2, 'germ', [4, 2, 2, 2], 'Messkirch, Alemanha', '1889 – 1976', 'Ser e Tempo',
@@ -114,7 +114,7 @@
       [7, 'Ser e Tempo', 'Descarte sua mão e não compre cartas. Jogue um turno extra.']),
     F('freud', 'Sigmund', 'Freud', 1, 'germ', [2, 1, 1, 5], 'Freiberg, Morávia', '1856 – 1939', 'A Interpretação dos Sonhos',
       'O eu não é senhor em sua própria casa.', 'Uma dificuldade no caminho da psicanálise (1917)',
-      ['O Inconsciente', 'Na fase de Reflexão, Freud pode mover 1 ideia para outro filósofo do grupo.'],
+      ['O Inconsciente', 'No momento de Reflexão, Freud pode mover 1 ideia para outro filósofo do grupo.'],
       [3, 'Divã', 'Baixe o Legado Divã. Um filósofo recebe +1 ideia na Reflexão.'],
       [6, 'Complexo de Édipo', 'Elimine um Filósofo Catedrático da mesa de jogo.']),
     F('arendt', 'Hannah', 'Arendt', 1, 'germ', [1, 1, 4, 3], 'Hannover, Alemanha', '1906 – 1975', 'A Condição Humana',
@@ -130,7 +130,7 @@
       [6, '“Aos amigos, os favores; aos inimigos, a lei”', '+2 ideias para seus filósofos. Um oponente não baixa cartas na próxima rodada.']),
     F('erasmo', 'de Roterdã', 'Erasmo', 1, 'livre', [2, 1, 3, 2], 'Roterdã, Holanda', '1466 – 1536', 'Elogio da Loucura',
       'A pior das loucuras é tentar ser sensato em um mundo de loucos.', 'atribuída; a conferir',
-      ['“A Religião é uma forma de loucura”', 'Na fase de Reflexão de Erasmo, um filósofo Teísta perde 2 ideias. (Sem Teístas neste protótipo.)'],
+      ['“A Religião é uma forma de loucura”', 'No momento de Reflexão de Erasmo, um filósofo Teísta perde 2 ideias. (Sem Teístas neste protótipo.)'],
       [3, '“Os objetos da Felicidade são ilusórios”', 'Coloque +1 ideia em cada debate.'],
       [5, 'Elegância Retórica', 'Baixe o Legado. Seus filósofos recebem +1 ideia ao mover ideias para debates.'])
   ];
@@ -271,26 +271,26 @@
   // ---------- conteúdo do nível 2 ----------
   // Conceito primário reescrito para o digital (decisões de 15/11/2026).
   var C1 = {
-    platao: ['A República', 'Na fase de Reflexão, o filósofo de maior custo do seu grupo — o Rei Filósofo — recebe +1 ideia.'],
-    socrates: ['Maiêutica', 'Na fase de Reflexão, o colega de grupo com menos ideias recebe +1. Sócrates ajuda os outros a dar à luz ideias.'],
-    epicuro: ['Laço de Amizade', 'Na fase de Reflexão, um filósofo vizinho recebe +1 ideia, e Epicuro também: a amizade é recíproca.'],
-    diogenes: ['Barrica de Diógenes', 'Nenhum adversário pode escolher Diógenes como alvo nem tirar ideias dele. Não pode ser trocado. Na fase de Reflexão, se tiver 2 ideias ou menos, recebe +1: vive com o mínimo.'],
-    marx: ['Mais-Valia', 'Na fase de Reflexão, o filósofo adversário com mais ideias perde 1.'],
+    platao: ['A República', 'No momento de Reflexão, o filósofo de maior custo do seu grupo — o Rei Filósofo — recebe +1 ideia.'],
+    socrates: ['Maiêutica', 'No momento de Reflexão, o colega de grupo com menos ideias recebe +1. Sócrates ajuda os outros a dar à luz ideias.'],
+    epicuro: ['Laço de Amizade', 'No momento de Reflexão, um filósofo vizinho recebe +1 ideia, e Epicuro também: a amizade é recíproca.'],
+    diogenes: ['Barrica de Diógenes', 'Nenhum adversário pode escolher Diógenes como alvo nem tirar ideias dele. Não pode ser trocado. No momento de Reflexão, se tiver 2 ideias ou menos, recebe +1: vive com o mínimo.'],
+    marx: ['Mais-Valia', 'No momento de Reflexão, o filósofo adversário com mais ideias perde 1.'],
     hegel: ['Dialética', 'Hegel é o único que pode levar a um debate menos que o valor da área: leva o que tiver, até o valor. Síntese: ao entrar num debate em que um adversário tem mais ideias que você, +1 ideia sua.'],
     locke: ['Tábula Rasa', 'Locke recebe +1 ideia sempre que você baixa uma carta e sempre que um adversário baixa um filósofo. As ideias vêm da experiência.'],
     kant: ['Imperativo Categórico', 'Quando Kant leva ideias a um debate de Ética / Política, cada colega em ação que tenha ideias põe 1 delas no mesmo debate, queira ou não.'],
     nietzsche: ['Filosofar com o martelo', 'Ao entrar num debate, o adversário com mais ideias nesse debate perde 2.'],
-    schopenhauer: ['Negação da Vontade', 'Na fase de Reflexão, recebe +1 ideia se não foi a nenhum debate no turno anterior.'],
-    heidegger: ['Ser-no-mundo', 'Na fase de Reflexão, recebe +1 ideia para cada debate em que você tem ideias.'],
+    schopenhauer: ['Negação da Vontade', 'No momento de Reflexão, recebe +1 ideia se não foi a nenhum debate no turno anterior.'],
+    heidegger: ['Ser-no-mundo', 'No momento de Reflexão, recebe +1 ideia para cada debate em que você tem ideias.'],
     freud: ['Ato Falho', 'Freud recebe +1 ideia sempre que um adversário usa uma falácia.'],
-    maquiavel: ['O Príncipe', 'Na fase de Reflexão, o filósofo com mais ideias do seu grupo recebe +1.'],
-    erasmo: ['Elogio da Loucura', 'Na fase de Reflexão, o adversário que lidera um debate de Metafísica / Religião perde 1 ideia.'],
-    hobbes: ['Guerra de todos contra todos', 'Na fase de Reflexão, o adversário com mais ideias num debate perde 1 ideia nesse debate.'],
-    bacon: ['“Conhecimento é poder”', 'Na fase de Reflexão, Bacon espia duas cartas da mão de um adversário.'],
-    rousseau: ['Contrato Social', 'Na fase de Reflexão, todos os filósofos de custo 1 da mesa recebem +1 ideia, inclusive os dos adversários.'],
-    arendt: ['A Condição Humana', 'Na fase de Reflexão, recebe +1 ideia se houver um debate de Ética / Política na mesa.'],
-    aristoteles: ['Silogismo – Premissa', 'Na fase de Reflexão, acrescenta +1 ideia sua a um debate de Lógica.'],
-    pitagoras: ['Harmonia das Esferas', 'Na fase de Reflexão, acrescenta 1 ideia sua a um debate cujo valor seja número primo.']
+    maquiavel: ['O Príncipe', 'No momento de Reflexão, o filósofo com mais ideias do seu grupo recebe +1.'],
+    erasmo: ['Elogio da Loucura', 'No momento de Reflexão, o adversário que lidera um debate de Metafísica / Religião perde 1 ideia.'],
+    hobbes: ['Guerra de todos contra todos', 'No momento de Reflexão, o adversário com mais ideias num debate perde 1 ideia nesse debate.'],
+    bacon: ['“Conhecimento é poder”', 'No momento de Reflexão, Bacon espia duas cartas da mão de um adversário.'],
+    rousseau: ['Contrato Social', 'No momento de Reflexão, todos os filósofos de custo 1 da mesa recebem +1 ideia, inclusive os dos adversários.'],
+    arendt: ['A Condição Humana', 'No momento de Reflexão, recebe +1 ideia se houver um debate de Ética / Política na mesa.'],
+    aristoteles: ['Silogismo – Premissa', 'No momento de Reflexão, acrescenta +1 ideia sua a um debate de Lógica.'],
+    pitagoras: ['Harmonia das Esferas', 'No momento de Reflexão, acrescenta 1 ideia sua a um debate cujo valor seja número primo.']
   };
   Object.keys(C1).forEach(function (k) { CARTAS[k].c1 = { t: C1[k][0], d: C1[k][1] }; });
 
@@ -483,10 +483,28 @@
   }
 
   function pop(s, P, id, tit, txt, tom) {
-    fx(s, { k: 'pop', P: P, id: id, tit: tit, txt: txt, tom: tom || 'con' });
+    var e = { k: 'pop', P: P, id: id, tit: tit, txt: txt, tom: tom || 'con' };
+    // no momento de Reflexão, o balão leva as ideias que mudaram desde o balão anterior:
+    // a interface só altera os números quando o balão aparece (um PLIM por mudança)
+    if (!s.mudo && s._snap) {
+      var nv = snapIdeias(s), mud = [];
+      Object.keys(nv).forEach(function (k) { if (k in s._snap && nv[k] !== s._snap[k]) mud.push({ k: k, n: nv[k] - s._snap[k] }); });
+      s._snap = nv; e.mud = mud; e.pensa = true;
+    }
+    fx(s, e);
+  }
+  function snapIdeias(s) {
+    var m = {};
+    s.players.forEach(function (pl, P) { pl.group.forEach(function (g) { if (!g.lib) m['f:' + P + ':' + g.id] = g.ideas; }); });
+    s.debates.forEach(function (d) { d.stakes.forEach(function (v, P) { m['d:' + d.id + ':' + P] = v; }); });
+    return m;
   }
 
   function reflexao(s, P) {
+    s._snap = s.mudo ? null : snapIdeias(s);
+    try { reflexao0(s, P); } finally { delete s._snap; }
+  }
+  function reflexao0(s, P) {
     var pl = s.players[P], g, i, anunciadas = {};
     if (!pl.group.length) return;
     for (i = 0; i < pl.group.length; i++) {
