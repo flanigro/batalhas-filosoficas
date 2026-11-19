@@ -1,0 +1,34 @@
+{"nome":"base-exila","v":{"praxisExila":true},"J":2000,"venc":[37,32.6,29.7],"emp":0.7,"rod":10.73,"debs":6.61,"ptsVenc":32.6,"margem":13.8,"prx":8.2,"lib":1.64,"libprod":49.3,"lid6":54}
+{"nome":"semPrxP0-exila","v":{"praxisExila":true,"semPraxisP":{"0":1}},"J":2000,"venc":[30.1,35.6,33.3],"emp":1,"rod":10.62,"debs":6.66,"ptsVenc":32.9,"margem":14,"prx":5.3,"lib":1.67,"libprod":49.8,"lid6":54}
+{"nome":"semPrxP1-exila","v":{"praxisExila":true,"semPraxisP":{"1":1}},"J":2000,"venc":[41,27.6,30.4],"emp":1.1,"rod":10.51,"debs":6.61,"ptsVenc":33,"margem":14.4,"prx":5.5,"lib":1.68,"libprod":49.6,"lid6":56.1}
+{"nome":"semPrxP2-exila","v":{"praxisExila":true,"semPraxisP":{"2":1}},"J":2000,"venc":[38.1,32.4,28.9],"emp":0.7,"rod":10.55,"debs":6.59,"ptsVenc":33,"margem":14.3,"prx":5.8,"lib":1.67,"libprod":49.5,"lid6":55.5}
+{"nome":"base-precos","v":{"praxisCusto":{"autoridade":-1,"espantalho":-1,"adhominem":1},"adhominem":4,"sofismaTira":2},"J":2000,"venc":[38,33.6,27.4],"emp":0.9,"rod":10.96,"debs":6.18,"ptsVenc":31.2,"margem":14.5,"prx":23.8,"lib":1.61,"libprod":49.9,"lid6":52.4}
+{"nome":"semPrxP0-precos","v":{"praxisCusto":{"autoridade":-1,"espantalho":-1,"adhominem":1},"adhominem":4,"sofismaTira":2,"semPraxisP":{"0":1}},"J":2000,"venc":[22.8,38.9,37.3],"emp":1.1,"rod":10.65,"debs":6.46,"ptsVenc":32.4,"margem":14.6,"prx":12.8,"lib":1.65,"libprod":49.3,"lid6":53}
+{"nome":"semPrxP1-precos","v":{"praxisCusto":{"autoridade":-1,"espantalho":-1,"adhominem":1},"adhominem":4,"sofismaTira":2,"semPraxisP":{"1":1}},"J":2000,"venc":[45.2,18.1,34.9],"emp":1.8,"rod":10.61,"debs":6.38,"ptsVenc":32.3,"margem":15,"prx":13.1,"lib":1.66,"libprod":49.5,"lid6":55.9}
+{"nome":"semPrxP2-precos","v":{"praxisCusto":{"autoridade":-1,"espantalho":-1,"adhominem":1},"adhominem":4,"sofismaTira":2,"semPraxisP":{"2":1}},"J":2000,"venc":[44.4,36,18.6],"emp":0.9,"rod":10.63,"debs":6.39,"ptsVenc":32.3,"margem":14.6,"prx":13.1,"lib":1.65,"libprod":49.2,"lid6":55.4}
+{"nome":"base-exilaPrecos","v":{"praxisExila":true,"praxisCusto":{"autoridade":-1,"espantalho":-1,"adhominem":1},"adhominem":4,"sofismaTira":2},"J":2000,"venc":[36.6,32.1,30.1],"emp":1.1,"rod":10.74,"debs":6.59,"ptsVenc":32.6,"margem":14,"prx":8.4,"lib":1.61,"libprod":48.4,"lid6":49.9}
+{"nome":"semPrxP0-exilaPrecos","v":{"praxisExila":true,"praxisCusto":{"autoridade":-1,"espantalho":-1,"adhominem":1},"adhominem":4,"sofismaTira":2,"semPraxisP":{"0":1}},"J":2000,"venc":[29.9,35.3,33.6],"emp":1.1,"rod":10.57,"debs":6.61,"ptsVenc":32.8,"margem":14.2,"prx":5.5,"lib":1.65,"libprod":49,"lid6":54.5}
+{"nome":"semPrxP1-exilaPrecos","v":{"praxisExila":true,"praxisCusto":{"autoridade":-1,"espantalho":-1,"adhominem":1},"adhominem":4,"sofismaTira":2,"semPraxisP":{"1":1}},"J":2000,"venc":[41,26.5,31.1],"emp":1.4,"rod":10.58,"debs":6.63,"ptsVenc":32.8,"margem":14.3,"prx":5.7,"lib":1.66,"libprod":49.3,"lid6":55.2}
+{"nome":"semPrxP2-exilaPrecos","v":{"praxisExila":true,"praxisCusto":{"autoridade":-1,"espantalho":-1,"adhominem":1},"adhominem":4,"sofismaTira":2,"semPraxisP":{"2":1}},"J":2000,"venc":[38.6,35,25.4],"emp":1,"rod":10.59,"debs":6.68,"ptsVenc":32.9,"margem":14,"prx":5.9,"lib":1.65,"libprod":49,"lid6":52.6}
+bacon 24.3 28.8/21.6/22.4
+locke 31.7 37.4/29.0/28.8
+maquiavel 32.9 35.6/30.6/32.6
+epicuro 31.1 34.2/29.8/29.4
+diogenes 32.3 38.0/31.2/27.6
+pitagoras 34.9 39.4/34.0/31.4
+erasmo 31.4 34.0/31.6/28.6
+rousseau 34.3 39.2/34.0/29.8
+marx 33.1 38.0/28.0/33.2
+hegel 38.9 44.2/34.4/38.2
+locke 35.9 41.2/34.6/32.0
+maquiavel 33.4 35.0/32.0/33.2
+epicuro 31.3 32.8/29.8/31.2
+diogenes 35.9 43.4/34.4/29.8
+pitagoras 38.1 43.0/36.0/35.2
+erasmo 32.1 34.6/31.6/30.2
+rousseau 40.1 46.0/39.0/35.4
+bacon 40.5 44.8/38.4/38.4
+aristoteles 35.1 40.4/32.2/32.6
+hegel 37.0 40.8/34.6/35.6
+marx 33.3 38.8/27.8/33.4
+FIM

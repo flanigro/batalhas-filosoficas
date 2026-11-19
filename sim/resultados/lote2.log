@@ -1,0 +1,22 @@
+{"nome":"semPrxP0-1porTurno","v":{"praxisPorTurno":1,"semPraxisP":{"0":1}},"J":2000,"venc":[21.8,40,37],"emp":1.3,"rod":10.67,"debs":6.45,"ptsVenc":32.4,"margem":14.5,"prx":11.4,"lib":1.67,"libprod":50,"lid6":51.3}
+{"nome":"semPrxP1-1porTurno","v":{"praxisPorTurno":1,"semPraxisP":{"1":1}},"J":2000,"venc":[46.4,19.7,32.6],"emp":1.4,"rod":10.61,"debs":6.41,"ptsVenc":32.4,"margem":14.8,"prx":11.5,"lib":1.69,"libprod":50.2,"lid6":56.9}
+{"nome":"semPrxP2-1porTurno","v":{"praxisPorTurno":1,"semPraxisP":{"2":1}},"J":2000,"venc":[44,37,18.1],"emp":0.8,"rod":10.6,"debs":6.44,"ptsVenc":32.6,"margem":14.8,"prx":11.3,"lib":1.67,"libprod":49.7,"lid6":56.3}
+{"nome":"base-1porTurno","v":{"praxisPorTurno":1},"J":2000,"venc":[38.2,31.8,28.6],"emp":1.5,"rod":11.01,"debs":6.18,"ptsVenc":30.8,"margem":14.2,"prx":20,"lib":1.64,"libprod":51.3,"lid6":51.5}
+{"nome":"semPrxP0-mais1","v":{"praxisMais":1,"semPraxisP":{"0":1}},"J":2000,"venc":[25.6,39,34.1],"emp":1.3,"rod":10.74,"debs":6.45,"ptsVenc":32,"margem":14,"prx":9.9,"lib":1.7,"libprod":52.1,"lid6":52.5}
+{"nome":"semPrxP1-mais1","v":{"praxisMais":1,"semPraxisP":{"1":1}},"J":2000,"venc":[45.6,21.2,32.1],"emp":1.1,"rod":10.7,"debs":6.44,"ptsVenc":32.5,"margem":14.6,"prx":10.3,"lib":1.7,"libprod":51.8,"lid6":55.6}
+{"nome":"semPrxP2-mais1","v":{"praxisMais":1,"semPraxisP":{"2":1}},"J":2000,"venc":[41.1,37.9,20.1],"emp":0.9,"rod":10.63,"debs":6.38,"ptsVenc":32.5,"margem":14.9,"prx":10.2,"lib":1.7,"libprod":51.3,"lid6":56.5}
+{"nome":"base-mais1","v":{"praxisMais":1},"J":2000,"venc":[40.8,31.3,26.7],"emp":1.3,"rod":11,"debs":6.17,"ptsVenc":30.9,"margem":14.1,"prx":18.7,"lib":1.68,"libprod":53,"lid6":53}
+{"nome":"semPrxP0-mais1-1porTurno","v":{"praxisMais":1,"praxisPorTurno":1,"semPraxisP":{"0":1}},"J":2000,"venc":[26.1,39.1,33.8],"emp":1,"rod":10.69,"debs":6.53,"ptsVenc":32.3,"margem":13.8,"prx":9.2,"lib":1.7,"libprod":51.8,"lid6":51.6}
+{"nome":"semPrxP1-mais1-1porTurno","v":{"praxisMais":1,"praxisPorTurno":1,"semPraxisP":{"1":1}},"J":2000,"venc":[46,20.3,33],"emp":0.7,"rod":10.64,"debs":6.46,"ptsVenc":32.6,"margem":14.6,"prx":9.5,"lib":1.7,"libprod":51.4,"lid6":56.6}
+{"nome":"semPrxP2-mais1-1porTurno","v":{"praxisMais":1,"praxisPorTurno":1,"semPraxisP":{"2":1}},"J":2000,"venc":[42.1,37.1,19.7],"emp":1.1,"rod":10.59,"debs":6.38,"ptsVenc":32.5,"margem":14.9,"prx":9.3,"lib":1.7,"libprod":51.1,"lid6":56.3}
+{"nome":"base-mais1-1porTurno","v":{"praxisMais":1,"praxisPorTurno":1},"J":2000,"venc":[40.9,30.4,27.4],"emp":1.3,"rod":10.9,"debs":6.26,"ptsVenc":31.4,"margem":14.3,"prx":16.6,"lib":1.68,"libprod":52.3,"lid6":54.3}
+{"nome":"semLib500","v":{"semLib":true},"J":500,"venc":[38.6,27.2,32.2],"emp":2,"rod":11.23,"debs":6.1,"ptsVenc":29.8,"margem":13.3,"prx":20.8,"lib":0,"libprod":0,"lid6":52.7}
+aristoteles 31.4 35.8/28.6/29.8
+platao 35.6 39.4/32.6/34.8
+socrates 40.7 44.6/35.8/41.6
+marx 31.2 34.4/27.2/32.0
+hegel 30.3 33.6/27.0/30.4
+hobbes 34.9 37.2/34.8/32.6
+kant 33.2 36.2/34.8/28.6
+nietzsche 36.4 39.6/34.0/35.6
+schopenhauer 33.5 37.0/33.0/30.6

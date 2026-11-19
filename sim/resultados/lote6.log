@@ -1,0 +1,30 @@
+{"nome":"semLib2000","v":{"semLib":true},"J":2000,"venc":[38,30.6,29.8],"emp":1.6,"rod":11.2,"debs":6.04,"ptsVenc":29.5,"margem":13.2,"prx":20.7,"lib":0,"libprod":0,"lid6":52.2}
+{"nome":"semLib-semPrxP0","v":{"semLib":true,"semPraxisP":{"0":1}},"J":2000,"venc":[32.1,29.7,36.8],"emp":1.4,"rod":10.78,"debs":6.51,"ptsVenc":31.9,"margem":13.7,"prx":11.5,"lib":0,"libprod":0,"lid6":53.6}
+{"nome":"semLib-semPrxP1","v":{"semLib":true,"semPraxisP":{"1":1}},"J":2000,"venc":[42.1,27.9,28.8],"emp":1.2,"rod":10.75,"debs":6.47,"ptsVenc":31.9,"margem":14.1,"prx":11.5,"lib":0,"libprod":0,"lid6":55}
+{"nome":"semLib-semPrxP2","v":{"semLib":true,"semPraxisP":{"2":1}},"J":2000,"venc":[39.3,35,24.9],"emp":0.8,"rod":10.78,"debs":6.46,"ptsVenc":32,"margem":13.8,"prx":11.1,"lib":0,"libprod":0,"lid6":54.8}
+{"nome":"mao3-2000","v":{"maoExtra":3},"J":2000,"venc":[39,30.4,29.8],"emp":0.8,"rod":11.01,"debs":6.1,"ptsVenc":30.7,"margem":14.1,"prx":21.7,"lib":1.93,"libprod":62.6,"lid6":54.2}
+{"nome":"mao3-semPrxP0","v":{"maoExtra":3,"semPraxisP":{"0":1}},"J":2000,"venc":[20.9,38,39.7],"emp":1.4,"rod":10.71,"debs":6.35,"ptsVenc":32,"margem":14.4,"prx":11.7,"lib":1.97,"libprod":61.3,"lid6":50.2}
+{"nome":"mao3-semPrxP1","v":{"maoExtra":3,"semPraxisP":{"1":1}},"J":2000,"venc":[48.3,17.9,32.7],"emp":1.2,"rod":10.66,"debs":6.35,"ptsVenc":32.3,"margem":14.8,"prx":11.9,"lib":1.96,"libprod":61.2,"lid6":56.9}
+{"nome":"mao3-semPrxP2","v":{"maoExtra":3,"semPraxisP":{"2":1}},"J":2000,"venc":[42.8,40.1,16.4],"emp":0.8,"rod":10.66,"debs":6.37,"ptsVenc":32.4,"margem":14.9,"prx":11.8,"lib":1.97,"libprod":61.4,"lid6":55.6}
+{"nome":"p2-semExila500","v":{"semLib":true,"maoExtra":3,"bibAlta":{"aristoteles":1,"kant":1,"marx":1},"buff":{"hegel1":1,"baconLog":1,"locke":1,"diogenes":1,"epicuro2":1}},"J":500,"venc":[37.2,31.4,29.8],"emp":1.6,"rod":11.02,"debs":6.35,"ptsVenc":30.7,"margem":13.2,"prx":18.8,"lib":0,"libprod":0,"lid6":54.1}
+aristoteles 36.3 41.0/35.4/32.6
+platao 35.8 44.0/33.0/30.4
+socrates 34.3 39.2/34.0/29.8
+epicuro 35.9 41.8/32.0/33.8
+pitagoras 33.7 37.2/33.8/30.0
+diogenes 32.7 40.8/30.0/27.4
+marx 33.4 39.2/30.6/30.4
+hegel 34.9 41.4/33.0/30.4
+hobbes 27.3 32.2/27.4/22.4
+bacon 33.1 37.8/31.0/30.4
+locke 33.1 37.2/33.4/28.6
+rousseau 33.9 40.2/31.6/29.8
+kant 37.6 45.4/39.2/28.2
+nietzsche 36.3 45.6/33.6/29.6
+schopenhauer 31.1 36.8/32.0/24.6
+heidegger 33.1 38.8/30.2/30.4
+freud 36.9 43.4/31.6/35.8
+arendt 36.1 46.0/31.6/30.6
+maquiavel 29.6 38.6/26.4/23.8
+erasmo 30.7 35.0/29.8/27.2
+FIM

@@ -1,0 +1,13 @@
+{"nome":"semLib","v":{"semLib":true},"J":3000,"venc":[37.9,31.4,29],"emp":1.7,"rod":11.21,"debs":6.04,"ptsVenc":29.4,"margem":13,"prx":20.7,"lib":0,"libprod":0,"lid6":52.7}
+{"nome":"mao3","v":{"maoExtra":3},"J":3000,"venc":[38.2,30.8,29.7],"emp":1.3,"rod":11.04,"debs":6.09,"ptsVenc":30.3,"margem":13.8,"prx":21.8,"lib":1.93,"libprod":62.9,"lid6":53.5}
+{"nome":"mao3semLib","v":{"maoExtra":3,"semLib":true},"J":3000,"venc":[36.5,32.4,29.7],"emp":1.4,"rod":11.12,"debs":6.07,"ptsVenc":29.8,"margem":13.2,"prx":18.3,"lib":0,"libprod":0,"lid6":53.7}
+{"nome":"praxis1porTurno","v":{"praxisPorTurno":1},"J":3000,"venc":[37.6,31.9,29],"emp":1.4,"rod":11.01,"debs":6.15,"ptsVenc":30.7,"margem":14.1,"prx":20,"lib":1.65,"libprod":51.2,"lid6":52}
+{"nome":"praxisMais1","v":{"praxisMais":1},"J":3000,"venc":[40.5,31,27.1],"emp":1.4,"rod":10.99,"debs":6.16,"ptsVenc":30.9,"margem":14.1,"prx":18.7,"lib":1.69,"libprod":53.2,"lid6":52.8}
+{"nome":"praxisEfeitosMenores","v":{"adhominem":3,"espantalho":3,"autoridade":4,"falseabilidade":4},"J":3000,"venc":[39.6,31.5,27.6],"emp":1.4,"rod":11.18,"debs":5.81,"ptsVenc":29.4,"margem":14,"prx":23.7,"lib":1.64,"libprod":52.2,"lid6":53.2}
+{"nome":"semLibP0","v":{"semLibP":{"0":1}},"J":2000,"venc":[27.8,36.9,34],"emp":1.3,"rod":11.07,"debs":6.06,"ptsVenc":30.1,"margem":13.9,"prx":22.1,"lib":1,"libprod":31.2,"lid6":51.5}
+{"nome":"semLibP1","v":{"semLibP":{"1":1}},"J":2000,"venc":[48,19.1,31.6],"emp":1.2,"rod":11.05,"debs":6.06,"ptsVenc":30.5,"margem":14.3,"prx":22.2,"lib":1.1,"libprod":34.5,"lid6":54.8}
+{"nome":"semLibP2","v":{"semLibP":{"2":1}},"J":2000,"venc":[44,34.8,20.1],"emp":1.1,"rod":11.04,"debs":6.02,"ptsVenc":30.4,"margem":14.2,"prx":22.2,"lib":1.17,"libprod":37,"lid6":52.9}
+{"nome":"semPrxP0","v":{"semPraxisP":{"0":1}},"J":2000,"venc":[22.3,37.6,38.9],"emp":1.2,"rod":10.71,"debs":6.41,"ptsVenc":32.1,"margem":14.3,"prx":12.4,"lib":1.67,"libprod":50.1,"lid6":52.2}
+{"nome":"semPrxP1","v":{"semPraxisP":{"1":1}},"J":2000,"venc":[48.4,18.8,31.4],"emp":1.4,"rod":10.63,"debs":6.38,"ptsVenc":32.4,"margem":15,"prx":12.7,"lib":1.69,"libprod":50.3,"lid6":56.4}
+{"nome":"semPrxP2","v":{"semPraxisP":{"2":1}},"J":2000,"venc":[44.6,37,17.6],"emp":0.8,"rod":10.64,"debs":6.41,"ptsVenc":32.5,"margem":14.7,"prx":12.6,"lib":1.67,"libprod":50.2,"lid6":56.6}
+{"nome":"base2000","v":{},"J":2000,"venc":[39.8,30.6,28.4],"emp":1.2,"rod":11.08,"debs":6.09,"ptsVenc":30.3,"margem":13.9,"prx":23.3,"lib":1.64,"libprod":51.7,"lid6":51.4}
