@@ -1,4 +1,4 @@
-# Batalhas Filosóficas
+# Batalha dos Filósofos
 
 Jogo digital de cartas em que filósofos disputam as grandes perguntas da filosofia. Protótipo web do nível 2, adaptado do protótipo impresso "Batalha dos Cabeções" v4.
 
