@@ -1,4 +1,4 @@
-/* Batalhas Filosóficas — falas por pergunta: Germânicos.
+/* Batalha dos Filósofos — falas por pergunta: Germânicos.
    Tipos: c = citação (tradução livre), p = paráfrase, i = inferência a partir da doutrina.
    Heidegger e Arendt: obras protegidas — só trechos curtos, com crédito. Tudo a verificar. */
 (function (r) {

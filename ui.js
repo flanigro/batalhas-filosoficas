@@ -1,4 +1,4 @@
-/* Batalhas Filosóficas — interface (protótipo nível 2)
+/* Batalha dos Filósofos — interface (protótipo nível 2)
  * A mesa é 3D (mesa3d.js). Aqui se desenham as cartas da mão, as telas e, para cada objeto clicável da
  * mesa, uma ÂNCORA invisível com data-anc (ver o CSS): mesmos data-atributos de antes, posição dada pela cena. */
 (function(){
@@ -587,7 +587,7 @@ function regrasHTML(){
     +'<li><b>Fim:</b> ao completar a rodada em que alguém chega a 30 pontos, ou ao fim da 12ª rodada. Mão com no máximo 5 cartas ao encerrar o turno. Duplo clique (ou botão direito) numa carta mostra a carta ampliada.</li></ul>';
 }
 function telaInicio(){
-  modal('<h2>Batalhas Filosóficas</h2><p>Filósofos disputam as grandes perguntas da filosofia. Você joga contra Hipátia e Sêneca, com três escolas na pilha: Grécia Clássica, Materialistas e Empiristas, Germânicos, mais dois livres-pensadores.</p>'
+  modal('<h2>Batalha dos Filósofos</h2><p>Filósofos disputam as grandes perguntas da filosofia. Você joga contra Hipátia e Sêneca, com três escolas na pilha: Grécia Clássica, Materialistas e Empiristas, Germânicos, mais dois livres-pensadores.</p>'
     +regrasHTML()
     +'<div class="lab" style="margin-top:12px">Oponentes</div><div class="sel"><label><input type="radio" name="niv" value="aprendiz" checked>Aprendizes<br><small style="color:var(--mute)">erram mais, usam menos falácias</small></label><label><input type="radio" name="niv" value="mestre">Mestres<br><small style="color:var(--mute)">calculam cada debate</small></label></div>'
     +'<div class="fecha"><button class="btn pri" data-a="comecar">Começar</button></div>');

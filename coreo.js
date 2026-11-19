@@ -1,4 +1,4 @@
-/* Batalhas Filosóficas — coreografia (rodada visual 3: a mesa é 3D)
+/* Batalha dos Filósofos — coreografia (rodada visual 3: a mesa é 3D)
  *
  * COMO FUNCIONA
  * O motor (engine.js) empilha eventos em S.fx. A interface (ui.js) lê a fila e, para cada evento,

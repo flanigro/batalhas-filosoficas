@@ -1,4 +1,4 @@
-/* Batalhas Filosóficas — a mesa em Three.js (rodada 5: a arena)
+/* Batalha dos Filósofos — a mesa em Three.js (rodada 5: a arena)
  *
  * COMO FUNCIONA
  * - A cena 3D é o TABULEIRO, em faixas (de cima para baixo na tela):
@@ -837,7 +837,7 @@ function estat(lista) {
 }
 function fimGravacao(b) {
   const e = estat(MED.grav), i = renderer.info, t = MED.el.querySelector('textarea'); MED.grav = null; b.textContent = 'Gravar 20 s';
-  t.value = ['Batalhas Filosóficas — medição de 20 s (' + new Date().toLocaleString('pt-BR') + ')',
+  t.value = ['Batalha dos Filósofos — medição de 20 s (' + new Date().toLocaleString('pt-BR') + ')',
     'Cenário: ' + (location.hash || '(nenhum)') + (cam.focado ? ', câmera em foco' : ''),
     'Quadros: ' + e.n + ' · média ' + (1000 / e.media).toFixed(1) + ' q/s · quadro médio ' + e.media.toFixed(1) + ' ms · p95 ' + e.p95.toFixed(1) + ' ms · pior ' + e.pior.toFixed(1) + ' ms · acima de 33 ms: ' + e.lentos,
     'Chamadas de desenho: ' + i.render.calls + ' · triângulos: ' + i.render.triangles + ' · texturas: ' + i.memory.textures + ' · geometrias: ' + i.memory.geometries,

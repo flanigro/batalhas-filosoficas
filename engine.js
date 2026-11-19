@@ -1,4 +1,4 @@
-/* Batalhas Filosóficas — motor de regras (protótipo nível 2; regras de 15/11/2026, revistas em 18/11/2026)
+/* Batalha dos Filósofos — motor de regras (protótipo nível 2; regras de 15/11/2026, revistas em 18/11/2026)
    Sem dependências; roda no navegador e no Node (para simulação). */
 (function (root) {
   'use strict';

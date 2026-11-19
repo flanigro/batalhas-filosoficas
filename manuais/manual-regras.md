@@ -1,4 +1,4 @@
-# Batalhas Filosóficas — Manual detalhado das regras (nível 2)
+# Batalha dos Filósofos — Manual detalhado das regras (nível 2)
 
 Versão de 18/11/2026. Conferido contra o motor de regras (`engine.js`, branch `mesa-3d`), que é a fonte de verdade. Onde o digital e o impresso diferem, o texto avisa.
 
@@ -8,7 +8,7 @@ Este manual é a referência completa: serve para revisar o jogo, arbitrar dúvi
 
 ## 1. O jogo
 
-Batalhas Filosóficas é um jogo de cartas em que filósofos disputam as grandes perguntas da filosofia. Cada jogador forma um grupo de pensadores, junta ideias e as leva aos debates abertos na Ágora. Quem sustenta um debate vence a pergunta e marca o valor dela em pontos.
+Batalha dos Filósofos é um jogo de cartas em que filósofos disputam as grandes perguntas da filosofia. Cada jogador forma um grupo de pensadores, junta ideias e as leva aos debates abertos na Ágora. Quem sustenta um debate vence a pergunta e marca o valor dela em pontos.
 
 O jogo tem três níveis com as mesmas cartas:
 

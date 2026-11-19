@@ -1,4 +1,4 @@
-# Batalhas Filosóficas — Como jogar
+# Batalha dos Filósofos — Como jogar
 
 Versão de 18/11/2026 · nível 2 · 3 jogadores · cerca de 10 rodadas
 

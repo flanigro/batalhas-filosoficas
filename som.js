@@ -1,4 +1,4 @@
-/* Batalhas Filosóficas — sons (18/11/2026)
+/* Batalha dos Filósofos — sons (18/11/2026)
  * Sons curtos e discretos, sintetizados no navegador (Web Audio): nenhum arquivo, nenhuma licença.
  * Os sons "físicos" (papel, livro, areia) poderão ser trocados depois por gravações de licença livre (CC0).
  * Uso: SOM.toca('nome', opcoes). O som só começa depois do primeiro gesto de quem joga (regra dos navegadores).
