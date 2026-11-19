@@ -1,4 +1,4 @@
-/* Batalhas Filosóficas — a mesa em Three.js (rodada 5: a arena)
+/* Batalha dos Filósofos — a mesa em Three.js (rodada 5: a arena)
  *
  * COMO FUNCIONA
  * - A cena 3D é o TABULEIRO, em faixas (de cima para baixo na tela):
@@ -590,13 +590,28 @@ function textoVago() {
   const r = (S.cfg.novoDebate || []).filter(x => x >= S.round)[0];
   return S.debDeck && S.debDeck.length && r ? 'Novo debate ao fim da rodada ' + r : 'Sem novo debate nesta partida';
 }
+// debate já vencido que ainda está sendo celebrado: a placa mostra a pergunta antiga e as ideias dela
+// (pela fila de efeitos ainda não tocados ou pelo registro da cena, em ocultos['placa:N'])
+function placaCongelada(i) {
+  const o = OC['placa:' + i]; if (o && o.id) return o;
+  const f = (S.fx || []).find(x => x.k === 'vit' && x.di === i); return f ? { id: f.did, stakes: f.stakes || [0, 0, 0] } : null;
+}
+// a placa gira de lado, troca de pergunta e de cor no meio do giro e volta de frente
+function virarPlaca(di, meio) {
+  const s = R.slots[di]; if (!s) { if (meio) meio(); return Promise.resolve(); }
+  const r0 = s.g.rotation.y;
+  return tween(T(260), k => { s.g.rotation.y = r0 + k * Math.PI / 2; s.g.scale.setScalar(1 - k * .06); }, E.in)
+    .then(() => { if (meio) meio(); s.g.rotation.y = r0 - Math.PI / 2; })
+    .then(() => tween(T(320), k => { s.g.rotation.y = r0 - Math.PI / 2 * (1 - k); s.g.scale.setScalar(.94 + k * .06); }, E.out))
+    .then(() => { s.g.rotation.y = r0; s.g.scale.setScalar(1); });
+}
 function sync(estado, ocultos) {
   if (!scene) return; S = estado; OC = ocultos || {};
   if (!S) return;
   const nJ = S.players.length, on = {}, vago = textoVago(); S.debates.forEach(d => { on[BF.DEB[d.id].area] = 1; });
   R.slots.forEach((slot, i) => {
     if (slot.nJ !== nJ) { montarPlaca(slot, nJ); slot.did = undefined; }
-    const d = S.debates[i], did = d ? d.id : null;
+    const cg = placaCongelada(i), d = cg || S.debates[i], did = d ? d.id : null;   // debate vencido: a placa espera o fim da festa
     if (slot.did !== did || (!did && slot.vago !== vago)) {
       slot.did = did; slot.vago = vago;
       if (did) { slot.v = BF.DEB[did].valor; medirPrat(slot); } else { slot.v = 0; slot.fil = null; }
@@ -608,7 +623,8 @@ function sync(estado, ocultos) {
     S.players.forEach((pl, p) => {
       const vis = Math.min(d.stakes[p], 2 * q.valor), oc = Math.min(vis, OC[d.id + ':' + p] || 0);
       ajustarPrat(slot, p, vis - oc);
-      if (slot.frisos[p]) slot.frisos[p].emissiveIntensity = BF.lidera(S, i, p) && !oc ? .9 : 0;
+      const lid = cg ? d.stakes[p] >= q.valor && d.stakes.every((v, o) => o === p || d.stakes[p] > v) : BF.lidera(S, i, p);
+      if (slot.frisos[p]) slot.frisos[p].emissiveIntensity = lid && !oc ? .9 : 0;
     });
   });
   const chave = BF.AREAS.map(a => on[a] ? 1 : 0).join('');
@@ -1017,7 +1033,7 @@ function iniciar() {
 }
 
 const API = {
-  pronto: false, sync, posicionar, foco, desfoco, tremer, tela: tela2, retFig, L, E, tween, mundoDeTela, encolher,
+  pronto: false, sync, posicionar, foco, desfoco, tremer, tela: tela2, retFig, L, E, tween, mundoDeTela, encolher, virarPlaca,
   figura, arco, andar, tranco, fora, brilhar, cairLivro, derrubar, livroVoa, papiro, espantalho, particulas, chuva, coro, chegarEstante,
   topoTorre, peTorre, mundoEstante, mundoPilha, slotDe, qualidade,
   palha: pos => particulas(pos, 14, MAT.palha), V3,

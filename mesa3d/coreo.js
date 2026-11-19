@@ -1,4 +1,4 @@
-/* Batalhas Filosóficas — coreografia (rodada visual 3: a mesa é 3D)
+/* Batalha dos Filósofos — coreografia (rodada visual 3: a mesa é 3D)
  *
  * COMO FUNCIONA
  * O motor (engine.js) empilha eventos em S.fx. A interface (ui.js) lê a fila e, para cada evento,
@@ -284,10 +284,17 @@ def('vitoria',async function(ev,c){
   anim(lr,[{transform:'translate(-50%,-150px) rotate(-20deg)',opacity:0},{transform:'translate(-50%,0) rotate(0deg)',opacity:1}],{d:520,e:CURVA.tranco});
   chuva(28);
   await dorme(2400);
+  await anim(pl,[{transform:base+'scale(1)',opacity:1},{transform:base+'scale(.92)',opacity:0}],{d:320,e:'ease-in'});
+  pl.remove();
   await desfoco();
-  var t=c.elTrofeu(ev.P), d=t?caixa(t):{x:px,y:py-200};
-  await anim(pl,[{transform:base+'scale(1)',opacity:1},{transform:'translate('+d.x+'px,'+d.y+'px) translate(-50%,-50%) scale(.08)',opacity:.7}],{d:700,e:'cubic-bezier(.5,0,.3,1)'});
-  pl.remove(); c.revelarTrofeu(ev.P);
+  // o medalhão com os pontos sai da placa e vai até o placar do vencedor, onde vira o pequeno troféu da cor da área
+  var de=c.medalhao(ev.di)||{x:px,y:py}, t=c.elTrofeu(ev.P), alvo=t&&t.querySelector('.trofeu.porvir'), d=alvo?caixa(alvo):(t?caixa(t):{x:px,y:40});
+  var md=cria('medalha',String(ev.valor),'--c:'+ar.cor);
+  var a0='translate('+de.x+'px,'+de.y+'px) translate(-50%,-50%) ', a1='translate('+d.x+'px,'+d.y+'px) translate(-50%,-50%) ';
+  await anim(md,[{transform:a0+'scale(.6)',opacity:0},{transform:a0+'scale(1.25)',opacity:1,offset:.25},{transform:a0+'scale(1)',opacity:1}],{d:420,e:CURVA.tranco});
+  await anim(md,[{transform:a0+'scale(1)'},{transform:'translate('+((de.x+d.x)/2)+'px,'+(Math.min(de.y,d.y)-80)+'px) translate(-50%,-50%) scale(.75)',offset:.5},{transform:a1+'scale(.32)'}],{d:820,e:'cubic-bezier(.45,0,.3,1)'});
+  md.remove(); if(window.SOM)SOM.toca('plim'); c.revelarTrofeu(ev.P,ev.valor);
+  await dorme(250);
 });
 
 X.T=T; X.dorme=dorme; X.anim=anim; X.caixa=caixa; X.cria=cria; X.tremer=tremer; X.poeira=poeira; X.estouro=estouro;

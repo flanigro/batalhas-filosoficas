@@ -1,4 +1,4 @@
-/* Batalhas Filosóficas — falas por pergunta: Livres-pensadores.
+/* Batalha dos Filósofos — falas por pergunta: Livres-pensadores.
    Tipos: c = citação (tradução livre), p = paráfrase, i = inferência a partir da doutrina.
    Tudo a verificar. */
 (function (r) {

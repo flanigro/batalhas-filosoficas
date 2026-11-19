@@ -1,4 +1,4 @@
-/* Batalhas Filosóficas — motor de regras (protótipo nível 2; regras de 15/11/2026, revistas em 18/11/2026)
+/* Batalha dos Filósofos — motor de regras (protótipo nível 2; regras de 15/11/2026, revistas em 18/11/2026)
    Sem dependências; roda no navegador e no Node (para simulação). */
 (function (root) {
   'use strict';
@@ -455,7 +455,7 @@
     pl.points += q.valor;
     pl.won.push(d.id);
     log(s, pl.nome + ' vence o debate «' + q.q + '» e marca ' + q.valor + ' pontos (' + motivo + ').', 'vit', P);
-    fx(s, { k: 'vit', P: P, q: q.q, valor: q.valor, di: di, did: d.id, area: q.area });
+    fx(s, { k: 'vit', P: P, q: q.q, valor: q.valor, di: di, did: d.id, area: q.area, stakes: d.stakes.slice() });
     s.debates.splice(di, 1);
     if (s.debDeck.length) {
       var id = s.debDeck.pop();

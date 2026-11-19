@@ -1,4 +1,4 @@
-/* Batalhas Filosóficas — materiais da mesa 3D
+/* Batalha dos Filósofos — materiais da mesa 3D
  *
  * TODOS os materiais da cena nascem aqui. Hoje cada um usa mapas gerados por código (canvas):
  * cor, normal (derivada do relevo) e rugosidade. São PROVISÓRIOS.

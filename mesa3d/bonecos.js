@@ -1,4 +1,4 @@
-/* Batalhas Filosóficas — marionetes de recorte (piloto: Diógenes)
+/* Batalha dos Filósofos — marionetes de recorte (piloto: Diógenes)
  *
  * Cada boneco é um SVG desenhado em PARTES. O programa não redesenha nada: só gira e desloca as partes
  * (as animações estão no CSS de index.html, bloco "motor de marionetes").

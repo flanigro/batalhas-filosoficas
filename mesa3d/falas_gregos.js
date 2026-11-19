@@ -1,4 +1,4 @@
-/* Batalhas Filosóficas — falas por pergunta: Grécia Clássica.
+/* Batalha dos Filósofos — falas por pergunta: Grécia Clássica.
    Tipos: c = citação (tradução livre), p = paráfrase, i = inferência a partir da doutrina.
    Tudo a verificar. */
 (function (r) {

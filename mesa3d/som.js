@@ -1,4 +1,4 @@
-/* Batalhas Filosóficas — sons (18/11/2026)
+/* Batalha dos Filósofos — sons (18/11/2026)
  * Sons curtos e discretos, sintetizados no navegador (Web Audio): nenhum arquivo, nenhuma licença.
  * Os sons "físicos" (papel, livro, areia) poderão ser trocados depois por gravações de licença livre (CC0).
  * Uso: SOM.toca('nome', opcoes). O som só começa depois do primeiro gesto de quem joga (regra dos navegadores).
@@ -48,6 +48,36 @@
     env(g, t, o.a || 0.004, o.vol || 0.08, dur);
     s.connect(f); f.connect(g); g.connect(mestre); s.start(t, Math.random() * 0.5); s.stop(t + dur + 0.05);
   }
+  // trombeta: dente de serra com filtro que abre no ataque e vibrato depois do início
+  function trompete(freq, t, dur, rel) {
+    rel = rel || 1;
+    var os = ctx.createOscillator(), f = ctx.createBiquadFilter(), g = ctx.createGain(), lfo = ctx.createOscillator(), lg = ctx.createGain();
+    os.type = 'sawtooth'; os.frequency.setValueAtTime(freq * 0.985, t); os.frequency.linearRampToValueAtTime(freq, t + 0.04);
+    lfo.frequency.value = 5.5; lg.gain.setValueAtTime(0, t); lg.gain.linearRampToValueAtTime(freq * 0.006, t + Math.min(0.25, dur));
+    lfo.connect(lg); lg.connect(os.frequency);
+    f.type = 'lowpass'; f.Q.value = 2; f.frequency.setValueAtTime(700, t); f.frequency.exponentialRampToValueAtTime(2800, t + 0.05); f.frequency.exponentialRampToValueAtTime(1600, t + dur);
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.06 * rel, t + 0.03); g.gain.setValueAtTime(0.055 * rel, t + Math.max(0.04, dur - 0.05)); g.gain.exponentialRampToValueAtTime(0.0001, t + dur + 0.08);
+    os.connect(f); f.connect(g); g.connect(mestre); os.start(t); lfo.start(t); os.stop(t + dur + 0.12); lfo.stop(t + dur + 0.12);
+  }
+  // torcida: rumor de muitas vozes (ruído em faixas que sobem e descem) e alguns "êêê" de vogal aberta
+  function torcida(t, dur) {
+    for (var b = 0; b < 4; b++) {
+      var s = ctx.createBufferSource(), f = ctx.createBiquadFilter(), g = ctx.createGain();
+      s.buffer = ruidoBuf; s.loop = true; f.type = 'bandpass'; f.Q.value = 1.3; f.frequency.value = [700, 1100, 1700, 2600][b];
+      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.03, t + 0.25);
+      for (var k = 1; k < 8; k++) g.gain.linearRampToValueAtTime(0.018 + Math.random() * 0.022, t + 0.25 + k * (dur - 0.6) / 8);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      s.connect(f); f.connect(g); g.connect(mestre); s.start(t, Math.random()); s.stop(t + dur + 0.05);
+    }
+    for (var v = 0; v < 7; v++) {   // vozes: dente de serra com formantes de "é"
+      var t0 = t + Math.random() * 0.35, d = 0.7 + Math.random() * 0.6, f0 = 170 + Math.random() * 180;
+      var o = ctx.createOscillator(), f1 = ctx.createBiquadFilter(), f2 = ctx.createBiquadFilter(), gv = ctx.createGain();
+      o.type = 'sawtooth'; o.frequency.setValueAtTime(f0, t0); o.frequency.linearRampToValueAtTime(f0 * 1.25, t0 + d * 0.4); o.frequency.linearRampToValueAtTime(f0 * 1.1, t0 + d);
+      f1.type = 'bandpass'; f1.frequency.value = 600; f1.Q.value = 4; f2.type = 'bandpass'; f2.frequency.value = 1800; f2.Q.value = 5;
+      gv.gain.setValueAtTime(0.0001, t0); gv.gain.exponentialRampToValueAtTime(0.012, t0 + 0.12); gv.gain.exponentialRampToValueAtTime(0.0001, t0 + d);
+      o.connect(f1); o.connect(f2); f1.connect(gv); f2.connect(gv); gv.connect(mestre); o.start(t0); o.stop(t0 + d + 0.05);
+    }
+  }
   function sino(freq, t, dur, vol) {   // sino suave: fundamental e parciais inarmônicos
     [[1, 1], [2.76, 0.35], [5.4, 0.12]].forEach(function (p) { tom(freq * p[0], t, dur * (p[0] > 1 ? 0.6 : 1), { vol: vol * p[1], a: 0.004 }); });
   }
@@ -74,9 +104,12 @@
       [196, 207, 185].forEach(function (f, i) { tom(f, t + 0.12, 0.55, { tipo: 'sawtooth', para: f * 0.82, desliza: 0.55, vol: 0.016, filtro: 650, a: 0.08, det: i * 7 }); });
     },
     tecnica: function (t) { tom(130, t, 0.14, { para: 90, vol: 0.11 }); ruido(t, 0.05, { freq: 1500, q: 0.8, vol: 0.05 }); tom(523, t + 0.1, 0.3, { vol: 0.025 }); },
-    vitoria: function (t) {   // acorde curto em arpejo (dó maior)
-      [523.25, 659.25, 783.99, 1046.5].forEach(function (f, i) { tom(f, t + i * 0.09, i === 3 ? 0.9 : 0.4, { tipo: 'triangle', vol: 0.06 }); });
-      ruido(t + 0.3, 0.9, { freq: 5000, q: 0.5, vol: 0.012, a: 0.2 });   // páginas no ar
+    // vitória num debate: toque curto de trombetas (sol-dó-mi-sol) e a torcida vibrando
+    vitoria: function (t) {
+      [[392, 0, 0.13], [523.25, 0.13, 0.13], [659.25, 0.26, 0.13], [783.99, 0.39, 0.7]].forEach(function (n) {
+        trompete(n[0], t + n[1], n[2]); trompete(n[0] * 0.75, t + n[1], n[2], 0.5);   // segunda voz uma quarta abaixo
+      });
+      torcida(t + 0.3, 1.9);
     },
     livros: function (t, o) { var n = Math.min((o && o.n) || 1, 6); for (var i = 0; i < n; i++) SONS.livro(t + i * 0.07, { k: i }); },
     turno: function (t) { sino(988, t, 0.9, 0.035); },

@@ -1,4 +1,4 @@
-/* Batalhas Filosóficas — interface (protótipo nível 2)
+/* Batalha dos Filósofos — interface (protótipo nível 2)
  * A mesa é 3D (mesa3d.js). Aqui se desenham as cartas da mão, as telas e, para cada objeto clicável da
  * mesa, uma ÂNCORA invisível com data-anc (ver o CSS): mesmos data-atributos de antes, posição dada pela cena. */
 (function(){
@@ -33,7 +33,7 @@ function emblema(p){
     +'<div class="perg"><span>'+esc(pl.nome)+'</span></div>';
 }
 // placar: pontos acumulados e o objetivo (30)
-function placar(p){ var pl=S.players[p]; return '<div class="pts" title="Pontos: '+pl.points+' de '+S.cfg.pontos+'"><b>'+pl.points+'</b><small>/'+S.cfg.pontos+'</small></div>'; }
+function placar(p){ var pl=S.players[p], pts=pl.points-(ocultos['pts:'+p]||0); return '<div class="pts" data-pts="'+p+'" title="Pontos: '+pts+' de '+S.cfg.pontos+'"><b>'+pts+'</b><small>/'+S.cfg.pontos+'</small></div>'; }
 // livros da Biblioteca em HTML (Minha Biblioteca, na faixa de baixo): em grupos de cinco, para contar a olho
 function livrosHTML(n){ var h=''; for(var i=0;i<Math.min(n,60);i++)h+='<i class="liv"></i>'; return h; }
 var TIPO={c:'Citação · tradução livre',p:'Paráfrase',i:'Inferência a partir da doutrina'};
@@ -318,7 +318,7 @@ function prepararOcultos(lista){
     if(f.k==='debate'){add(f.did+':'+f.P,f.amt);add('fig:'+f.P+':'+f.id,1);}
     else if(f.k==='segue'&&f.did)add(f.did+':'+f.P,1);
     else if(f.k==='praxis'&&f.did&&f.ganho>0)add(f.did+':'+f.P,f.ganho);
-    else if(f.k==='vit')add('trof:'+f.P,1);
+    else if(f.k==='vit'){ add('trof:'+f.P,1); add('pts:'+f.P,f.valor); ocultos['placa:'+f.di]={id:f.did,stakes:f.stakes||[0,0,0]}; n++; }
   });
   if(n){redesenhar();if(sel)reaplicarSel();}
 }
@@ -334,8 +334,10 @@ async function revelar(did,P,n){
     await sleep(veloz?35:80);
   }
 }
-function revelarTrofeu(P){
+function revelarTrofeu(P,valor){
   if(ocultos['trof:'+P]>0)ocultos['trof:'+P]--;
+  if(valor&&ocultos['pts:'+P]>0){ ocultos['pts:'+P]=Math.max(0,ocultos['pts:'+P]-valor);
+    document.querySelectorAll('[data-pts="'+P+'"] b').forEach(function(b){ b.textContent=S.players[P].points-(ocultos['pts:'+P]||0); b.parentNode.title='Pontos: '+b.textContent+' de '+S.cfg.pontos; b.classList.remove('soma'); void b.offsetWidth; b.classList.add('soma'); }); }
   var t=q$('[data-trof="'+P+'"] .trofeu.porvir'); if(t){t.classList.remove('porvir');t.classList.add('chegou');}
   var v=q$('[data-trof="'+P+'"] .tv'); if(v)v.remove();
 }
@@ -347,7 +349,7 @@ var CTX={
   elDeb:function(di){return q$('.deb[data-di="'+di+'"]');},
   elTrofeu:function(P){return q$('[data-trof="'+P+'"]');},
   idDoGrupo:function(P,fi){var g=S.players[P].group[fi];return g?g.id:null;},
-  revelar:revelar, revelarTrofeu:revelarTrofeu,
+  revelar:revelar, revelarTrofeu:revelarTrofeu, medalhao:function(di){ var e=q$('.deb[data-di="'+di+'"]'); if(!e)return null; var r=e.getBoundingClientRect(); return {x:r.left+r.width*.13,y:r.top+r.height*.1}; },
   lidera:function(did,P){for(var i=0;i<S.debates.length;i++)if(S.debates[i].id===did)return BF.lidera(S,i,P);return false;},
   nome:function(P){return S.players[P].nome;}, cor:function(P){return S.players[P].cor;},
   carta:function(id){return C(id);}, area:function(a){return AREA[a];}
@@ -375,7 +377,10 @@ async function tocar(lista){
         }
         break;
       case 'segue': if(M3())voo(M3().mundoPilha(f.P,f.id),M3().topoTorre(f.did,f.P),1,f.P); await sleep(veloz?200:420); await revelar(f.did,f.P,1); break;
-      case 'vit': await esperarBaloes(); await BFX.cena('vitoria',f); break;
+      case 'vit': await esperarBaloes(); await BFX.cena('vitoria',f);
+        // só agora a pergunta nova entra: a placa gira e troca de texto e de cor
+        if(M3()) await M3().virarPlaca(f.di,function(){ delete ocultos['placa:'+f.di]; m3d(); }); else { delete ocultos['placa:'+f.di]; m3d(); }
+        break;
       case 'praxis': await esperarBaloes(); await palcoCarta(f); await BFX.cena('falacia',f); break;
       case 'dupla': som('dupla'); [f.a,f.b].forEach(function(id){brilhar(f.P,id,'#c2410c');}); BFX.coro('aplauso','Dupla clássica!',1300); break;
     }
@@ -392,8 +397,10 @@ function bigHTML(c){
   if(c.tipo==='P')return '<div class="bigP"><span class="bc">'+c.custo+'</span><h3>'+esc(c.nome)+'</h3><div class="ps">'+esc(c.sub)+'</div><p>'+esc(c.d)+'</p></div>';
   var e=ESC[c.escola], ds=BF.duplasDe(c.id);
   var pills=BF.AREAS.map(function(a){return '<div class="pill" style="--c:'+AREA[a].cor+'">'+AREA[a].nome+'<b>'+c.vals[a]+'</b></div>';}).join('');
-  return '<div class="big" style="--e1:'+e.cor+';--e2:'+e.cor2+'"><div class="foto" style="background-image:url('+figURL(c.id)+')"></div>'
-    +'<span class="bc">'+c.custo+'</span><div class="head"><i>'+esc(c.pre)+'</i><b>'+esc(c.nome)+'</b></div><div class="areas">'+pills+'</div>'
+  // complemento do nome: prenome vem antes (Sigmund Freud); "de Sínope" e afins vêm depois (Diógenes de Sínope)
+  var depois=/^de\s/i.test(c.pre||''), pre=c.pre?'<i class="'+(depois?'dep':'ant')+'">'+esc(c.pre)+'</i>':'';
+  return '<div class="big" style="--e1:'+e.cor+';--e2:'+e.cor2+'"><div class="foto"><i style="background-image:url('+figURL(c.id,'corpo')+');--cx:'+((CORPO_CX[c.id]||.58)*100)+'%"></i></div>'
+    +'<span class="bc">'+c.custo+'</span><div class="head">'+(depois?'':pre)+'<b>'+esc(c.nome)+'</b>'+(depois?pre:'')+'<span class="en">'+esc(e.nome)+'</span></div><div class="areas">'+pills+'</div>'
     +'<div class="corpo">'
     +'<div class="conc c1"><span class="cc">–</span><b><small class="rot">Poder</small>'+esc(c.c1.t)+'</b>'+esc(c.c1.d)+'</div>'
     +'<div class="conc info"><b>Na fase de Reflexão:</b> recebe '+BF.nI(BF.REFLEXAO[c.custo])+ds.map(function(d){return ' · <b>Dupla clássica</b> com '+esc(C(d.par).nome)+': +'+BF.nI(BF.BONUS_DUPLA);}).join('')+'</div>'
@@ -401,17 +408,22 @@ function bigHTML(c){
     +'<div class="conc off"><span class="cc">'+c.c3.custo+'</span><b><small class="rot">Poder 3</small>'+esc(c.c3.t)+'</b>'+esc(c.c3.d)+'</div>'
     +(c.cit?'<div class="cit">“'+esc(c.cit)+'”<small>'+esc(c.citFonte)+'</small></div>':'')
     +'</div>'
-    +'<div class="pe"><div>'+esc(c.datas)+'</div><div class="sc">'+esc(c.local)+'</div><div class="sc">Obra de referência</div><div><em>'+esc(c.obra)+'</em></div></div>'
-    +'<div class="esc">'+e.nome+'</div></div>';
+    +'<div class="pe"><button class="bio" data-a="bio" title="Biografia (em preparação)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5.5C5.5 4.3 8.6 4.4 12 6c3.4-1.6 6.5-1.7 9-.5V19c-2.5-1.2-5.6-1.1-9 .5-3.4-1.6-6.5-1.7-9-.5z" fill="#e9c25a" stroke="#2b2116" stroke-width="1.6" stroke-linejoin="round"/><path d="M12 6v13.5" stroke="#2b2116" stroke-width="1.6"/></svg>Biografia</button><div>'+esc(c.datas)+'</div><div class="sc">'+esc(c.local)+'</div><div class="sc">Obra de referência</div><div><em>'+esc(c.obra)+'</em></div></div>'
+    +'<div class="bio-txt" role="status">A biografia de '+esc(c.nome)+' ainda está sendo escrita: dois ou três parágrafos curtos sobre a vida e a obra.</div>'
+    +'</div>';
 }
-function verCarta(id){
-  cancelarSel();
-  $('box').innerHTML=bigHTML(C(id))+'<div class="fecha"><button class="btn" data-a="fechar">Fechar</button></div>';
+// centro horizontal da figura de corpo inteiro (do cotovelo esquerdo à mão estendida), em fração da largura da prancha:
+// a carta grande centraliza a figura na área livre à esquerda. Medido nas pranchas de 18/11/2026; sem valor, 0,58.
+var CORPO_CX={aristoteles:.59,platao:.57,socrates:.605,epicuro:.588,pitagoras:.617,diogenes:.573,marx:.563,hegel:.578,hobbes:.563,bacon:.577,
+  locke:.587,rousseau:.589,kant:.562,nietzsche:.607,schopenhauer:.608,heidegger:.572,freud:.541,arendt:.601,maquiavel:.587,erasmo:.607};
+function verCarta(id,daGaleria){
+  cancelarSel(); $('box').className='box';
+  $('box').innerHTML=bigHTML(C(id))+'<div class="fecha">'+(daGaleria?'<button class="btn" data-a="ab-galeria">Voltar à galeria</button>':'')+'<button class="btn" data-a="fechar">Fechar</button></div>';
   $('ov').classList.add('on'); aberto={id:id};
   var b=$('box').querySelector('[data-a=fechar]'); if(b)b.focus();
 }
 function fechar(){ $('ov').classList.remove('on'); aberto=null; }
-function modal(html){ cancelarSel(); aberto=null; $('box').innerHTML=html; $('ov').classList.add('on'); }
+function modal(html,cls){ cancelarSel(); aberto=null; $('box').className='box'+(cls?' '+cls:''); $('box').innerHTML=html; $('ov').classList.add('on'); }
 
 // ---------- alvos (mesmo cálculo para clique e arrasto) ----------
 function q$(s){return document.querySelector(s);}
@@ -574,15 +586,87 @@ function regrasHTML(){
     +'<li><b>Vencer um debate:</b> no início do seu turno, ter ideias iguais ou acima do valor e pelo menos uma a mais que cada adversário (empate não vence). Quem lidera precisa esperar uma volta inteira da mesa, para que os outros possam responder. Com o dobro do valor, a vitória é imediata.</li>'
     +'<li><b>Fim:</b> ao completar a rodada em que alguém chega a 30 pontos, ou ao fim da 12ª rodada. Mão com no máximo 5 cartas ao encerrar o turno. Duplo clique (ou botão direito) numa carta mostra a carta ampliada.</li></ul>';
 }
-function telaInicio(){
-  modal('<h2>Batalha dos Filósofos</h2><p>Filósofos disputam as grandes perguntas da filosofia. Você joga contra Hipátia e Sêneca, com três escolas na pilha: Grécia Clássica, Materialistas e Empiristas, Germânicos, mais dois livres-pensadores.</p>'
-    +regrasHTML()
+function escolherOponentes(){
+  modal('<h2>Batalha!</h2><p>Você joga contra Hipátia e Sêneca. Na pilha, três escolas (Grécia Clássica, Materialistas e Empiristas, Germânicos) e dois livres-pensadores.</p>'
     +'<div class="lab" style="margin-top:12px">Oponentes</div><div class="sel"><label><input type="radio" name="niv" value="aprendiz" checked>Aprendizes<br><small style="color:var(--mute)">erram mais, usam menos falácias</small></label><label><input type="radio" name="niv" value="mestre">Mestres<br><small style="color:var(--mute)">calculam cada debate</small></label></div>'
-    +'<div class="fecha"><button class="btn pri" data-a="comecar">Começar</button></div>');
+    +'<div class="fecha"><button class="btn" data-a="fechar">Voltar</button><button class="btn pri" data-a="comecar">Começar</button></div>');
+  var b=$('box').querySelector('[data-a=comecar]'); if(b)b.focus();
+}
+
+// ---------- tela de abertura (proposta A, "Duelo", ajustada pelo Flavio em 19/11/2026) ----------
+// O palco tem 1440 × 900 e é escalado para caber na janela; o fundo (diagonal, raio) ocupa a janela toda.
+var AB=$('abertura');
+function abertaAbertura(){ return AB.classList.contains('on'); }
+function escalaAbertura(){ AB.style.setProperty('--s',Math.min(innerWidth/1440,innerHeight/900).toFixed(4)); }
+window.addEventListener('resize',escalaAbertura);
+function debateDoDia(){   // uma pergunta sorteada a cada vez que a abertura aparece
+  var d=BF.DEBATES[Math.floor(Math.random()*BF.DEBATES.length)];
+  $('abplaca').style.setProperty('--c',AREA[d.area].cor);
+  $('abval').textContent='Debate de hoje · vale '+d.valor; $('abq').textContent=d.q;
+}
+function mostrarAbertura(){
+  fechar(); cancelarSel(); debateDoDia(); escalaAbertura();
+  $('abcont').hidden=!(S&&!S.over);
+  AB.classList.add('on');
+  setTimeout(function(){ var b=$('abbat'); if(b)b.focus(); },50);
+}
+function esconderAbertura(){ AB.classList.remove('on'); }
+function galeriaHTML(){
+  var h='<h2>Galeria dos filósofos</h2><p class="galsub">Clique num filósofo para ver a carta.</p>';
+  Object.keys(ESC).forEach(function(k){
+    var e=ESC[k], fs=BF.FILOSOFOS.filter(function(f){return f.escola===k;});
+    if(!fs.length)return;
+    h+='<div class="galesc" style="--e1:'+e.cor+';--e2:'+e.cor2+'"><h3>'+esc(e.nome)+'</h3><div class="galgrade">'
+      +fs.map(function(c){return '<button class="galc" data-a="ab-carta" data-id="'+c.id+'" aria-label="'+esc(c.nome)+'"><i style="background-image:url('+figURL(c.id)+')"></i><span class="gcusto">'+c.custo+'</span><b>'+esc(c.nome)+'</b></button>';}).join('')
+      +'</div></div>';
+  });
+  return h+'<div class="fecha"><button class="btn" data-a="fechar">Fechar</button></div>';
+}
+// "As regras": o manual do jogador (manuais/manual-jogador.md), convertido de Markdown na hora.
+// Sem o arquivo (aberto de outro lugar), mostra o resumo de Como jogar.
+var MANUAL=null, pedidoManual=0;
+function inl(t){ return esc(t).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/\*(.+?)\*/g,'<i>$1</i>').replace(/`(.+?)`/g,'<code>$1</code>'); }
+function mdHTML(md){
+  var out='', par=[], listas=[];
+  function fp(){ if(par.length){ out+='<p>'+inl(par.join(' '))+'</p>'; par=[]; } }
+  function fl(ate){ while(listas.length>ate) out+='</li></'+listas.pop().tipo+'>'; }
+  md.replace(/\r/g,'').split('\n').forEach(function(l){
+    var m;
+    if(!l.trim()){ fp(); fl(0); return; }
+    if(/^-{3,}\s*$/.test(l)){ fp(); fl(0); out+='<hr>'; return; }
+    if((m=/^(#{1,4})\s+(.*)$/.exec(l))){ fp(); fl(0); var n=m[1].length+1; out+='<h'+n+'>'+inl(m[2])+'</h'+n+'>'; return; }
+    if((m=/^>\s?(.*)$/.exec(l))){ fp(); fl(0); out+='<blockquote>'+inl(m[1])+'</blockquote>'; return; }
+    if((m=/^(\s*)([-*]|\d+\.)\s+(.*)$/.exec(l))){
+      fp(); var ind=m[1].length, tipo=/\d/.test(m[2])?'ol':'ul', nv=0;
+      while(nv<listas.length&&listas[nv].ind<ind)nv++;
+      if(nv<listas.length){ fl(nv+1); out+='</li><li>'+inl(m[3]); return; }
+      out+='<'+tipo+'><li>'+inl(m[3]); listas.push({tipo:tipo,ind:ind}); return;
+    }
+    if(listas.length&&/^\s/.test(l)){ out+=' '+inl(l.trim()); return; }
+    fl(0); par.push(l.trim());
+  });
+  fp(); fl(0); return out;
+}
+function abrirManual(){
+  var fecha='<div class="fecha"><button class="btn" data-a="fechar">Fechar</button></div>', meu=++pedidoManual;
+  function mostra(h){ if(meu!==pedidoManual||!$('ov').classList.contains('on'))return; $('box').innerHTML=h+fecha; $('box').scrollTop=0; }
+  modal('<h2>As regras</h2><p>Abrindo o manual…</p>','larga manual');
+  (MANUAL?Promise.resolve(MANUAL):fetch('manuais/manual-jogador.md').then(function(r){ if(!r.ok)throw new Error(r.status); return r.text(); }))
+    .then(function(t){ MANUAL=t; mostra(mdHTML(t)); })
+    .catch(function(){ mostra('<h2>Como jogar</h2>'+regrasHTML()); });
+}
+function abAcao(a,id){
+  switch(a){
+    case 'ab-batalha': escolherOponentes(); break;
+    case 'ab-galeria': modal(galeriaHTML(),'larga'); break;
+    case 'ab-carta': verCarta(id,true); break;
+    case 'ab-regras': abrirManual(); break;
+    case 'ab-continuar': esconderAbertura(); break;
+  }
 }
 function nova(nivel){ S=BF.newGame({niveis:['mestre',nivel,nivel]});
   var h=location.hash.slice(1).split('-'); ['diogenes','nietzsche'].forEach(function(id){ if(h.indexOf(id)>=0)comFilosofo(id); });
-  logN=0; bibChegou=true; fechar(); rodarIA(); }
+  logN=0; bibChegou=true; fechar(); esconderAbertura(); rodarIA(); }
 /* Entradas de teste: #diogenes ou #nietzsche no fim do endereço põem esse filósofo, já ativo e com 4 ideias, no seu grupo.
    Combinam com hífen: #nietzsche-medir (com o painel de medição), #medir-doze (personagem de teste nas doze vagas). */
 function comFilosofo(id){
@@ -613,14 +697,18 @@ document.addEventListener('click',function(ev){
     else { cancelarSel(); if(!b)return; }
   }
   var t=ev.target.closest('[data-a]');
-  if(!t){ if(ev.target===$('ov')&&S&&aberto)fechar(); return; }
+  if(!t){ if(ev.target===$('ov')&&(S&&aberto||abertaAbertura()))fechar(); return; }
   var a2=t.dataset.a, i=t.dataset.i!==undefined?+t.dataset.i:undefined, id=t.dataset.id;
+  if(a2.indexOf('ab-')===0){ abAcao(a2,id); return; }
+  if(a2==='bio'){ var bt=$('box').querySelector('.bio-txt'); if(bt)bt.classList.toggle('on'); return; }   // biografias ainda por escrever
   if(a2==='comecar'){var r=document.querySelector('input[name=niv]:checked'); nova(r?r.value:'aprendiz'); return;}
-  if(a2==='inicio'){telaInicio();return;}
-  if(!S){ if(a2==='fechar')telaInicio(); return; }
+  if(a2==='inicio'){mostrarAbertura();return;}
+  if(a2==='fechar'&&(!S||abertaAbertura())){ fechar(); return; }
+  if(!S)return;
   var meu=pode();
   switch(a2){
     case 'fechar': fechar(); break;
+    case 'bio': { var bt=$('box').querySelector('.bio-txt'); if(bt)bt.classList.toggle('on'); } break;   // biografias ainda por escrever
     case 'ver': verCarta(id); break;
     case 'grupo':
       // o Bibliotecário não vai a debate: o clique só inspeciona (duplo clique abre a carta); a restrição só aparece se ele for arrastado
@@ -649,7 +737,9 @@ document.addEventListener('dblclick',function(e){
   e.preventDefault(); verCarta(m.dataset.cid);
 });
 document.addEventListener('keydown',function(e){
-  if(e.key!=='Escape'||!S)return;
+  if(e.key!=='Escape')return;
+  if(abertaAbertura()){ if($('ov').classList.contains('on'))fechar(); return; }
+  if(!S)return;
   if($('ov').classList.contains('on')&&aberto){fechar();return;}
   if(sel)cancelarSel();
 });
@@ -710,8 +800,8 @@ document.addEventListener('pointermove',function(e){
 });
 $('bdiario').onclick=$('bdiario2').onclick=function(){document.body.classList.toggle('diario');};
 BFX.ligar(CTX);
-$('bregras').onclick=function(){modal('<h2>Como jogar</h2>'+regrasHTML()+'<p style="font-size:13.5px;color:var(--mute)">Protótipo de nível 2: valem os valores das áreas e o poder gratuito de cada filósofo. Os poderes pagos aparecem na carta ampliada, marcados como nível 3. Falas, citações e contextos históricos ainda estão por verificar.</p><div class="fecha"><button class="btn" data-a="fechar">Fechar</button></div>');};
-$('bnova').onclick=telaInicio;
-window.__bf={agir:agir,render:render,rodarIA:rodarIA,redesenhar:redesenhar,verCarta:verCarta,fechar:fechar,palco:palco,palcoBaixa:palcoBaixa,get S(){return S;},get ocupado(){return ocupado;},get emPalco(){return emPalco;},get animando(){return animando;},get sel(){return sel;}};
-telaInicio();
+$('bregras').onclick=function(){modal('<h2>Como jogar</h2>'+regrasHTML()+'<p style="font-size:13.5px;color:var(--mute)">Protótipo de nível 2: valem os valores das áreas e o poder gratuito de cada filósofo. Os poderes pagos aparecem na carta ampliada, marcados como nível 3. Falas, citações e contextos históricos ainda estão por verificar.</p><div class="fecha"><button class="btn" data-a="ab-regras">Manual completo</button><button class="btn" data-a="fechar">Fechar</button></div>');};
+$('bnova').onclick=mostrarAbertura;
+window.__bf={abertura:mostrarAbertura,mdHTML:mdHTML,agir:agir,render:render,rodarIA:rodarIA,redesenhar:redesenhar,verCarta:verCarta,fechar:fechar,palco:palco,palcoBaixa:palcoBaixa,get S(){return S;},get ocupado(){return ocupado;},get emPalco(){return emPalco;},get animando(){return animando;},get sel(){return sel;}};
+mostrarAbertura();
 })();
