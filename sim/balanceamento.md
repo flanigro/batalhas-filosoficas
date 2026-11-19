@@ -150,3 +150,27 @@ Depois das decisões: aplicar no `mesa-3d`, rodar os testes do motor e uma parti
   - `exp.js`: os experimentos gerais;
   - `injeta.js`: a força de cada carta.
 - Resultados brutos em `sim/resultados/`.
+
+## 7. Cartas temporárias (19/11/2026, noite; commit aad520d do `mesa-3d`)
+
+Primeira leva programada: as quatro famílias, as 7 cartas novas, as falácias saindo do jogo e tirando pontos. Medido com `sim/temporarias.js`, direto no `engine.js` (o `engine-var.js` é anterior a esta mudança).
+
+**Retrato do jogo** (600 partidas só de IA, comparadas com o motor de antes, nas mesmas sementes):
+- **Vitórias por assento:** 37%, 30% e 32% (antes, 34%, 31% e 35%).
+- **Duração:** 11,5 rodadas (antes, 11,2). Pontos médios por jogador no fim: 14,7 (antes, 18,2). Mais partidas chegam à 12ª rodada sem ninguém alcançar 30.
+- **Cartas temporárias usadas:** cerca de 17,5 por partida (antes, 22,5 Práxis). Cada falácia sai na primeira vez em que é usada, então aparece no máximo uma vez por partida; os argumentos são agora as cartas mais usadas (Retorsio 2,4; Tautologia 2,4; Reductio 1,9; Paradoxo 1,8; Cicuta 1,7).
+- **Caveiras:** 2,2 pontos perdidos em falácias por jogador e partida. Placar final negativo: 10% dos jogadores.
+
+**Força de cada carta** (a carta posta na mão inicial de um assento, no lugar de uma carta sorteada; diferença de vitórias em p.p.). Uma carta que não faz nada fica por volta de −3, porque toma o lugar de uma carta útil; a margem de erro é de cerca de 2 p.p.
+- Paradoxo Lógico +2,8 (1.000 partidas por assento) e +4,0 (400): a carta mais forte do conjunto.
+- Reductio +0,1 e +1,8; Autoridade −0,3; Falseabilidade −0,6; Ceticismo −0,4; Niilismo −0,6; Cicuta −0,7; Retorsio −1,0; Sofisma −1,3.
+- Espantalho −2,2; Ad Hominem −2,6; Tautologia −3,5; Mutatio −4,1; Dogma −4,5.
+- Petitio −2,8 e Non Sequitur −4,7: a IA **nunca** as usa, porque a penalidade supera o ganho. A Petitio era usada 1,65 vez por partida antes da penalidade: pagar 3 e receber 5 ideias num filósofo é só +2 líquido, e −1 ponto torna a troca ruim.
+- Sem penalidade nenhuma (só saindo do jogo), as falácias ficam entre +1,4 (Sofisma) e −2,8; a Petitio e a Non Sequitur passam a ser usadas (75% e 100% das partidas). A penalidade pesa menos que a saída do jogo.
+
+**Leitura:**
+- As falácias deixaram de ser o centro do jogo: usadas uma vez e cobrando pontos, viraram cartas de ocasião, com força perto de uma carta comum.
+- O Paradoxo, sem trava, é a carta mais forte, como previsto. Acompanhar com jogadores reais.
+- Dogma e Tautologia rendem pouco. O Dogma custa 4 para tirar a Reflexão de dois filósofos de um só adversário, e o terceiro jogador lucra junto. A Tautologia é neutra por desenho (paga 2, recebe 2).
+- Petitio e Non Sequitur, com −1, ficam sem uso pela IA. Opções: penalidade 0 para as falácias mais fracas, ou reforçar o efeito (Petitio com 6 ideias, Non Sequitur com 3 cartas).
+- A IA decide as cartas novas pela mesma avaliação de estado, com pesos acrescentados para filósofos eliminados, Dogma, Niilismo, cartas na mão do adversário e debates trancados. Os números dependem desses pesos.
