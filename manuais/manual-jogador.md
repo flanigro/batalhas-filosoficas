@@ -1,6 +1,6 @@
 # Batalha dos Filósofos — Como jogar
 
-Versão de 18/11/2026 · nível 2 · 3 jogadores · cerca de 10 rodadas
+Versão de 19/11/2026 · nível 2 · 3 jogadores · cerca de 10 rodadas
 
 ---
 
@@ -25,7 +25,7 @@ Você comanda um grupo de filósofos que disputam as grandes perguntas da filoso
 ## Preparação
 
 1. Embaralhe filósofos e Práxis numa pilha só.
-2. Cada jogador recebe um filósofo de custo 1 e mais 4 cartas.
+2. Cada jogador recebe um filósofo de custo 1 e mais 3 cartas.
 3. Abra 2 debates na Ágora.
 4. Bibliotecas e grupos começam vazios.
 

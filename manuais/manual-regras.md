@@ -1,6 +1,6 @@
 # Batalha dos Filósofos — Manual detalhado das regras (nível 2)
 
-Versão de 18/11/2026. Conferido contra o motor de regras (`engine.js`, branch `mesa-3d`), que é a fonte de verdade. Onde o digital e o impresso diferem, o texto avisa.
+Versão de 19/11/2026. Conferido contra o motor de regras (`engine.js`, branch `mesa-3d`), que é a fonte de verdade. **As regras do digital valem também para o jogo impresso** (decisão de 19/11/2026); onde o impresso v4 era diferente, vale o digital.
 
 Este manual é a referência completa: serve para revisar o jogo, arbitrar dúvidas e programar. Para aprender a jogar, use o **Manual do jogador**, mais curto.
 
@@ -94,7 +94,7 @@ Cada debate é uma pergunta de uma das quatro áreas, com um **valor**: 15, 12, 
 ## 4. Preparação
 
 1. Embaralhe a pilha: os 20 filósofos e as 9 Práxis.
-2. Cada jogador recebe um filósofo de custo 1, tirado ao acaso da pilha, e mais 4 cartas do topo. Todos começam com 5 cartas na mão.
+2. Cada jogador recebe um filósofo de custo 1, tirado ao acaso da pilha, e mais 3 cartas do topo. Todos começam com 4 cartas na mão. O filósofo de custo 1 garante que todos baixem uma carta na primeira rodada.
 3. Embaralhe os 24 debates e abra 2 na Ágora.
 4. As Bibliotecas começam vazias. Os grupos começam vazios.
 5. Defina a ordem de jogo. No digital, você é sempre o primeiro, seguido de Hipátia e Sêneca (nomes provisórios).
@@ -252,17 +252,17 @@ Os poderes valem enquanto o filósofo está no grupo. Os que agem "na fase de Re
 - **Aristóteles — Silogismo – Premissa.** Na fase de Reflexão, põe +1 ideia sua num debate de Lógica, mesmo que você ainda não participe dele. Computador: o debate de Lógica em que você tem mais ideias (empate: o de maior valor). Sem debate de Lógica na Ágora, nada acontece. Essa ideia entra depois da conferência de sustentação: só conta no turno seguinte (seção 5).
 - **Platão — A República.** Na fase de Reflexão, o filósofo de maior custo do seu grupo, o Rei Filósofo, recebe +1 ideia. Pode ser o próprio Platão. O Bibliotecário não entra na escolha.
 - **Sócrates — Maiêutica.** Na fase de Reflexão, o colega com menos ideias recebe +1. Não vale para o próprio Sócrates nem para o Bibliotecário.
-- **Epicuro — Laço de Amizade.** Na fase de Reflexão, um vizinho de cadeira recebe +1 ideia. Computador: o vizinho com menos ideias (empate: o da cadeira anterior). O Bibliotecário não recebe.
+- **Epicuro — Laço de Amizade.** Na fase de Reflexão, um vizinho de cadeira recebe +1 ideia, e Epicuro também: a amizade é recíproca. Sem vizinho, nada acontece. Computador: o vizinho com menos ideias (empate: o da cadeira anterior). O Bibliotecário não recebe.
 - **Pitágoras — Harmonia das Esferas.** Na fase de Reflexão, põe +1 ideia sua num debate cujo valor seja número primo (5 ou 7). Computador: o debate de valor primo em que você tem mais ideias (empate: o de maior valor). Só conta para a sustentação no turno seguinte.
-- **Diógenes — Barrica de Diógenes.** Nenhum adversário pode escolher Diógenes como alvo nem tirar ideias dele. Não pode ser trocado: nem tomado por um adversário, nem dado pelo dono. Continua recebendo efeitos favoráveis gerais (como o Contrato Social de Rousseau) e os efeitos do próprio grupo (Sócrates e Platão podem lhe dar ideias; Kant pode puxar uma ideia dele). A proteção vale para Diógenes e para as ideias **que estão nele**; as que ele já levou a um debate pertencem ao jogador e não são protegidas. Hoje a proteção afasta a Mais-Valia de Marx, a falácia Ad Hominem e a troca; vale também para as cartas que vierem.
+- **Diógenes — Barrica de Diógenes.** Nenhum adversário pode escolher Diógenes como alvo nem tirar ideias dele. Não pode ser trocado: nem tomado por um adversário, nem dado pelo dono. Continua recebendo efeitos favoráveis gerais (como o Contrato Social de Rousseau) e os efeitos do próprio grupo (Sócrates e Platão podem lhe dar ideias; Kant pode puxar uma ideia dele). A proteção vale para Diógenes e para as ideias **que estão nele**; as que ele já levou a um debate pertencem ao jogador e não são protegidas. Hoje a proteção afasta a Mais-Valia de Marx, a falácia Ad Hominem e a troca; vale também para as cartas que vierem. **Vive com o mínimo:** na fase de Reflexão, se tiver 2 ideias ou menos (já contada a Reflexão), recebe +1.
 
 ### Materialistas e Empiristas
 
 - **Marx — Mais-Valia.** Na fase de Reflexão, o filósofo adversário com mais ideias perde 1. Ignora Diógenes e os Bibliotecários.
-- **Hegel — Dialética.** Hegel é o único que pode ir a um debate com menos ideias que o seu valor na área: leva o que tiver, até esse valor. Precisa ter pelo menos 1 ideia. No digital, ele sempre leva o máximo possível.
-- **Hobbes — "Tudo no Universo é físico".** Na fase de Reflexão, um oponente perde 1 ideia num debate de Lógica. Computador: o adversário com mais ideias num debate de Lógica.
+- **Hegel — Dialética.** Hegel é o único que pode ir a um debate com menos ideias que o seu valor na área: leva o que tiver, até esse valor. Precisa ter pelo menos 1 ideia. No digital, ele sempre leva o máximo possível. **Síntese:** ao entrar num debate em que um adversário tem mais ideias que você (antes de Hegel chegar), +1 ideia sua nesse debate. A tese encontra a antítese.
+- **Hobbes — Guerra de todos contra todos.** Na fase de Reflexão, o adversário com mais ideias num debate, de qualquer área, perde 1 ideia nesse debate. Computador: o maior número de ideias de um adversário entre todos os debates (empate: o primeiro debate). Nome do poder tirado do Leviatã, cap. XIII (a verificar); até 18/11/2026 o poder valia só para debates de Lógica e se chamava "Tudo no Universo é físico".
 - **Bacon — "Conhecimento é poder".** Na fase de Reflexão, você espia duas cartas da mão de um adversário. Computador: o adversário com mais cartas, duas cartas ao acaso. No digital, por enquanto, só tem efeito quando é do jogador humano.
-- **Locke — Tábula Rasa.** Locke recebe +1 ideia sempre que você baixa uma carta: um filósofo (inclusive como Bibliotecário, exceto o próprio Locke) ou uma Práxis. Locke precisa estar em ação.
+- **Locke — Tábula Rasa.** Locke recebe +1 ideia sempre que um jogador, você ou um adversário, baixa uma carta: um filósofo (inclusive como Bibliotecário, exceto o próprio Locke) ou uma Práxis. Locke precisa estar em ação. As ideias vêm da experiência.
 - **Rousseau — Contrato Social.** Na fase de Reflexão, todos os filósofos de custo 1 da mesa recebem +1 ideia, inclusive os dos adversários e o próprio Rousseau. Ficam de fora os recém-chegados e os Bibliotecários.
 
 ### Germânicos
@@ -338,7 +338,7 @@ Em todas, "debate do qual você participa" quer dizer: debate em que você tem p
 
 ## 13. Diferenças em relação ao impresso v4 ("Batalha dos Cabeções")
 
-Para quem conhece o protótipo de papel. O digital mudou de propósito:
+Para quem conhece o protótipo de papel. O digital mudou de propósito, e estas mudanças passam a valer também para o impresso:
 
 - A Biblioteca recebe sempre 3 ideias por turno e **acumula**; no v4, recebia o número da rodada (até 8) e era zerada ao fim do turno.
 - Não há limite de 4 ideias repassadas por turno; em vez disso, cada filósofo tem um teto de 10 ideias.
@@ -347,6 +347,7 @@ Para quem conhece o protótipo de papel. O digital mudou de propósito:
 - A Ágora começa com 2 debates e abre o terceiro ao fim da rodada 4.
 - Empate não vence debate.
 - Fim com 30 pontos ou 12 rodadas.
+- Mão inicial: o filósofo de custo 1 e mais 3 cartas (no v4, mais 4).
 - Entraram a troca e os poderes gratuitos reescritos para o digital.
 - "Conceito" passou a se chamar "Poder"; "Permanente", "Legado" (nível 3).
 

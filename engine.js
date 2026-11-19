@@ -273,11 +273,11 @@
   var C1 = {
     platao: ['A República', 'Na fase de Reflexão, o filósofo de maior custo do seu grupo — o Rei Filósofo — recebe +1 ideia.'],
     socrates: ['Maiêutica', 'Na fase de Reflexão, o colega de grupo com menos ideias recebe +1. Sócrates ajuda os outros a dar à luz ideias.'],
-    epicuro: ['Laço de Amizade', 'Na fase de Reflexão, um filósofo vizinho recebe +1 ideia.'],
-    diogenes: ['Barrica de Diógenes', 'Nenhum adversário pode escolher Diógenes como alvo nem tirar ideias dele. Não pode ser trocado.'],
+    epicuro: ['Laço de Amizade', 'Na fase de Reflexão, um filósofo vizinho recebe +1 ideia, e Epicuro também: a amizade é recíproca.'],
+    diogenes: ['Barrica de Diógenes', 'Nenhum adversário pode escolher Diógenes como alvo nem tirar ideias dele. Não pode ser trocado. Na fase de Reflexão, se tiver 2 ideias ou menos, recebe +1: vive com o mínimo.'],
     marx: ['Mais-Valia', 'Na fase de Reflexão, o filósofo adversário com mais ideias perde 1.'],
-    hegel: ['Dialética', 'Hegel é o único que pode levar a um debate menos que o valor da área: leva o que tiver, até o valor.'],
-    locke: ['Tábula Rasa', 'Locke recebe +1 ideia sempre que você baixa uma carta. As ideias vêm da experiência.'],
+    hegel: ['Dialética', 'Hegel é o único que pode levar a um debate menos que o valor da área: leva o que tiver, até o valor. Síntese: ao entrar num debate em que um adversário tem mais ideias que você, +1 ideia sua.'],
+    locke: ['Tábula Rasa', 'Locke recebe +1 ideia sempre que um jogador, você ou um adversário, baixa uma carta. As ideias vêm da experiência.'],
     kant: ['Imperativo Categórico', 'Quando Kant leva ideias a um debate de Ética / Política, cada colega em ação que tenha ideias põe 1 delas no mesmo debate, queira ou não.'],
     nietzsche: ['Filosofar com o martelo', 'Ao entrar num debate, o adversário com mais ideias nesse debate perde 2.'],
     schopenhauer: ['Negação da Vontade', 'Na fase de Reflexão, recebe +1 ideia se não foi a nenhum debate no turno anterior.'],
@@ -285,7 +285,7 @@
     freud: ['Ato Falho', 'Freud recebe +1 ideia sempre que um adversário usa uma falácia.'],
     maquiavel: ['O Príncipe', 'Na fase de Reflexão, o filósofo com mais ideias do seu grupo recebe +1.'],
     erasmo: ['Elogio da Loucura', 'Na fase de Reflexão, o adversário que lidera um debate de Metafísica / Religião perde 1 ideia.'],
-    hobbes: ['“Tudo no Universo é físico”', 'Na fase de Reflexão, um oponente perde 1 ideia em um debate de Lógica / Ciência.'],
+    hobbes: ['Guerra de todos contra todos', 'Na fase de Reflexão, o adversário com mais ideias num debate perde 1 ideia nesse debate.'],
     bacon: ['“Conhecimento é poder”', 'Na fase de Reflexão, Bacon espia duas cartas da mão de um adversário.'],
     rousseau: ['Contrato Social', 'Na fase de Reflexão, todos os filósofos de custo 1 da mesa recebem +1 ideia, inclusive os dos adversários.'],
     arendt: ['A Condição Humana', 'Na fase de Reflexão, recebe +1 ideia se houver um debate de Ética / Política na mesa.'],
@@ -361,7 +361,7 @@
   ].forEach(function (r) { RELACOES.push(r); });
 
   // ---------- preparação ----------
-  var PADRAO = { pontos: 30, rodadas: 12, debInicial: 2, novoDebate: [4], copiasPraxis: 1, bibPorTurno: 3, custoTroca: 5, teto: 10 };
+  var PADRAO = { pontos: 30, rodadas: 12, debInicial: 2, novoDebate: [4], copiasPraxis: 1, bibPorTurno: 3, custoTroca: 5, teto: 10, maoInicial: 3 };
   var REFLEXAO = [0, 1, 1, 2, 2, 3];
 
   function fx(s, e) { if (!s.mudo) s.fx.push(e); }
@@ -401,7 +401,8 @@
         if (c.tipo === 'F' && c.custo === 1) { pl.hand.push(s.deck.splice(j, 1)[0]); break; }
       }
     });
-    s.players.forEach(function (pl) { for (var k = 0; k < 4; k++) pl.hand.push(s.deck.pop()); });
+    // mão inicial: o filósofo de custo 1 e mais maoInicial cartas (3 desde 19/11/2026; antes, 4)
+    s.players.forEach(function (pl) { for (var k = 0; k < cfg.maoInicial; k++) pl.hand.push(s.deck.pop()); });
     DEBATES.forEach(function (d) { s.debDeck.push(d.id); });
     shuffle(s, s.debDeck);
     for (var d = 0; d < cfg.debInicial; d++) addDebate(s);
@@ -542,7 +543,7 @@
         if (viz.length) {
           t = viz[0];
           if (viz[1] && viz[1].ideas < t.ideas) t = viz[1];
-          poe(s, t, 1); diz('+1 ideia para ' + C(t.id).nome + '.');
+          poe(s, t, 1); ganha(s, P, g, 1); diz('+1 ideia para ' + C(t.id).nome + ' e para Epicuro.');
         }
         break;
       case 'pitagoras':
@@ -564,7 +565,6 @@
       case 'hobbes':
         var bd = -1, bo = -1, bv = 0;
         for (di = 0; di < s.debates.length; di++) {
-          if (DEB[s.debates[di].id].area !== 'logica') continue;
           for (o = 0; o < s.players.length; o++) if (o !== P && s.debates[di].stakes[o] > bv) { bv = s.debates[di].stakes[o]; bd = di; bo = o; }
         }
         if (bd >= 0) { s.debates[bd].stakes[bo] -= 1; diz(nomeJ(s, bo) + ' perde 1 ideia em «' + DEB[s.debates[bd].id].q + '».', 'neg'); }
@@ -602,6 +602,9 @@
       case 'maquiavel':
         t = null; semLib(pl).forEach(function (x) { if (!t || x.ideas > t.ideas) t = x; });
         if (t) { poe(s, t, 1); diz('+1 ideia para ' + C(t.id).nome + ', quem tem mais ideias.'); }
+        break;
+      case 'diogenes':
+        if (g.ideas <= 2) { ganha(s, P, g, 1); diz('+1 ideia: vive com o mínimo.'); }
         break;
       case 'erasmo':
         var ed = -1, eo = -1, ev = 0;
@@ -674,6 +677,9 @@
       });
       if (n) { pop(s, P, 'kant', 'Imperativo Categórico', n + ' colega(s) acrescentam 1 ideia cada ao debate.'); log(s, 'Imperativo Categórico: ' + n + ' colega(s) de Kant acrescentam 1 ideia cada.', 'con', P); }
     }
+    if (g.id === 'hegel' && oppMax(d, P) > d.stakes[P] - o.amt) {   // Síntese (desde 19/11/2026)
+      d.stakes[P] += 1; pop(s, P, 'hegel', 'Síntese', '+1 ideia no debate: a tese encontrou a antítese.');
+    }
     if (g.id === 'nietzsche') {
       var mo = -1, mv = 0;
       for (var oo = 0; oo < s.players.length; oo++) if (oo !== P && d.stakes[oo] > mv) { mv = d.stakes[oo]; mo = oo; }
@@ -697,6 +703,12 @@
   }
 
   function gatilhoLocke(s, P, idBaixado) {
+    // desde 19/11/2026, Locke ganha também quando um adversário baixa uma carta
+    for (var oL = 0; oL < s.players.length; oL++) {
+      if (oL === P) continue;
+      var lo = inGroup(s.players[oL], 'locke');
+      if (lo && ativo(lo)) { ganha(s, oL, lo, 1); pop(s, oL, 'locke', 'Tábula Rasa', '+1 ideia: ' + nomeJ(s, P) + ' baixou uma carta.'); }
+    }
     var l = inGroup(s.players[P], 'locke');
     if (l && ativo(l) && idBaixado !== 'locke') { ganha(s, P, l, 1); pop(s, P, 'locke', 'Tábula Rasa', '+1 ideia: você baixou uma carta.'); }
   }
