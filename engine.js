@@ -196,9 +196,9 @@
   ];
   var FAMILIA = {
     falacia:   { nome: 'Falácia',  cor: '#7a1420' },
-    argumento: { nome: 'Argumento', cor: '#2c5d8a' },
-    escola:    { nome: 'Escola',    cor: '#5a4a8a' },
-    praxis:    { nome: 'Práxis',    cor: '#2f7a5c' }
+    argumento: { nome: 'Argumento', cor: '#4a2f86' },   // roxo-índigo: nenhuma escola, área ou jogador usa (19/11/2026)
+    escola:    { nome: 'Escola',    cor: '#5a4a8a' },   // não usada na tela: a carta de escola leva a cor da escola atacada
+    praxis:    { nome: 'Práxis',    cor: '#1d5c63' }    // petróleo escuro
   };
   PRAXIS.forEach(function (p) { p.tipo = 'P'; p.falacia = p.fam === 'falacia'; p.pen = p.pen || 0; });
 

@@ -36,11 +36,8 @@ function emblema(p){
 function placar(p){ var pl=S.players[p], pts=pl.points-(ocultos['pts:'+p]||0); return '<div class="pts" data-pts="'+p+'" title="Pontos: '+pts+' de '+S.cfg.pontos+'"><b>'+pts+'</b><small>/'+S.cfg.pontos+'</small></div>'; }
 // símbolos provisórios das cartas temporárias (os definitivos virão do Flavio)
 var CAVEIRA='<svg class="caveira" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2C7 2 3.5 5.6 3.5 10.2c0 2.7 1.2 4.6 3 5.8V19c0 .6.4 1 1 1h1.3v-2h1.4v2h3.6v-2h1.4v2h1.3c.6 0 1-.4 1-1v-3c1.8-1.2 3-3.1 3-5.8C20.5 5.6 17 2 12 2zm-3.6 11.2a2.1 2.1 0 1 1 0-4.2 2.1 2.1 0 0 1 0 4.2zm7.2 0a2.1 2.1 0 1 1 0-4.2 2.1 2.1 0 0 1 0 4.2zM12 13.4l1.2 2.2h-2.4z"/></svg>';
-var CADEADO='<svg class="cadeado" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7 10V7a5 5 0 0 1 10 0v3h1.5c.8 0 1.5.7 1.5 1.5v9c0 .8-.7 1.5-1.5 1.5h-13C4.7 22 4 21.3 4 20.5v-9c0-.8.7-1.5 1.5-1.5H7zm2 0h6V7a3 3 0 0 0-6 0v3zm3 4a1.6 1.6 0 0 0-.8 3V19h1.6v-2a1.6 1.6 0 0 0-.8-3z"/></svg>';
-var SIMB_FAM={falacia:CAVEIRA,
-  argumento:'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M11 3h2v3h6l-3 6.5a3.5 3.5 0 0 0 7 0L20 6h-1V4h-6v15h4v2H7v-2h4V4H5v2H4l-3 6.5a3.5 3.5 0 0 0 7 0L5 6h6z"/></svg>',
-  escola:'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2 2 7v2h20V7zM4 10v8h3v-8zm6.5 0v8h3v-8zM17 10v8h3v-8zM2 19v3h20v-3z"/></svg>',
-  praxis:'<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M9 21h6v-1H9zm3-19a7 7 0 0 0-4 12.7V18h8v-3.3A7 7 0 0 0 12 2zm2.5 11.4-.5.3V16h-4v-2.3l-.5-.3a5 5 0 1 1 5 0z"/></svg>'};
+// só as falácias têm símbolo (a caveirinha); as outras famílias se distinguem pela cor e pelo rótulo (decisão de 19/11/2026)
+var SIMB_FAM={falacia:CAVEIRA,argumento:'',escola:'',praxis:''};
 // rótulo da família: Falácia, Argumento, Práxis ou o nome da escola atacada
 function rotFam(c){ return c.fam==='escola'?'Carta de escola · '+(ESC[c.esc]?ESC[c.esc].nome:''):BF.FAMILIA[c.fam].nome; }
 function caveiras(p){ var n=S.players[p].caveiras-(ocultos['cav:'+p]||0); return n>0?'<span class="cav" data-cav="'+p+'" title="Falácias usadas: '+n+' ponto'+(n>1?'s':'')+' perdido'+(n>1?'s':'')+'">'+CAVEIRA+'×'+n+'</span>':''; }
@@ -117,7 +114,7 @@ function renderAgora(){
   S.debates.forEach(function(d,i){
     var q=DEB[d.id], a=AREA[q.area];
     h+='<div class="trib'+(d.tranca?' trancado':'')+'"><div class="deb" data-di="'+i+'" data-anc="deb:'+i+'" title="«'+esc(q.q)+'» · '+esc(a.nome)+' · vale '+q.valor+(d.tranca?' · trancado pelo Paradoxo Lógico até o turno de '+esc(S.players[d.tranca.P].nome):'')+'">'
-      +(d.tranca?'<div class="tranca" style="--pc:'+S.players[d.tranca.P].cor+'">'+CADEADO+'Paradoxo · '+(d.tranca.P===0?'até o seu turno':'até o turno de '+esc(S.players[d.tranca.P].nome))+'</div>':'');
+      +(d.tranca?'<div class="tranca" style="--pc:'+S.players[d.tranca.P].cor+'">'+AMPULHETA+'Paradoxo · '+(d.tranca.P===0?'até o seu turno':'até o turno de '+esc(S.players[d.tranca.P].nome))+'</div>':'');
     S.players.forEach(function(pl,p){
       var n=d.stakes[p], lid=BF.lidera(S,i,p), vis=Math.min(n,2*q.valor), oc=Math.min(vis,ocultos[d.id+':'+p]||0);
       h+='<div class="est" data-row="'+i+':'+p+'" data-anc="est:'+i+':'+p+'" style="--pc:'+pl.cor+'" title="'+esc(pl.nome)+(lid?' · leva o debate no início do próprio turno':'')+'"><div class="torre'+(lid&&!oc?' lider':'')+'" data-est="'+d.id+':'+p+'"></div>'
