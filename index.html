@@ -126,14 +126,19 @@ button:disabled{cursor:not-allowed;opacity:.45}
 .balao::after{content:"";position:absolute;left:50%;bottom:-9px;margin-left:-8px;border:8px solid transparent;border-top-color:var(--tc,#b8902f);border-bottom:0}
 .balao.baixo{transform:translate(-50%,0)}
 .balao.baixo::after{bottom:auto;top:-9px;border-top:0;border-bottom:8px solid var(--tc,#b8902f)}
-/* balão de pensamento (momento de Reflexão): nuvem arredondada com bolhinhas que levam ao filósofo */
-.balao.pensa{border-radius:26px;padding:7px 14px 8px;border-width:2px;background:#fffef8}
+/* balão de pensamento (momento de Reflexão): nuvem de volutas, estilo HQ (desenhada em SVG por nuvemSVG em ui.js),
+   com três bolhinhas que levam à cabeça do filósofo (ou, na bancada de cima, ao púlpito) */
+.balao.pensa{background:none;border:0;box-shadow:none;padding:8px 18px 9px;isolation:isolate;max-width:250px}
 .balao.pensa::after{display:none}
-.balao.pensa .bolha{position:absolute;left:50%;border-radius:50%;background:#fffef8;border:2px solid var(--tc,#b8902f);box-shadow:0 3px 8px rgba(0,0,0,.35)}
-.balao.pensa .b1{width:13px;height:13px;bottom:-17px;margin-left:-14px}
-.balao.pensa .b2{width:8px;height:8px;bottom:-29px;margin-left:-22px}
-.balao.pensa.baixo .b1{bottom:auto;top:-17px}
-.balao.pensa.baixo .b2{bottom:auto;top:-29px}
+.balao.pensa .nuvem{position:absolute;z-index:-1;overflow:visible;filter:drop-shadow(0 5px 9px rgba(0,0,0,.4))}
+.balao.pensa .nuvem path{fill:#fffef8;stroke:var(--tc,#b8902f);stroke-width:2.2;stroke-linejoin:round}
+.balao.pensa .bolha{position:absolute;left:50%;border-radius:50%;background:#fffef8;border:2px solid var(--tc,#b8902f);box-shadow:0 3px 7px rgba(0,0,0,.35)}
+.balao.pensa .b1{width:15px;height:15px;bottom:-24px;margin-left:-12px}
+.balao.pensa .b2{width:10px;height:10px;bottom:-36px;margin-left:-18px}
+.balao.pensa .b3{width:6px;height:6px;bottom:-45px;margin-left:-22px}
+.balao.pensa.baixo .b1{bottom:auto;top:-24px}
+.balao.pensa.baixo .b2{bottom:auto;top:-36px}
+.balao.pensa.baixo .b3{bottom:auto;top:-45px}
 .pilha b.soma{display:inline-block;animation:soma .7s var(--tranco)}
 
 @keyframes bal{0%{opacity:0;margin-top:8px}9%{opacity:1;margin-top:0}86%{opacity:1}100%{opacity:0;margin-top:-6px}}

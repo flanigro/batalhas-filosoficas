@@ -202,17 +202,32 @@ function aplicarMud(f){
     var b=q$('[data-anc="pilha:'+a[1]+':'+gi+'"] b'); if(b){ b.classList.remove('soma'); void b.offsetWidth; b.classList.add('soma'); } });
   if(ganhou)som('plim'); else if(perdeu)som('perda');
 }
+// nuvem de pensamento (estilo HQ): contorno de volutas em volta de um retângulo de cantos bem redondos
+function nuvemSVG(w,h){
+  var k=9, pad=k+5, rr=Math.min(h/2,26), segs=[], L=0;
+  function reta(x1,y1,x2,y2,nx,ny){ var l=Math.hypot(x2-x1,y2-y1); segs.push({l:l,p:function(t){return [x1+(x2-x1)*t,y1+(y2-y1)*t,nx,ny];}}); L+=l; }
+  function arco(cx,cy,a0){ var l=Math.PI*rr/2; segs.push({l:l,p:function(t){var a=a0+t*Math.PI/2;return [cx+rr*Math.cos(a),cy+rr*Math.sin(a),Math.cos(a),Math.sin(a)];}}); L+=l; }
+  reta(rr,0,w-rr,0,0,-1); arco(w-rr,rr,-Math.PI/2); reta(w,rr,w,h-rr,1,0); arco(w-rr,h-rr,0);
+  reta(w-rr,h,rr,h,0,1); arco(rr,h-rr,Math.PI/2); reta(0,h-rr,0,rr,-1,0); arco(rr,rr,Math.PI);
+  function ponto(d){ for(var i=0;i<segs.length;i++){ if(d<=segs[i].l||i===segs.length-1)return segs[i].p(Math.min(1,d/segs[i].l)); d-=segs[i].l; } }
+  var n=Math.max(10,Math.round(L/30)), st=L/n, p0=ponto(0), d='M'+(p0[0]+pad).toFixed(1)+' '+(p0[1]+pad).toFixed(1);
+  for(var i=0;i<n;i++){ var m=ponto((i+.5)*st), q=ponto(Math.min(L,(i+1)*st));
+    d+=' Q'+(m[0]+m[2]*k*1.6+pad).toFixed(1)+' '+(m[1]+m[3]*k*1.6+pad).toFixed(1)+' '+(q[0]+pad).toFixed(1)+' '+(q[1]+pad).toFixed(1); }
+  return '<svg class="nuvem" width="'+(w+2*pad)+'" height="'+(h+2*pad)+'" style="left:'+(-pad)+'px;top:'+(-pad)+'px" aria-hidden="true"><path d="'+d+' Z"/></svg>';
+}
 function balao(f){
   return new Promise(function(res){
     var m=elMini(f.P,f.id); if(!m){aplicarMud(f);res();return;}
     var r=m.getBoundingClientRect(), b=document.createElement('div'), baixo=r.top<130, dur=durBal();
     // o balão nunca cobre o número de ideias do filósofo
     var gi=S.players[f.P].group.findIndex(function(g){return g.id===f.id;}), pe=gi>=0?q$('[data-anc="pilha:'+f.P+':'+gi+'"]'):null, pr=pe?pe.getBoundingClientRect():null;
-    var y=baixo?Math.max(r.bottom+10,pr?pr.bottom+16:0):Math.min(r.top-10,pr?pr.top-16:1e9);
+    var gap=f.pensa?46:12;   // no pensamento, espaço para as bolhinhas que levam à cabeça (ou ao púlpito, na bancada de cima)
+    var y=baixo?Math.max(r.bottom,pr?pr.bottom+4:0)+gap:Math.min(r.top,pr?pr.top-4:1e9)-gap;
     b.className='balao'+(f.pensa?' pensa':'')+(baixo?' baixo':'');
     b.style.cssText='--tc:'+(TONS[f.tom]||TONS.con)+';--dur:'+dur+'ms;left:'+Math.max(130,Math.min(window.innerWidth-130,r.left+r.width/2))+'px;top:'+y+'px';
-    b.innerHTML='<b>'+esc(f.tit)+'</b>'+esc(f.txt||'')+(f.pensa?'<i class="bolha b1"></i><i class="bolha b2"></i>':'');
+    b.innerHTML='<b>'+esc(f.tit)+'</b>'+esc(f.txt||'')+(f.pensa?'<i class="bolha b1"></i><i class="bolha b2"></i><i class="bolha b3"></i>':'');
     $('fx').appendChild(b);
+    if(f.pensa) b.insertAdjacentHTML('afterbegin',nuvemSVG(b.offsetWidth,b.offsetHeight));
     brilhar(f.P,f.id,TONS[f.tom]||TONS.con);
     if(f.mud&&f.mud.length){ setTimeout(function(){aplicarMud(f);},Math.round(dur*.3)); }
     // fora do momento de Reflexão: ideia ganha, sempre o mesmo PLIM; perda: som de perda; outros poderes: brilho
