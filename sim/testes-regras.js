@@ -39,7 +39,10 @@ function passaPara1(s) { s.players[0].hand = s.players[0].hand.slice(0, 5); BF.e
 { const s = jogo(5); zera(s); s.players[0].group = [G('locke')]; passaPara1(s);
   const p1 = s.players[1]; p1.library = 10; const id = BF.FILOSOFOS.find(f => f.custo === 1 && f.id !== 'locke' && f.id !== 'diogenes').id;
   p1.hand.push(id); BF.playPhilosopher(s, 1, id);
-  confere('Locke do adversário +1 quando o jogador da vez baixa', s.players[0].group[0].ideas === 1, s.players[0].group[0].ideas); }
+  confere('Locke do adversário +1 quando o jogador da vez baixa um filósofo', s.players[0].group[0].ideas === 1, s.players[0].group[0].ideas);
+  const prx = BF.PRAXIS.find(c => c.id.indexOf('autoridade') === 0).id + '#1'; p1.hand.push(prx); p1.library = 10;
+  s.debates[0].stakes[1] = 1; BF.playPraxis(s, 1, prx, BF.praxisOptions(s, 1, 'autoridade')[0].prm);
+  confere('Locke do adversário não ganha com Práxis do jogador da vez', s.players[0].group[0].ideas === 1, s.players[0].group[0].ideas); }
 { const s = jogo(5); zera(s); s.players[0].group = [G('locke')]; s.players[0].library = 10; const id = BF.FILOSOFOS.find(f => f.custo === 1 && f.id !== 'locke').id;
   s.players[0].hand.push(id); BF.playPhilosopher(s, 0, id);
   confere('Locke +1 quando o dono baixa (regra antiga mantida)', s.players[0].group[0].ideas === 1, s.players[0].group[0].ideas); }

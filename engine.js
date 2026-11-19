@@ -277,7 +277,7 @@
     diogenes: ['Barrica de Diógenes', 'Nenhum adversário pode escolher Diógenes como alvo nem tirar ideias dele. Não pode ser trocado. Na fase de Reflexão, se tiver 2 ideias ou menos, recebe +1: vive com o mínimo.'],
     marx: ['Mais-Valia', 'Na fase de Reflexão, o filósofo adversário com mais ideias perde 1.'],
     hegel: ['Dialética', 'Hegel é o único que pode levar a um debate menos que o valor da área: leva o que tiver, até o valor. Síntese: ao entrar num debate em que um adversário tem mais ideias que você, +1 ideia sua.'],
-    locke: ['Tábula Rasa', 'Locke recebe +1 ideia sempre que um jogador, você ou um adversário, baixa uma carta. As ideias vêm da experiência.'],
+    locke: ['Tábula Rasa', 'Locke recebe +1 ideia sempre que você baixa uma carta e sempre que um adversário baixa um filósofo. As ideias vêm da experiência.'],
     kant: ['Imperativo Categórico', 'Quando Kant leva ideias a um debate de Ética / Política, cada colega em ação que tenha ideias põe 1 delas no mesmo debate, queira ou não.'],
     nietzsche: ['Filosofar com o martelo', 'Ao entrar num debate, o adversário com mais ideias nesse debate perde 2.'],
     schopenhauer: ['Negação da Vontade', 'Na fase de Reflexão, recebe +1 ideia se não foi a nenhum debate no turno anterior.'],
@@ -703,11 +703,11 @@
   }
 
   function gatilhoLocke(s, P, idBaixado) {
-    // desde 19/11/2026, Locke ganha também quando um adversário baixa uma carta
-    for (var oL = 0; oL < s.players.length; oL++) {
+    // desde 19/11/2026, Locke ganha também quando um adversário baixa um filósofo (não as cartas temporárias)
+    for (var oL = 0; oL < s.players.length && C(idBaixado).tipo === 'F'; oL++) {
       if (oL === P) continue;
       var lo = inGroup(s.players[oL], 'locke');
-      if (lo && ativo(lo)) { ganha(s, oL, lo, 1); pop(s, oL, 'locke', 'Tábula Rasa', '+1 ideia: ' + nomeJ(s, P) + ' baixou uma carta.'); }
+      if (lo && ativo(lo)) { ganha(s, oL, lo, 1); pop(s, oL, 'locke', 'Tábula Rasa', '+1 ideia: ' + nomeJ(s, P) + ' baixou um filósofo.'); }
     }
     var l = inGroup(s.players[P], 'locke');
     if (l && ativo(l) && idBaixado !== 'locke') { ganha(s, P, l, 1); pop(s, P, 'locke', 'Tábula Rasa', '+1 ideia: você baixou uma carta.'); }
