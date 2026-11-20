@@ -11,7 +11,7 @@
  * 1. Falácia nova:   BFX.def('falacia:<id da carta>', async function(ev){ … });
  *    Copie 'falacia:espantalho'. Sem bloco próprio, a carta usa 'falacia:_padrao'.
  * 2. Outra cena:     BFX.def('minhaCena', …) e uma linha em tocar() de ui.js.
- * 3. Textos:         INTERJ (interjeições por tom), TOM (tom de cada filósofo), CORO (falas do coro).
+ * 3. Textos:         BORDAO e LINGUA (bordões de entrada), INTERJ (reserva por tom), TOM (tom de cada filósofo), CORO (falas do coro).
  *
  * 4. Movimento na mesa: use as peças de M3D (mesa3d.js): M3D.figura, arco, andar, cairLivro, derrubar,
  *    livroVoa, papiro, espantalho, chuva, foco… Posições são pontos da cena (M3D.V3); M3D.tela(ponto)
@@ -36,6 +36,45 @@ var INTERJ={
   medio:['Eureka!','Vejamos!','Ora, ora!','Ponto para mim!'],
   escrachado:['Ha!','Ora essa!','Bah!','Tolice!','Essa é boa!']
 };
+// Bordões de entrada (20/11/2026): cada filósofo tem os seus e usa às vezes os da sua língua ou tradição.
+// Formato 'Bordão|tradução' (a tradução aparece pequena, embaixo). São texto de humor, não citação;
+// os que retomam frases reais estão listados com a fonte em claude/bordoes.md (a verificar).
+var LINGUA={
+  grego:['Eureka!|Achei!','Pela Ágora!','Ó atenienses!'],
+  latim:['Ergo!|Logo!','Distinguo!|Faço uma distinção!','Quod erat demonstrandum!|Como se queria demonstrar','Nego!|Discordo!'],
+  ingles:['Indeed!|De fato!','Evidence!|Provas!'],
+  alemao:['Also!|Pois bem!','Genau!|Exatamente!','Ach so!|Ah, então é isso!','Achtung!|Atenção!'],
+  frances:['Voilà!|Eis aí!','Mon Dieu!|Meu Deus!'],
+  italiano:['Ecco!|Eis!','Basta!|Chega!']
+};
+var BORDAO={
+  socrates:{p:['Só sei que nada sei!','Posso fazer uma perguntinha?','Conhece-te a ti mesmo!'],l:['grego']},
+  platao:{p:['Pelas Formas!','Saiam da caverna!','Isso é só sombra!'],l:['grego']},
+  aristoteles:{p:['Silogismo à vista!','Pela causa final!','No meio-termo está a virtude!'],l:['grego']},
+  epicuro:{p:['Ataraxia!|Serenidade!','Sem medo da morte!','Pão, água e amigos!'],l:['grego']},
+  pitagoras:{p:['Tudo é número!','Ipse dixit!|Ele mesmo disse!','Harmonia!'],l:['grego']},
+  diogenes:{p:['Sai do meu sol!','Procuro um homem!','Au! Au!|Kýon: cão, daí cínico'],l:['grego']},
+  marx:{p:['Proletários, uni-vos!','Mais-valia!','Luta de classes!'],l:['alemao']},
+  hegel:{p:['Aufheben!|Superar e conservar','Geist!|Espírito!','O real é racional!'],l:['alemao']},
+  hobbes:{p:['Homo homini lupus!|O homem é o lobo do homem','Leviatã!','Bellum omnium!|Guerra de todos!'],l:['latim','ingles']},
+  bacon:{p:['Ipsa scientia potestas est!|O próprio saber é poder','Fora, ídolos!','Ao experimento!'],l:['latim','ingles']},
+  locke:{p:['Tábula rasa!','Experiência!','Vida, liberdade, propriedade!'],l:['ingles']},
+  rousseau:{p:['Contrato social!','O homem nasce livre!','Liberdade!'],l:['frances']},
+  kant:{p:['Sapere aude!|Ousa saber!','A priori!|Antes da experiência','Imperativo categórico!'],l:['alemao','latim']},
+  nietzsche:{p:['Gott ist tot!|Deus está morto!','Martelada!','Amor fati!|Ama o teu destino!'],l:['alemao']},
+  schopenhauer:{p:['Tudo é vontade!','Que tédio…','Ach!|Ai!'],l:['alemao']},
+  heidegger:{p:['Dasein!|Ser-aí','Das Nichts nichtet!|O nada nadifica','Ser-para-a-morte!'],l:['alemao']},
+  freud:{p:['Ato falho!','Ahá, um lapso!','Isso é recalque!'],l:['alemao']},
+  arendt:{p:['Pensar sem corrimão!','Ação!','Banalidade do mal!'],l:['alemao']},
+  maquiavel:{p:['Virtù!|Coragem e engenho','Fortuna!|A sorte','Raposa e leão!'],l:['italiano']},
+  erasmo:{p:['Viva a Loucura!','Festina lente!|Apressa-te devagar','Ad fontes!|Às fontes!'],l:['latim']}
+};
+// dois em cada três vezes, um bordão próprio; na outra, um da língua dele
+function bordao(id){
+  var b=BORDAO[id]; if(!b)return sorteia(INTERJ[tomDe(id)]);
+  if(Math.random()<.67||!b.l.length)return sorteia(b.p);
+  return sorteia(LINGUA[sorteia(b.l)]);
+}
 var CORO={
   entrada:['Hmmm…','Atenção, atenção…','Lá vem argumento.'],
   lidera:['Oooh!','Tomou a frente!'],
@@ -76,9 +115,10 @@ function poeira(x,y,n){
 // interjeição numa tira de pergaminho que se desenrola; o tom muda só o corpo da letra
 function estouro(texto,x,y,tom){
   x=Math.max(90,Math.min(innerWidth-90,x)); y=Math.max(40,y);
-  var e=cria('estouro '+(tom||'medio'),'<span>'+esc(texto)+'</span>','left:'+x+'px;top:'+y+'px'), b='translate(-50%,-50%) ';
+  var par=String(texto).split('|'), h='<span>'+esc(par[0])+'</span>'+(par[1]?'<small>'+esc(par[1])+'</small>':'');
+  var e=cria('estouro '+(tom||'medio'),h,'left:'+x+'px;top:'+y+'px'), b='translate(-50%,-50%) ';
   return anim(e,[{transform:b+'scaleX(.08)',opacity:0},{transform:b+'scaleX(1)',opacity:1,offset:.2},{transform:b+'scaleX(1)',opacity:1,offset:.84},{transform:b+'translateY(-6px)',opacity:0}],
-    {d:1800,e:'ease-out'}).then(function(){e.remove();});
+    {d:par[1]?2400:1800,e:'ease-out'}).then(function(){e.remove();});
 }
 // selo que assenta e fica um instante
 function carimbo(texto,x,y){
@@ -168,7 +208,7 @@ async function entradaCarta(ev,c,f,torre){
   if(window.SOM)SOM.toca('pouso');
   m.tranco(o,T(280)); tremer(3);
   var p=m.tela(pe), b=caixa(torre); poeira(p.x,p.y,9);
-  estouro(sorteia(INTERJ[tom]),b.x+(b.x>innerWidth/2?-90:90),b.t-8,tom);
+  estouro(bordao(ev.id),b.x+(b.x>innerWidth/2?-90:90),b.t-8,tom);
   coro('murmurio',sorteia(CORO.entrada),1400);
   await dorme(260);
   await c.revelar(ev.did,ev.P,ev.amt);
@@ -205,7 +245,7 @@ async function entradaBoneco(ev,c,f,torre){
   if(ev.amt>n)await c.revelar(ev.did,ev.P,ev.amt-n);
   g.classList.remove('lanca');
   var tom=tomDe(ev.id), b=caixa(torre);
-  estouro(sorteia(INTERJ[tom]),b.x,b.t-24,tom);
+  estouro(bordao(ev.id),b.x,b.t-24,tom);
   if(c.lidera(ev.did,ev.P))coro('aplauso',sorteia(CORO.lidera),1300);
   await dorme(900);
   g.classList.add('anda');
@@ -299,7 +339,7 @@ def('vitoria',async function(ev,c){
 
 X.T=T; X.dorme=dorme; X.anim=anim; X.caixa=caixa; X.cria=cria; X.tremer=tremer; X.poeira=poeira; X.estouro=estouro;
 X.carimbo=carimbo; X.livroVoa=livroVoa; X.livrosCaem=livrosCaem; X.chuva=chuva; X.legenda=legenda; X.coro=coro; X.montarCoro=montarCoro;
-X.def=def; X.cena=cena; X.CURVA=CURVA; X.TOM=TOM; X.INTERJ=INTERJ; X.CORO=CORO; X.tomDe=tomDe;
+X.def=def; X.cena=cena; X.CURVA=CURVA; X.TOM=TOM; X.INTERJ=INTERJ; X.CORO=CORO; X.tomDe=tomDe; X.BORDAO=BORDAO; X.LINGUA=LINGUA; X.bordao=bordao;
 X.foco=foco; X.desfoco=desfoco;
 X.ligar=function(ctx){X.ctx=ctx;montarCoro();};
 window.BFX=X;
