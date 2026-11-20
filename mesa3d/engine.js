@@ -31,7 +31,7 @@
   // Valores e textos: planilha "Versão 4". Datas/locais em falta completados (a conferir).
   var FILOSOFOS = [
     F('aristoteles', 'de Estagira', 'Aristóteles', 5, 'grega', [4, 5, 4, 4], 'Estagira – Atenas', '384 – 322 a.C.', 'Organon',
-      'Todos os homens, por natureza, desejam conhecer.', 'Metafísica, I, 1',
+      'Todos os homens, por natureza, desejam conhecer.', 'Metafísica I, 1, 980a21',
       ['Silogismo – Premissa', 'No momento de Reflexão, acrescente +1 ideia em um debate de Lógica.'],
       [4, 'Silogismo – Termo Médio', 'Elimine 5 ideias de um oponente em um debate no qual você participa.'],
       [7, 'Silogismo – Conclusão', 'Ganhe um debate de Lógica no qual você participe.']),
@@ -46,7 +46,7 @@
       [3, 'Dialética Socrática', 'Inverta as cores das ideias em um debate de Lógica no qual você participe.'],
       [7, 'O Banquete', 'Ganhe um debate de Estética / Psicologia no qual você participe.']),
     F('epicuro', 'de Samos', 'Epicuro', 2, 'grega', [3, 1, 3, 3], 'Samos', '341 – 270 a.C.', 'Da Natureza',
-      'A morte não é nada para nós.', 'Carta a Meneceu',
+      'A morte não é nada para nós.', 'Carta a Meneceu 124–125',
       ['Laço de Amizade', 'Um filósofo ao lado recebe +1 ideia na Reflexão.'],
       [4, 'O Jardim', 'Baixe o Legado Jardim. Aliados não perdem ideias. Gera +1 ideia na Reflexão.'],
       [6, '“A Morte não é nada para nós”', 'Ganhe um debate à sua escolha no qual você participe. Elimine a carta Epicuro.']),
@@ -54,9 +54,9 @@
       'Tudo é número.', 'atribuída pela tradição pitagórica',
       ['Harmonia das Esferas', 'No momento de Reflexão, coloque 1 ideia em um debate cujo valor seja número primo.'],
       [4, 'Metempsicose', 'Troque Pitágoras por um outro filósofo da mesa. Catedráticos não são afetados.'],
-      [6, 'Razão Áurea', 'Todos os filósofos gregos, inclusive Pitágoras, recebem +3 ideias.']),
-    F('diogenes', 'de Sínope', 'Diógenes', 1, 'grega', [2, 1, 3, 2], 'Sínope, Jônia', '412 – 323 a.C.', '—',
-      'Na casa de um rico não há lugar para se cuspir, a não ser em sua cara.', 'anedota em Diógenes Laércio, VI',
+      [6, 'Tetráctis', 'Todos os filósofos gregos, inclusive Pitágoras, recebem +3 ideias.']),
+    F('diogenes', 'de Sínope', 'Diógenes', 1, 'grega', [2, 1, 3, 2], 'Sínope, mar Negro', '412 – 323 a.C.', '—',
+      'Na casa de um rico não há lugar para se cuspir, a não ser em sua cara.', 'Diógenes Laércio VI, 32',
       ['Barrica de Diógenes', 'Proteção contra Conceitos negativos de Catedráticos adversários.'],
       [5, 'Cínicos – Vivendo como um cão', 'Livre-se dos bens materiais: elimine todas as Legados do jogo.'],
       [6, 'Lanterna de Diógenes', 'Baixe o Legado Lanterna de Diógenes. Gera 2 ideias na Reflexão.']),
@@ -67,19 +67,19 @@
       [3, 'Luta de Classes', 'Substitua todos os Catedráticos pelo filósofo de menor valor no grupo.'],
       [7, 'Comunismo', 'Expurgo! Remova todos os Catedráticos, exceto Marx.']),
     F('hegel', 'Georg', 'Hegel', 4, 'mat', [4, 4, 3, 3], 'Stuttgart, Alemanha', '1770 – 1831', 'Fenomenologia do Espírito',
-      'O que é racional é real, e o que é real é racional.', 'Filosofia do Direito, prefácio',
+      'O que é racional é real, e o que é real é racional.', 'Filosofia do Direito, Prefácio',
       ['“Toda realidade é um processo histórico”', 'Se for Catedrático, Hegel move para um debate quantas ideias tiver, sem o teto da área.'],
       [4, '“Estruturas de pensamento são mutáveis”', 'Transporte até 5 ideias de qualquer filósofo para outro filósofo.'],
-      [7, 'Dialética Hegeliana', 'Converta todas as ideias adversárias de um debate de que você participa para sua cor.']),
+      [7, '“O real é racional”', 'Converta todas as ideias adversárias de um debate de que você participa para sua cor.']),
     F('hobbes', 'Thomas', 'Hobbes', 3, 'mat', [3, 4, 4, 2], 'Malmesbury, Inglaterra', '1588 – 1679', 'Leviatã',
       'O homem é o lobo do homem.', 'Do Cidadão, dedicatória',
       ['“Tudo no Universo é físico”', 'No momento de Reflexão, elimine 1 ideia de um oponente em um debate de Lógica / Ciência.'],
       [5, '“O mais fraco tem força para matar o forte”', 'Substitua um filósofo de valor 4 ou 5 por um de valor 1 de sua mão.'],
       [6, 'Leviatã', 'Baixe o Legado. Elimine as cartas da mão de um jogador. Ativação: 4 ideias.']),
     F('bacon', 'Francis', 'Bacon', 2, 'mat', [1, 4, 2, 2], 'Londres, Inglaterra', '1561 – 1626', 'O progresso do conhecimento',
-      'A natureza só é comandada se é obedecida.', 'Novum Organum, I, 3',
+      'A natureza só é comandada se é obedecida.', 'Novum Organum I, 3',
       ['“Conhecimento é poder”', 'No momento de Reflexão de Bacon, veja duas cartas na mão de um jogador.'],
-      [5, '“O dinheiro é bom criado, mas mau senhor”', 'Elimine 2 ideias de todos os filósofos de uma escola à sua escolha.'],
+      [5, '“O dinheiro é como esterco: só é bom espalhado”', 'Elimine 2 ideias de todos os filósofos de uma escola à sua escolha.'],
       [6, 'O Método Científico', 'Todos os debates ficam reduzidos a 1 ideia de cada jogador.']),
     F('locke', 'John', 'Locke', 1, 'mat', [1, 4, 3, 1], 'Wrington, Inglaterra', '1632 – 1704', 'Ensaio sobre o entendimento humano',
       'Não há nada na mente que não tenha passado antes pelos sentidos.', 'máxima empirista associada ao Ensaio',
@@ -87,30 +87,30 @@
       [3, '“Não existem ideias universais”', 'Teístas e Racionalistas não recebem ideias na Reflexão nesta rodada.'],
       [7, 'Direito natural ao autogoverno', 'Mova todas as ideias de seus filósofos para um debate de Ética / Política.']),
     F('rousseau', 'Jean-Jacques', 'Rousseau', 1, 'mat', [1, 1, 4, 2], 'Genebra', '1712 – 1778', 'Do Contrato Social',
-      'O homem nasce livre, e por toda parte encontra-se a ferros.', 'Do Contrato Social, I, 1',
+      'O homem nasce livre, e por toda parte encontra-se a ferros.', 'Do Contrato Social I, 1',
       ['Contrato Social', 'No momento de Reflexão de Rousseau, todos os filósofos de custo 1 da mesa recebem +1 ideia.'],
       [4, 'A propriedade privada é um roubo', 'Elimine qualquer Legado. Use apenas uma vez.'],
-      [6, 'O Bom Selvagem', 'Baixe o Legado. Na Reflexão, gera +2 ideias a redistribuir.']),
+      [6, 'Estado de natureza', 'Baixe o Legado. Na Reflexão, gera +2 ideias a redistribuir.']),
 
     F('kant', 'Immanuel', 'Kant', 5, 'germ', [3, 5, 5, 4], 'Königsberg, Prússia', '1724 – 1804', 'Crítica da Razão Pura',
-      'Age sempre de tal modo que o teu comportamento possa vir a ser princípio de uma lei universal.', 'Fundamentação da Metafísica dos Costumes',
+      'Age apenas segundo a regra que possas querer que vire lei para todos.', 'Fundamentação da Metafísica dos Costumes, seção II (AA 4:421)',
       ['Imperativo Categórico', 'Se um jogador compra sua carta extra, os demais também compram.'],
       [5, '“As coisas em si são incognoscíveis”', 'Elimine qualquer Legado.'],
-      [7, '“Espaço e tempo são intuições da mente”', 'Jogue um turno extra, pulando sua fase do Jogador.']),
+      [7, '“Espaço e tempo são formas da intuição”', 'Jogue um turno extra, pulando sua fase do Jogador.']),
     F('nietzsche', 'Friedrich', 'Nietzsche', 4, 'germ', [5, 1, 4, 5], 'Röcken, Prússia', '1844 – 1900', 'Assim Falou Zaratustra',
       'Deus está morto.', 'A Gaia Ciência, § 125',
       ['Vontade de Poder', 'Se você não tiver Teístas, Nietzsche assume a cadeira de Catedrático sem custo.'],
       [4, '“Deus está morto”', 'Elimine a Legado Igreja ou Alma Imortal. Remova um Teísta de valor 1 ou 2.'],
-      [5, 'Super-Homem', 'Legado. Um filósofo germânico em vaga extra, que ignora as regras alheias.']),
+      [5, 'Além-do-homem', 'Legado. Um filósofo germânico em vaga extra, que ignora as regras alheias.']),
     F('schopenhauer', 'Arthur', 'Schopenhauer', 3, 'germ', [3, 2, 3, 4], 'Danzig', '1788 – 1860', 'O Mundo como Vontade e Representação',
       'O mundo é minha representação.', 'O Mundo como Vontade e Representação, § 1',
       ['Mestre e discípulo', 'No momento de Reflexão, recebe +1 ideia se Kant, Freud ou Nietzsche estiverem no grupo.'],
       [5, 'Vontade Universal', 'Coloque +3 ideias em cada um dos debates de que você participa.'],
       [7, '“Os limites do mundo são os da minha visão”', 'Oponentes perdem até 5 ideias em todos os debates de que você participa.']),
     F('heidegger', 'Martin', 'Heidegger', 2, 'germ', [4, 2, 2, 2], 'Messkirch, Alemanha', '1889 – 1976', 'Ser e Tempo',
-      'A linguagem é a morada do ser.', 'Carta sobre o Humanismo',
+      'A linguagem é a morada do ser.', 'Carta sobre o Humanismo, abertura (GA 9, p. 313)',
       ['Fenomenologia', 'Por 1 turno, um filósofo adversário aleatório paga +2 ideias para participar de debates.'],
-      [4, 'A Morte e a Existência Humana', 'Elimine Heidegger e um filósofo de outra corrente que não a Germânica.'],
+      [4, 'Ser-para-a-morte', 'Elimine Heidegger e um filósofo de outra corrente que não a Germânica.'],
       [7, 'Ser e Tempo', 'Descarte sua mão e não compre cartas. Jogue um turno extra.']),
     F('freud', 'Sigmund', 'Freud', 1, 'germ', [2, 1, 1, 5], 'Freiberg, Morávia', '1856 – 1939', 'A Interpretação dos Sonhos',
       'O eu não é senhor em sua própria casa.', 'Uma dificuldade no caminho da psicanálise (1917)',
@@ -126,12 +126,12 @@
     F('maquiavel', 'Nicolau', 'Maquiavel', 1, 'livre', [1, 1, 5, 2], 'Florença, Itália', '1469 – 1527', 'O Príncipe',
       'Vale mais fazer e arrepender-se que não fazer e arrepender-se.', 'atribuída; a conferir',
       ['O Príncipe', 'Mais poder ao soberano: seu Catedrático recebe +1 ideia na Reflexão.'],
-      [5, '“Aliados hoje, inimigos amanhã”', 'Troque quaisquer dois filósofos da mesa entre você e um oponente.'],
-      [6, '“Aos amigos, os favores; aos inimigos, a lei”', '+2 ideias para seus filósofos. Um oponente não baixa cartas na próxima rodada.']),
-    F('erasmo', 'de Roterdã', 'Erasmo', 1, 'livre', [2, 1, 3, 2], 'Roterdã, Holanda', '1466 – 1536', 'Elogio da Loucura',
+      [5, 'A raposa e o leão', 'Troque quaisquer dois filósofos da mesa entre você e um oponente.'],
+      [6, '“Mais seguro ser temido que amado”', '+2 ideias para seus filósofos. Um oponente não baixa cartas na próxima rodada.']),
+    F('erasmo', 'de Roterdã', 'Erasmo', 1, 'livre', [2, 1, 3, 2], 'Roterdã, Holanda', 'c. 1466 – 1536', 'Elogio da Loucura',
       'A pior das loucuras é tentar ser sensato em um mundo de loucos.', 'atribuída; a conferir',
       ['“A Religião é uma forma de loucura”', 'No momento de Reflexão de Erasmo, um filósofo Teísta perde 2 ideias. (Sem Teístas neste protótipo.)'],
-      [3, '“Os objetos da Felicidade são ilusórios”', 'Coloque +1 ideia em cada debate.'],
+      [3, '“A felicidade depende da opinião”', 'Coloque +1 ideia em cada debate.'],
       [5, 'Elegância Retórica', 'Baixe o Legado. Seus filósofos recebem +1 ideia ao mover ideias para debates.'])
   ];
 
@@ -154,14 +154,14 @@
     { id: 'sofisma', nome: 'Sofisma', custo: 2, fam: 'falacia', pen: 1, sub: 'Falácia — argumento enganoso',
       d: 'Num debate em que você e um oponente participam, +2 ideias para você e −3 para ele.',
       oq: 'Um raciocínio que parece válido e foi feito para enganar. O nome vem dos sofistas, professores de retórica da Atenas do século V a.C., que Platão acusava de vender a aparência da sabedoria (Aristóteles, Refutações Sofísticas, a verificar). Os sofistas cobravam caro pelas aulas; esta carta cobra só 2 ideias, mas a conta chega depois.' },
-    { id: 'petitio', nome: 'Petitio Principii', custo: 3, fam: 'falacia', pen: 1, sub: 'Falácia — raciocínio circular',
-      d: 'Ponha 5 ideias num filósofo seu que esteja em ação e não tenha nenhuma ideia.',
-      oq: 'A petição de princípio: a conclusão já está escondida na premissa. “Esta carta é ótima porque é a melhor carta.” Aristóteles a descreve nos Primeiros Analíticos II, 16 (a verificar). Prova-se o que se queria provar porque já se começou provando.' },
+    { id: 'petitio', nome: 'Petitio Principii', custo: 2, fam: 'falacia', pen: 2, sub: 'Falácia — dar por provado',
+      d: 'Num debate em que você tem mais ideias que cada adversário, dê a conclusão por provada: se no início do seu próximo turno você ainda tiver mais ideias que cada um, vence o debate, mesmo sem ter chegado ao valor.',
+      oq: 'Petição de princípio: usar como premissa justamente o que está em discussão. “Tenho razão porque estou certo.” A premissa não foi aceita pelos outros e costuma vir do senso comum: “todo mundo sabe que…”. Aristóteles a descreve nos Primeiros Analíticos II, 16 (a verificar).' },
     { id: 'mutatio', nome: 'Mutatio Controversiae', custo: 3, fam: 'falacia', pen: 1, sub: 'Falácia — mudando de assunto',
       d: 'Retire até 4 ideias suas de um debate e ponha-as em outro debate da Ágora.',
       oq: 'Mudar de assunto quando a discussão aperta. Em inglês, a manobra ganhou o nome de red herring, o arenque vermelho, um peixe defumado de cheiro forte capaz de despistar os cães de caça.' },
     { id: 'nonsequitur', nome: 'Non Sequitur', custo: 2, fam: 'falacia', pen: 1, sub: 'Falácia — não se segue',
-      d: 'Um oponente descarta até 2 cartas temporárias da mão, sorteadas.',
+      d: 'Um oponente descarta até 3 cartas temporárias da mão, sorteadas.',
       oq: 'Em latim, “não se segue”: a conclusão não decorre das premissas. “Está chovendo; logo, o seu adversário descarta duas cartas.” Faz tanto sentido quanto esta carta, e funciona do mesmo jeito.' },
 
     { id: 'retorsio', nome: 'Retorsio Argumenti', custo: 3, fam: 'argumento', sub: 'Argumento — bumerangue',
@@ -233,37 +233,37 @@
   // Relações históricas entre filósofos (notas em paráfrase, com fonte; todas a verificar).
   var RELACOES = [
     ['nietzsche', 'socrates', 'Nietzsche trata Sócrates como sintoma de decadência da cultura grega.', 'Crepúsculo dos Ídolos, “O problema de Sócrates”'],
-    ['nietzsche', 'platao', 'Nietzsche chama o cristianismo de “platonismo para o povo” e vê em Platão a origem do desprezo pelo mundo sensível.', 'Além do Bem e do Mal, prefácio'],
+    ['nietzsche', 'platao', 'Nietzsche chama o cristianismo de “platonismo para o povo” e vê em Platão a origem do desprezo pelo mundo sensível.', 'Além do Bem e do Mal, Prefácio; Crepúsculo dos Ídolos, «Como o mundo verdadeiro se tornou fábula», §§1–2'],
     ['nietzsche', 'kant', 'Nietzsche ataca o imperativo categórico como moral impessoal, perigosa para a vida.', 'O Anticristo, § 11'],
-    ['nietzsche', 'schopenhauer', 'Nietzsche teve Schopenhauer como mestre de juventude e depois rompeu com seu pessimismo.', 'Schopenhauer como Educador; Genealogia da Moral, III'],
+    ['nietzsche', 'schopenhauer', 'Nietzsche teve Schopenhauer como mestre de juventude e depois rompeu com seu pessimismo.', 'Schopenhauer como Educador, §§1–3; A Gaia Ciência, §370; Genealogia da Moral III, §§5–8; Ecce Homo, «As extemporâneas», §3'],
     ['schopenhauer', 'kant', 'Schopenhauer se declara herdeiro de Kant, mas dedica um apêndice inteiro a criticá-lo.', 'O Mundo como Vontade e Representação, apêndice'],
-    ['schopenhauer', 'hegel', 'Schopenhauer chamava Hegel de charlatão e marcava suas aulas no mesmo horário das dele, em Berlim.', 'O Mundo como Vontade e Representação, prefácio à 2ª ed.'],
-    ['schopenhauer', 'platao', 'Schopenhauer aponta Platão e Kant como seus dois grandes mestres.', 'O Mundo como Vontade e Representação, prefácio à 1ª ed.'],
+    ['schopenhauer', 'hegel', 'Schopenhauer chamava Hegel de charlatão e marcou seu curso em Berlim no mesmo horário da aula do rival. Quase ninguém apareceu.', 'Os Dois Problemas Fundamentais da Ética, prefácio à 1ª ed.; carta a August Böckh, 31 de dezembro de 1819; programação da Universidade de Berlim, 1820'],
+    ['schopenhauer', 'platao', 'Schopenhauer pede que o leitor chegue à sua obra conhecendo Kant e, se possível, Platão.', 'O Mundo como Vontade e Representação, prefácio à 1ª ed.'],
     ['marx', 'hegel', 'Marx diz que a dialética de Hegel está de cabeça para baixo e que é preciso invertê-la.', 'O Capital, posfácio à 2ª ed.'],
     ['marx', 'epicuro', 'A tese de doutorado de Marx compara as filosofias da natureza de Demócrito e de Epicuro.', 'Diferença entre as filosofias da natureza de Demócrito e Epicuro (1841)'],
-    ['marx', 'aristoteles', 'Marx chama Aristóteles de grande pensador por ter sido o primeiro a analisar a forma do valor.', 'O Capital, livro I, cap. 1'],
+    ['marx', 'aristoteles', 'Marx chama Aristóteles de grande pensador por ter sido o primeiro a analisar a forma do valor.', 'O Capital, livro I, cap. 1, § 3, A.3, «A forma de equivalente» (MEW 23, pp. 73–74)'],
     ['aristoteles', 'platao', 'Aristóteles critica a Ideia do Bem de seu mestre: a amizade é cara, mas a verdade vem antes.', 'Ética a Nicômaco, I, 6'],
-    ['platao', 'socrates', 'Quase tudo o que sabemos de Sócrates vem dos diálogos de Platão, seu discípulo.', 'Apologia, Críton, Fédon'],
+    ['platao', 'socrates', 'Sócrates nada escreveu. Platão, seu discípulo, fez dele o protagonista de quase todos os seus diálogos.', 'Platão, Apologia 34a e 38b; Aristófanes, Nuvens, vv. 218–234; Xenofonte, Memoráveis I, 1, 1–9'],
     ['diogenes', 'platao', 'Diógenes chamava as aulas de Platão de perda de tempo, e Platão o chamava de “um Sócrates enlouquecido”.', 'Diógenes Laércio, Vidas, VI, 24 e 54'],
-    ['bacon', 'aristoteles', 'Bacon intitulou sua obra Novum Organum para substituir a lógica do Organon aristotélico.', 'Novum Organum (1620)'],
-    ['hobbes', 'aristoteles', 'Hobbes rejeita a tese aristotélica de que o homem é naturalmente político.', 'Do Cidadão, I; Leviatã, XVII'],
-    ['locke', 'hobbes', 'Locke distingue estado de natureza de estado de guerra, respondendo ao quadro traçado por Hobbes.', 'Segundo Tratado sobre o Governo, cap. III'],
+    ['bacon', 'aristoteles', 'Bacon intitulou sua obra Novum Organum para substituir a lógica do Organon aristotélico.', 'Novum Organum (1620), Prefácio e I, 11–19 e 105'],
+    ['hobbes', 'aristoteles', 'Hobbes rejeita a tese aristotélica de que o homem é naturalmente político.', 'Do Cidadão I, 2 e nota; Leviatã XVII; Aristóteles, Política I, 2, 1253a2–3'],
+    ['locke', 'hobbes', 'Locke distingue estado de natureza de estado de guerra, respondendo ao quadro traçado por Hobbes.', 'Locke, Segundo Tratado sobre o Governo III, §19; Hobbes, Leviatã XIII'],
     ['rousseau', 'hobbes', 'Rousseau acusa Hobbes de atribuir ao homem natural paixões que nascem da sociedade.', 'Discurso sobre a Origem da Desigualdade'],
-    ['kant', 'rousseau', 'Kant escreveu que Rousseau o ensinou a respeitar os seres humanos.', 'Anotações às Observações sobre o Belo e o Sublime'],
+    ['kant', 'rousseau', 'Kant escreveu que Rousseau o ensinou a respeitar os seres humanos.', 'Anotações às Observações sobre o Sentimento do Belo e do Sublime (AA 20:44)'],
     ['hegel', 'kant', 'Hegel critica o formalismo vazio da moral kantiana.', 'Filosofia do Direito, § 135'],
-    ['hegel', 'socrates', 'Hegel vê em Sócrates o momento em que a consciência individual se volta contra os costumes da cidade.', 'Lições sobre a História da Filosofia'],
-    ['heidegger', 'platao', 'Heidegger abre Ser e Tempo com uma passagem do Sofista, de Platão, sobre o sentido de “ser”.', 'Ser e Tempo, epígrafe'],
-    ['heidegger', 'nietzsche', 'Heidegger dedicou anos de cursos a Nietzsche, que considerava o último metafísico do Ocidente.', 'Nietzsche (cursos de 1936–1940)'],
-    ['heidegger', 'aristoteles', 'Os primeiros cursos de Heidegger são longas interpretações de Aristóteles.', 'Interpretações Fenomenológicas de Aristóteles'],
-    ['arendt', 'heidegger', 'Arendt foi aluna de Heidegger em Marburgo e manteve com ele um diálogo crítico por toda a vida.', 'Martin Heidegger faz oitenta anos (1969)'],
+    ['hegel', 'socrates', 'Hegel vê em Sócrates o momento em que a consciência individual se volta contra os costumes da cidade.', 'Lições sobre a História da Filosofia, «Sócrates», partes 1 e 3, «O princípio socrático» e «O destino de Sócrates»'],
+    ['heidegger', 'platao', 'Heidegger abre Ser e Tempo com uma passagem do Sofista, de Platão, sobre o sentido de “ser”.', 'Ser e Tempo, epígrafe; Platão, Sofista, 244a'],
+    ['heidegger', 'nietzsche', 'Heidegger dedicou anos de cursos a Nietzsche, que considerava o último metafísico do Ocidente.', 'Nietzsche I–II (GA 6.1–6.2); cursos em GA 43, 44, 47 e 48'],
+    ['heidegger', 'aristoteles', 'Os primeiros cursos de Heidegger são longas interpretações de Aristóteles.', 'Interpretações Fenomenológicas de Aristóteles, cursos de 1921–22 e verão de 1922 (GA 61 e 62); relatório Natorp (1922, GA 62)'],
+    ['arendt', 'heidegger', 'Arendt foi aluna de Heidegger em Marburgo. Afastaram-se quando ele aderiu ao nazismo e retomaram o diálogo em 1950.', 'Hannah Arendt e Martin Heidegger, correspondência 1925–1975; Martin Heidegger faz oitenta anos (1969)'],
     ['arendt', 'kant', 'Arendt buscou na Crítica do Juízo, de Kant, as bases de uma filosofia política.', 'Lições sobre a Filosofia Política de Kant'],
-    ['arendt', 'marx', 'Arendt critica Marx por reduzir a ação política ao trabalho.', 'A Condição Humana, cap. III'],
-    ['arendt', 'socrates', 'Para Arendt, Sócrates é o modelo do pensador que examina opiniões em público.', 'A Vida do Espírito, “Pensar”'],
-    ['freud', 'schopenhauer', 'Freud reconhece que Schopenhauer antecipou a ideia de recalque.', 'Contribuição à História do Movimento Psicanalítico'],
-    ['freud', 'nietzsche', 'Freud dizia evitar a leitura de Nietzsche por temer encontrar ali suas próprias descobertas.', 'Um Estudo Autobiográfico'],
-    ['freud', 'platao', 'Freud aproxima sua noção de Eros do Eros de Platão.', 'Três Ensaios sobre a Teoria da Sexualidade, prefácio à 4ª ed.'],
+    ['arendt', 'marx', 'Arendt critica Marx por fazer do trabalho a essência do ser humano, sem deixar lugar para a ação política.', 'A Condição Humana, cap. III, §§11 e 14; “Karl Marx and the Tradition of Western Political Thought”'],
+    ['arendt', 'socrates', 'Para Arendt, Sócrates é o modelo do pensador que examina opiniões em público.', 'A Vida do Espírito I, “Pensar”, cap. III, §§17–18'],
+    ['freud', 'schopenhauer', 'Freud reconhece que Schopenhauer antecipou a ideia de recalque.', 'Contribuição à História do Movimento Psicanalítico, I; Schopenhauer, O Mundo como Vontade e Representação II, cap. 32'],
+    ['freud', 'nietzsche', 'Freud evitou ler Nietzsche por muito tempo: as intuições do filósofo coincidiam demais com o que a psicanálise descobria com esforço.', 'Um Estudo Autobiográfico (Selbstdarstellung), V'],
+    ['freud', 'platao', 'Freud lembra que a sexualidade ampliada da psicanálise se aproxima do Eros do “divino Platão”.', 'Três Ensaios sobre a Teoria da Sexualidade, prefácio à 4ª ed.'],
     ['maquiavel', 'rousseau', 'Rousseau lê O Príncipe como livro dos republicanos: fingindo ensinar os reis, ensinou os povos.', 'Do Contrato Social, III, 6'],
-    ['epicuro', 'platao', 'O Jardim de Epicuro nasceu como alternativa à Academia platônica: prazer sereno em vez de Ideias eternas.', 'Diógenes Laércio, Vidas, X']
+    ['epicuro', 'platao', 'Epicuro chamava os seguidores de Platão de “bajuladores de Dionísio”, o tirano de Siracusa a quem Platão tentou aconselhar.', 'Diógenes Laércio, Vidas, X, 8']
   ];
 
   var CARTAS = {};
@@ -328,10 +328,10 @@
     schopenhauer: ['Negação da Vontade', 'No momento de Reflexão, recebe +1 ideia se não foi a nenhum debate no turno anterior.'],
     heidegger: ['Ser-no-mundo', 'No momento de Reflexão, recebe +1 ideia para cada debate em que você tem ideias.'],
     freud: ['Ato Falho', 'Freud recebe +1 ideia sempre que um adversário usa uma falácia.'],
-    maquiavel: ['O Príncipe', 'No momento de Reflexão, o filósofo com mais ideias do seu grupo recebe +1.'],
+    maquiavel: ['O Príncipe', 'No momento de Reflexão, o filósofo de maior custo do seu grupo, o soberano, recebe +1. Se for o Bibliotecário ou já tiver 10 ideias, a ideia vai para a Biblioteca.'],
     erasmo: ['Elogio da Loucura', 'No momento de Reflexão, o adversário que lidera um debate de Metafísica / Religião perde 1 ideia.'],
     hobbes: ['Guerra de todos contra todos', 'No momento de Reflexão, o adversário com mais ideias num debate perde 1 ideia nesse debate.'],
-    bacon: ['“Conhecimento é poder”', 'No momento de Reflexão, Bacon espia duas cartas da mão de um adversário.'],
+    bacon: ['“Conhecimento é poder”', 'No momento de Reflexão, se houver um debate de Lógica / Ciência na mesa, +1 ideia na sua Biblioteca. E Bacon espia duas cartas da mão de um adversário.'],
     rousseau: ['Contrato Social', 'No momento de Reflexão, todos os filósofos de custo 1 da mesa recebem +1 ideia, inclusive os dos adversários.'],
     arendt: ['A Condição Humana', 'No momento de Reflexão, recebe +1 ideia se houver um debate de Ética / Política na mesa.'],
     aristoteles: ['Silogismo – Premissa', 'No momento de Reflexão, acrescenta +1 ideia sua a um debate de Lógica.'],
@@ -342,15 +342,15 @@
 
   // Citações da carta, obras e conceitos 2–3 alinhados à aba "Cartas v5" (16/11/2026).
   var CIT = {
-    platao: ['O espanto é a única origem da filosofia.', 'Teeteto, 155d'],
-    socrates: ['Pareço ser mais sábio apenas porque não penso saber o que não sei.', 'Platão, Apologia, 21d'],
-    locke: ['Nenhum conhecimento humano pode ir além da sua experiência.', 'Ensaio, II, 1, 19'],
+    platao: ['O espanto é a única origem da filosofia.', 'Teeteto 155d'],
+    socrates: ['Pareço ser mais sábio apenas porque não penso saber o que não sei.', 'Platão, Apologia 21d'],
+    locke: ['Nenhum conhecimento humano pode ir além da sua experiência.', 'Ensaio sobre o Entendimento Humano, II, 1, §19'],
     nietzsche: ['Torna-te quem tu és.', 'A Gaia Ciência, §270; Ecce Homo (subtítulo)'],
-    arendt: ['Ninguém tem o direito de obedecer.', 'entrevista a Joachim Fest (1964)'],
+    arendt: ['Ninguém tem o direito de obedecer.', 'entrevista a Joachim Fest (1964), lendo Kant'],
     maquiavel: ['É muito mais seguro ser temido do que amado, quando se tem de escolher.', 'O Príncipe, XVII'],
-    erasmo: ['A guerra é doce para quem não a experimentou.', 'Adágios, IV, I, 1'],
-    hobbes: ['O homem é o lobo do homem.', 'Do Cidadão, epístola dedicatória (de Plauto)'],
-    pitagoras: ['Tudo é número.', 'atribuída pela tradição pitagórica (Aristóteles, Metafísica I, 5)']
+    erasmo: ['A guerra é doce para quem não a experimentou.', 'Adágios, IV, I, 1 (“Dulce bellum inexpertis”)'],
+    hobbes: ['O homem é o lobo do homem.', 'Do Cidadão, epístola dedicatória; Plauto, Asinária, v. 495'],
+    pitagoras: ['Tudo é número.', 'atribuída aos pitagóricos (Aristóteles, Metafísica I, 5)']
   };
   Object.keys(CIT).forEach(function (k) { CARTAS[k].cit = CIT[k][0]; CARTAS[k].citFonte = CIT[k][1]; });
   CARTAS.epicuro.obra = 'Carta a Meneceu'; CARTAS.bacon.obra = 'Novum Organum'; CARTAS.diogenes.obra = '— (não deixou obra)';
@@ -363,9 +363,9 @@
     marx: ['Luta de Classes', 'Substitua o filósofo de maior custo de cada oponente pelo de menor custo do grupo dele.', null, 'Comunismo', 'Expurgo! Elimine o filósofo de maior custo de cada oponente.'],
     hobbes: [null, null, null, 'Leviatã', 'Baixe o Legado Leviatã. Ativação: 4 ideias. Elimine as cartas da mão de um jogador.'],
     locke: ['“Não existem ideias inatas”', 'Teístas e Racionalistas não recebem ideias na Reflexão nesta rodada.'],
-    rousseau: ['O primeiro que cercou um terreno', 'Elimine qualquer Legado. Uma vez por partida.', null, 'O Bom Selvagem', 'Baixe o Legado O Bom Selvagem: gera +2 ideias na Reflexão, a redistribuir.'],
-    kant: ['“As coisas em si são incognoscíveis”', 'Elimine qualquer Legado.', null, '“Espaço e tempo são intuições da mente”', 'Jogue um turno extra, sem a compra e sem a Biblioteca.'],
-    nietzsche: ['“Deus está morto”', 'Elimine o Legado Igreja ou Alma Imortal. Remova um Teísta de custo 1 ou 2.', null, 'Super-Homem', 'Baixe o Legado Super-Homem: um filósofo germânico em cadeira extra, imune às regras alheias.'],
+    rousseau: ['O primeiro que cercou um terreno', 'Elimine qualquer Legado. Uma vez por partida.', null, 'Estado de natureza', 'Baixe o Legado Estado de natureza: gera +2 ideias na Reflexão, a redistribuir.'],
+    kant: ['“As coisas em si são incognoscíveis”', 'Elimine qualquer Legado.', null, '“Espaço e tempo são formas da intuição”', 'Jogue um turno extra, sem a compra e sem a Biblioteca.'],
+    nietzsche: ['“Deus está morto”', 'Elimine o Legado Igreja ou Alma Imortal. Remova um Teísta de custo 1 ou 2.', null, 'Além-do-homem', 'Baixe o Legado Além-do-homem: um filósofo germânico em cadeira extra, imune às regras alheias.'],
     schopenhauer: [null, null, null, '“O mundo é minha representação”', 'Oponentes perdem até 5 ideias em todos os debates dos quais você participa.'],
     freud: ['Divã', 'Baixe o Legado Divã: um filósofo recebe +1 ideia na Reflexão.', null, 'Complexo de Édipo', 'Elimine o filósofo de maior custo de um oponente.'],
     erasmo: [null, null, null, 'Elegância Retórica', 'Baixe o Legado Elegância Retórica: seus filósofos recebem +1 ideia ao levar ideias a debates.']
@@ -393,16 +393,16 @@
 
   // Relações acrescentadas nesta versão (a verificar).
   [
-    ['kant', 'platao', 'Kant compara Platão a uma pomba que, sentindo a resistência do ar, imagina voar melhor no vácuo.', 'Crítica da Razão Pura, Introdução (B 8–9)'],
+    ['kant', 'platao', 'Kant compara Platão a uma pomba que, sentindo a resistência do ar, imagina voar melhor no vácuo.', 'Crítica da Razão Pura, Introdução, A5/B8–9'],
     ['kant', 'aristoteles', 'Kant afirma que a lógica não deu um passo adiante nem atrás desde Aristóteles.', 'Crítica da Razão Pura, prefácio à 2ª ed. (B VIII)'],
-    ['hobbes', 'bacon', 'O jovem Hobbes serviu de secretário a Bacon, anotando seus pensamentos durante os passeios.', 'John Aubrey, Brief Lives'],
-    ['rousseau', 'locke', 'Rousseau discute a pedagogia de Locke: raciocinar com crianças é começar pelo fim.', 'Emílio, livro II'],
-    ['nietzsche', 'epicuro', 'Nietzsche admira em Epicuro a felicidade de quem contempla o mar da existência já serenado.', 'A Gaia Ciência, § 45'],
-    ['erasmo', 'socrates', 'Um personagem de Erasmo, comovido, quase diz: “São Sócrates, rogai por nós”.', 'Colóquios, “O banquete religioso”'],
-    ['pitagoras', 'platao', 'A cosmologia matemática de Platão deve muito aos pitagóricos.', 'Timeu; Aristóteles, Metafísica I, 6'],
-    ['hegel', 'aristoteles', 'Hegel considera Aristóteles um dos gênios mais ricos e profundos que já existiram.', 'Lições sobre a História da Filosofia'],
-    ['locke', 'bacon', 'O empirismo de Locke herda de Bacon a confiança na experiência contra a autoridade.', 'Ensaio sobre o Entendimento Humano, Epístola ao leitor'],
-    ['maquiavel', 'aristoteles', 'Maquiavel troca a pergunta clássica pelo melhor regime pela pergunta de como o poder de fato se conquista e se mantém.', 'O Príncipe, cap. XV']
+    ['hobbes', 'bacon', 'O jovem Hobbes serviu de secretário a Bacon, anotando seus pensamentos durante os passeios.', 'John Aubrey, Brief Lives, «Thomas Hobbes»'],
+    ['rousseau', 'locke', 'Rousseau discute a pedagogia de Locke: raciocinar com crianças é começar pelo fim.', 'Rousseau, Emílio II, «Raisonner avec les enfans…»; Locke, Alguns Pensamentos sobre a Educação, §§81–82'],
+    ['nietzsche', 'epicuro', 'Nietzsche admira em Epicuro a felicidade de quem contempla o mar da existência já serenado.', 'A Gaia Ciência, §45, «Epicuro»'],
+    ['erasmo', 'socrates', 'Um personagem de Erasmo, comovido, quase diz: “São Sócrates, rogai por nós”.', 'Colóquios, “O Banquete Religioso” (Convivium religiosum), fala de Nephalius após a discussão da morte de Sócrates'],
+    ['pitagoras', 'platao', 'A cosmologia matemática de Platão deve muito aos pitagóricos.', 'Platão, Timeu 35b–36b e República VII, 530d–531c; Aristóteles, Metafísica I, 6, 987a29–b14; Filolau, fr. 6a, ed. Huffman'],
+    ['hegel', 'aristoteles', 'Hegel considera Aristóteles um dos gênios mais ricos e profundos que já existiram.', 'Lições sobre a História da Filosofia, seção «Aristóteles», abertura (Werke 19, p. 132)'],
+    ['locke', 'bacon', 'O empirismo de Locke segue o caminho aberto por Bacon: começar pela experiência, e não pela autoridade.', 'Locke, Ensaio sobre o Entendimento Humano, Introdução, §2, e IV, 12, §§9–10; Bacon, Novum Organum I, 19 e 82'],
+    ['maquiavel', 'aristoteles', 'Maquiavel troca a pergunta clássica pelo melhor regime pela pergunta de como o poder de fato se conquista e se mantém.', 'Aristóteles, Política IV, 1, 1288b21–1289a7; Maquiavel, O Príncipe, I–II e XV']
   ].forEach(function (r) { RELACOES.push(r); });
 
   // ---------- preparação ----------
@@ -473,7 +473,7 @@
   // ---------- consultas ----------
   function inGroup(pl, id) { for (var i = 0; i < pl.group.length; i++) if (pl.group[i].id === id) return pl.group[i]; return null; }
   function oppMax(d, P) { var m = 0; for (var i = 0; i < d.stakes.length; i++) if (i !== P && d.stakes[i] > m) m = d.stakes[i]; return m; }
-  function lidera(s, di, P) { var d = s.debates[di]; return d.stakes[P] >= DEB[d.id].valor && d.stakes[P] > oppMax(d, P); }
+  function lidera(s, di, P) { var d = s.debates[di]; var req = d.petitio && d.petitio.P === P ? 1 : DEB[d.id].valor; return d.stakes[P] >= req && d.stakes[P] > oppMax(d, P); }
   function ativo(g) { return !g.novo; }
   // Diógenes: nenhum adversário o escolhe como alvo nem tira ideias dele; não pode ser trocado (nem pelo dono).
   function imune(g) { return g.id === 'diogenes'; }
@@ -496,8 +496,9 @@
       if (d.tranca && d.tranca.P === P) { delete d.tranca; log(s, 'O Paradoxo se desfaz: «' + DEB[d.id].q + '» volta a andar.', 'sis', P); fx(s, { k: 'destranca', di: di, did: d.id }); }
     });
     for (var i = s.debates.length - 1; i >= 0; i--) {
-      if (livre(s.debates[i]) && lidera(s, i, P)) win(s, P, i, 'sustentou a liderança até seu turno');
+      if (livre(s.debates[i]) && lidera(s, i, P)) win(s, P, i, s.debates[i].petitio && s.debates[i].petitio.P === P && s.debates[i].stakes[P] < DEB[s.debates[i].id].valor ? 'deu a conclusão por provada, e ninguém a recusou' : 'sustentou a liderança até seu turno');
     }
+    s.debates.forEach(function (d) { if (d.petitio && d.petitio.P === P) { delete d.petitio; log(s, 'A Petitio de ' + pl.nome + ' em «' + DEB[d.id].q + '» foi recusada pelos adversários.', 'sis', P); } });
     draw(s, P, 1);
     pl.library += s.cfg.bibPorTurno;
     fx(s, { k: 'bib', P: P, n: s.cfg.bibPorTurno });
@@ -650,7 +651,8 @@
         }
         if (bd >= 0) { s.debates[bd].stakes[bo] -= 1; diz(nomeJ(s, bo) + ' perde 1 ideia em «' + DEB[s.debates[bd].id].q + '».', 'neg'); }
         break;
-      case 'bacon':
+      case 'bacon':   // desde 20/11/2026: +1 na Biblioteca se houver debate de Lógica / Ciência na mesa
+        if (s.debates.some(function (d) { return DEB[d.id].area === 'logica'; })) { pl.library += 1; diz('+1 ideia na Biblioteca: há debate de Lógica na mesa.'); }
         if (pl.human) {
           var alvo = -1;
           for (o = 0; o < s.players.length; o++) if (o !== P && (alvo < 0 || s.players[o].hand.length > s.players[alvo].hand.length)) alvo = o;
@@ -680,18 +682,21 @@
       case 'arendt':
         if (s.debates.some(function (d) { return DEB[d.id].area === 'etica'; })) { ganha(s, P, g, 1); diz('+1 ideia: há debate de Ética na mesa.'); }
         break;
-      case 'maquiavel':
-        t = null; semLib(pl).forEach(function (x) { if (!t || x.ideas > t.ideas) t = x; });
-        if (t) { poe(s, t, 1); diz('+1 ideia para ' + C(t.id).nome + ', quem tem mais ideias.'); }
+      case 'maquiavel':   // desde 19/11/2026: o soberano é o filósofo de maior custo (Bibliotecário incluído); empate, a primeira cadeira
+        t = null; pl.group.forEach(function (x) { if (!t || C(x.id).custo > C(t.id).custo) t = x; });
+        if (t) {
+          if (t.lib || t.ideas >= s.cfg.teto) { pl.library += 1; diz('+1 ideia na Biblioteca: ' + C(t.id).nome + (t.lib ? ', o soberano, é o Bibliotecário.' : ', o soberano, já tem ' + s.cfg.teto + ' ideias.')); }
+          else { poe(s, t, 1); diz('+1 ideia para ' + C(t.id).nome + ', o soberano.'); }
+        }
         break;
       case 'diogenes':
         if (g.ideas <= 2) { ganha(s, P, g, 1); diz('+1 ideia: vive com o mínimo.'); }
         break;
       case 'erasmo':
         var ed = -1, eo = -1, ev = 0;
-        for (di = 0; di < s.debates.length; di++) {
+        for (di = 0; di < s.debates.length; di++) {   // desde 20/11/2026: só o adversário que lidera (mais ideias que todos os outros)
           if (DEB[s.debates[di].id].area !== 'meta' || !livre(s.debates[di])) continue;
-          for (o = 0; o < s.players.length; o++) if (o !== P && s.debates[di].stakes[o] > ev) { ev = s.debates[di].stakes[o]; ed = di; eo = o; }
+          for (o = 0; o < s.players.length; o++) if (o !== P && s.debates[di].stakes[o] > ev && s.debates[di].stakes[o] > oppMax(s.debates[di], o)) { ev = s.debates[di].stakes[o]; ed = di; eo = o; }
         }
         if (ed >= 0) { s.debates[ed].stakes[eo] -= 1; diz(nomeJ(s, eo) + ' perde 1 ideia em «' + DEB[s.debates[ed].id].q + '».', 'neg'); }
         break;
@@ -896,7 +901,7 @@
         });
         break;
       case 'petitio':
-        pl.group.forEach(function (g, fi) { if (g.ideas === 0 && ativo(g) && !g.lib) out.push({ label: '5 ideias para ' + C(g.id).nome, prm: { fi: fi } }); });
+        M.forEach(function (i) { var dd = s.debates[i]; if (!dd.petitio && dd.stakes[P] > oppMax(dd, P)) out.push({ label: 'Dar por provado «' + DEB[dd.id].q + '»', prm: { d: i } }); });
         break;
       case 'mutatio':
         M.forEach(function (i) {
@@ -908,7 +913,7 @@
       case 'nonsequitur':
         ops(function (x) {
           var n = s.players[x].hand.filter(temporariaNaMao).length;
-          if (n) out.push({ label: nomeJ(s, x) + ' descarta ' + Math.min(2, n) + ' carta' + (n > 1 ? 's' : '') + ' temporária' + (n > 1 ? 's' : ''), prm: { o: x } });
+          if (n) out.push({ label: nomeJ(s, x) + ' descarta ' + Math.min(3, n) + ' carta' + (n > 1 ? 's' : '') + ' temporária' + (n > 1 ? 's' : ''), prm: { o: x } });
         });
         break;
       case 'tautologia':
@@ -942,6 +947,32 @@
     }
     return out.filter(function (o) { return custoPraxis(s, P, base, o.prm) <= pl.library; });
   }
+  // Quem ficou fora do alcance de uma carta e por quê (para a dica da mesa; desde 20/11/2026)
+  function foraDoAlcance(s, P, base) {
+    var out = [], pl = s.players[P], x, gs;
+    for (x = 0; x < s.players.length; x++) {
+      if (x === P) continue;
+      var op = s.players[x], nj = op.nome;
+      if (base === 'cicuta') {
+        op.group.forEach(function (g) {
+          if (C(g.id).escola !== 'grega') return;
+          if (imune(g)) out.push(C(g.id).nome + ' (' + nj + ') é imune.');
+          else if (g.lib) out.push(C(g.id).nome + ' (' + nj + ') é o Bibliotecário: a Cicuta não chega à Biblioteca.');
+          else if (custoPraxis(s, P, base, { o: x, fi: op.group.indexOf(g) }) > pl.library) out.push(C(g.id).nome + ' (' + nj + '): a Cicuta custa ' + nI(CARTAS.cicuta.custo) + '.');
+        });
+      } else if (base === 'niilismo') {
+        gs = op.group.filter(function (g) { return C(g.id).escola === 'germ'; });
+        if (op.niil) out.push(nj + ' já está sob o Niilismo.');
+        else if (!gs.length) out.push(nj + ' não tem Germânicos.');
+        else if (gs.every(function (g) { return g.lib; })) out.push(nj + ': o único Germânico é o Bibliotecário.');
+      } else if (base === 'dogma') {
+        gs = op.group.filter(function (g) { return C(g.id).escola === 'mat'; });
+        if (!gs.length) out.push(nj + ' não tem Materialistas.');
+        else if (!alvosDogma(s, x).length) out.push(nj + ': ' + (gs.some(function (g) { return g.dogma; }) ? 'os Materialistas já estão sob o Dogma.' : 'o único Materialista é o Bibliotecário.'));
+      }
+    }
+    return out;
+  }
   // Dogma: os dois Materialistas que mais receberiam no próximo momento de Reflexão
   function alvosDogma(s, o) {
     return s.players[o].group.filter(function (g) { return !g.lib && !g.dogma && C(g.id).escola === 'mat'; })
@@ -962,13 +993,13 @@
         d.stakes[prm.o] = Math.max(0, d.stakes[prm.o] - n); break;
       case 'adhominem':
         g = s.players[prm.o].group[prm.fi]; n = Math.min(5, g.ideas); g.ideas -= n; d.stakes[P] += n; break;   // até 5 (18/11/2026)
-      case 'petitio': poe(s, s.players[P].group[prm.fi], 5); break;
+      case 'petitio': d.petitio = { P: P }; break;   // desde 20/11/2026: dá a conclusão por provada (vence abaixo do valor se ainda liderar)
       case 'mutatio':
         n = Math.min(4, d.stakes[P]); d.stakes[P] -= n; s.debates[prm.d2].stakes[P] += n; break;
       case 'nonsequitur':
         op = s.players[prm.o];
         var foi = [];
-        for (n = 0; n < 2; n++) {
+        for (n = 0; n < 3; n++) {   // até 3 desde 20/11/2026 (era 2)
           var ts = []; op.hand.forEach(function (id, k) { if (temporariaNaMao(id)) ts.push(k); });
           if (!ts.length) break;
           var k = ts[Math.floor(rnd(s) * ts.length)];
@@ -1096,8 +1127,9 @@
       var d = s.debates[i], val = DEB[d.id].valor, mine = d.stakes[P], om = oppMax(d, P);
       v += 0.6 * Math.min(mine, val);
       v += 0.25 * Math.max(-val, Math.min(val, mine - om));
-      if (mine >= val && mine > om) v += 0.8 * val;
-      if (om >= val && om > mine) v -= 0.6 * val;
+      var pv = d.petitio ? d.petitio.P : -1, req = pv === P ? 1 : val, reqO = pv >= 0 && pv !== P ? 1 : val;   // Petitio: o limiar cai para 1
+      if (mine >= req && mine > om) v += 0.8 * val;
+      if (om >= reqO && om > mine) v -= 0.6 * val;
       if (d.tranca) {   // Paradoxo: liderança protegida (ou a do adversário adiada)
         if (d.tranca.P === P && mine >= val && mine > om) v += 0.7 * val;
         else if (d.tranca.P === P && om >= val && om > mine) v += 0.3 * val;
@@ -1214,7 +1246,7 @@
     C: C, newGame: newGame, moveOptions: moveOptions, porqueNao: porqueNao, moveToDebate: moveToDebate,
     playPhilosopher: playPhilosopher, trocar: trocar, podeTrocar: podeTrocar, libIdx: libIdx, nI: nI, canGive: canGive, giveIdea: giveIdea, buyExtra: buyExtra,
     praxisOptions: praxisOptions, playPraxis: playPraxis, endTurn: endTurn, aiStep: aiStep,
-    oppMax: oppMax, lidera: lidera, ativo: ativo, evalState: evalState, livre: livre, custoPraxis: custoPraxis, custoMin: custoMin
+    oppMax: oppMax, lidera: lidera, ativo: ativo, evalState: evalState, livre: livre, custoPraxis: custoPraxis, custoMin: custoMin, foraDoAlcance: foraDoAlcance
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = API;
   else root.BF = API;
