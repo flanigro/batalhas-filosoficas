@@ -35,7 +35,7 @@ function emblema(p){
 // placar: pontos acumulados e o objetivo (30)
 function placar(p){ var pl=S.players[p], pts=pl.points-(ocultos['pts:'+p]||0); return '<div class="pts" data-pts="'+p+'" title="Pontos: '+pts+' de '+S.cfg.pontos+'"><b>'+pts+'</b><small>/'+S.cfg.pontos+'</small></div>'; }
 // símbolos provisórios das cartas temporárias (os definitivos virão do Flavio)
-var CAVEIRA='<svg class="caveira" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2C7 2 3.5 5.6 3.5 10.2c0 2.7 1.2 4.6 3 5.8V19c0 .6.4 1 1 1h1.3v-2h1.4v2h3.6v-2h1.4v2h1.3c.6 0 1-.4 1-1v-3c1.8-1.2 3-3.1 3-5.8C20.5 5.6 17 2 12 2zm-3.6 11.2a2.1 2.1 0 1 1 0-4.2 2.1 2.1 0 0 1 0 4.2zm7.2 0a2.1 2.1 0 1 1 0-4.2 2.1 2.1 0 0 1 0 4.2zM12 13.4l1.2 2.2h-2.4z"/></svg>';
+var CAVEIRA='<i class="caveira" aria-hidden="true"></i>';   // ícone do Flavio (icones/fam-falacia.png), usado como máscara: pega a cor do texto
 // só as falácias têm símbolo (a caveirinha); as outras famílias se distinguem pela cor e pelo rótulo (decisão de 19/11/2026)
 var SIMB_FAM={falacia:CAVEIRA,argumento:'',escola:'',praxis:''};
 // rótulo da família: Falácia, Argumento, Práxis ou o nome da escola atacada
@@ -76,8 +76,11 @@ function ancF(g,c,attrs,anc,figAnc){
 function miniP(c,attrs,cls){
   return '<button class="mini P fam-'+c.fam+' '+(cls||'')+'" data-cid="'+c.id+'" '+attrs+' aria-label="'+esc(rotFam(c)+': '+c.nome)+'"'+famStyle(c)+'><span class="custo">'+c.custo+'</span>'
     +'<span class="famrot">'+SIMB_FAM[c.fam]+(c.fam==='escola'?'Escola':BF.FAMILIA[c.fam].nome)+'</span>'+(c.pen?'<span class="penal" title="Ao usar: −'+c.pen+' ponto'+(c.pen>1?'s':'')+'; a carta sai do jogo">−'+c.pen+'</span>':'')
-    +'<div class="pt">'+esc(c.nome)+'</div><div class="pd">'+esc(c.d)+'</div></button>';
+    +imgTemp(c)+'<div class="pt">'+esc(c.nome)+'</div><div class="pd">'+esc(c.d)+'</div></button>';
 }
+// ilustrações das cartas temporárias (pasta IMGS BATALHA FILO/Praxis do Flavio, 640 px em webp); y = ponto de corte vertical na carta pequena
+var CORTE_TEMP={niilismo:66,nonsequitur:64,paradoxo:46,mutatio:58,petitio:50,cicuta:58,dogma:52,ceticismo:58};
+function imgTemp(c,cls){ return '<div class="'+(cls||'pimg')+'" style="background-image:url(temporarias/'+c.id+'.webp);background-position:50% '+(CORTE_TEMP[c.id]||55)+'%"></div>'; }
 function custoMao(c){ return c.tipo==='P'?BF.custoMin(c.id):c.custo; }
 function famStyle(c){ return ' style="--fam:'+(c.fam==='escola'&&ESC[c.esc]?ESC[c.esc].cor2:BF.FAMILIA[c.fam].cor)+'"'; }
 function seat(g,p,i,meu){
@@ -457,7 +460,7 @@ function agir(fn){ cancelarSel(); fn(); aberto=null; $('ov').classList.remove('o
 // ---------- carta ampliada (só leitura) ----------
 function bigHTML(c){
   if(c.tipo==='P')return '<div class="bigP fam-'+c.fam+'"'+famStyle(c)+'><span class="bc">'+c.custo+'</span><div class="famrot">'+SIMB_FAM[c.fam]+esc(rotFam(c))+(c.pen?' <b>−'+c.pen+' ponto'+(c.pen>1?'s':'')+'</b>':'')+'</div><h3>'+esc(c.nome)+'</h3>'
-    +'<div class="ps">'+esc(c.sub.replace(/^[^—]*—\s*/,''))+'</div><p class="jogo"><b>Jogo.</b> '+esc(c.d)+(c.pen?' <span class="pena">Quem usa perde '+c.pen+' ponto'+(c.pen>1?'s':'')+', e a carta sai do jogo.</span>':'')+'</p>'+(c.oq?'<p class="oq"><b>O que é.</b> '+esc(c.oq)+'</p>':'')+'</div>';
+    +'<div class="ps">'+esc(c.sub.replace(/^[^—]*—\s*/,''))+'</div>'+imgTemp(c,'bimg')+'<p class="jogo"><b>Jogo.</b> '+esc(c.d)+(c.pen?' <span class="pena">Quem usa perde '+c.pen+' ponto'+(c.pen>1?'s':'')+', e a carta sai do jogo.</span>':'')+'</p>'+(c.oq?'<p class="oq"><b>O que é.</b> '+esc(c.oq)+'</p>':'')+'</div>';
   var e=ESC[c.escola], ds=BF.duplasDe(c.id);
   var pills=BF.AREAS.map(function(a){return '<div class="pill" style="--c:'+AREA[a].cor+'">'+AREA[a].nome+'<b>'+c.vals[a]+'</b></div>';}).join('');
   // complemento do nome: prenome vem antes (Sigmund Freud); "de Sínope" e afins vêm depois (Diógenes de Sínope)

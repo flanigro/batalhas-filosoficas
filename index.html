@@ -631,7 +631,7 @@ body.escolhendo .rodape .mao .selecionado,body.escolhendo .cmd.selecionado{box-s
 .mini.P.fam-falacia{background:linear-gradient(180deg,#f8ebe7,#ead2cb) padding-box,repeating-linear-gradient(135deg,var(--fam) 0 3px,color-mix(in srgb,var(--fam) 45%,#fff) 3px 6px) border-box}
 .mini.P .custo{border-color:var(--fam)}
 .mini.P .famrot{position:absolute;left:29px;right:2px;top:6px;display:flex;align-items:center;gap:2px;font-size:8px;font-weight:900;letter-spacing:.1px;overflow:hidden;white-space:nowrap;text-transform:uppercase;color:var(--fam);line-height:1}
-.mini.P .famrot svg{width:11px;height:11px;flex:none}
+.mini.P .famrot svg,.mini.P .famrot .caveira{width:11px;height:11px;flex:none}
 .mini.P .penal{position:absolute;right:3px;top:19px;background:var(--fam);color:#fff;border-radius:7px;padding:0 4px;font-size:10px;font-weight:900;line-height:14px}
 .mini.P .pt{padding-top:30px}
 .mini.P .pd{padding-top:4px}
@@ -640,7 +640,7 @@ body.escolhendo .rodape .mao .selecionado,body.escolhendo .cmd.selecionado{box-s
 .bigP.fam-falacia{background:linear-gradient(180deg,#f8ebe7,#e6cbc2) padding-box,repeating-linear-gradient(135deg,var(--fam) 0 4px,color-mix(in srgb,var(--fam) 45%,#fff) 4px 8px) border-box}
 .bigP .bc{border-color:var(--fam)}
 .bigP .famrot{margin:0 0 4px 56px;display:flex;align-items:center;gap:6px;color:var(--fam);font-weight:900;text-transform:uppercase;letter-spacing:.8px;font-size:12px;min-height:20px}
-.bigP .famrot svg{width:18px;height:18px;flex:none}
+.bigP .famrot svg,.bigP .famrot .caveira{width:18px;height:18px;flex:none}
 .bigP .famrot b{color:#fff;background:var(--fam);border-radius:6px;padding:0 5px}
 .bigP p.jogo{margin-top:14px}
 .bigP .pena{display:block;margin-top:6px;font-size:.82em;font-weight:700;color:var(--fam)}
@@ -649,9 +649,9 @@ body.escolhendo .rodape .mao .selecionado,body.escolhendo .cmd.selecionado{box-s
 .cena.usada .cartaU .bigP p.oq{font-size:13.5px}
 /* caveiras: os pontos que as falácias já custaram, ao lado dos troféus */
 .cav{display:inline-flex;align-items:center;gap:1px;color:#fbe3dd;background:#7a1420;border:1px solid #c0485a;border-radius:9px;padding:0 5px 0 3px;font-weight:900;font-family:var(--serif);font-size:12px;line-height:17px}
-.cav svg{width:13px;height:13px}
+.cav svg,.cav .caveira{width:13px;height:13px}
 .ident .cav{font-size:13cqh;line-height:17cqh;border-radius:8cqh;padding:0 3cqh 0 1.5cqh}
-.ident .cav svg{width:13cqh;height:13cqh}
+.ident .cav svg,.ident .cav .caveira{width:13cqh;height:13cqh}
 .cai{animation:cai .8s var(--tranco,ease)}
 @keyframes cai{0%{transform:scale(1)}30%{transform:scale(1.35) rotate(-6deg);color:#ff8a8a}60%{transform:scale(.95) rotate(4deg)}100%{transform:scale(1)}}
 /* Paradoxo Lógico: debate trancado */
@@ -672,6 +672,12 @@ body.escolhendo .rodape .mao .selecionado,body.escolhendo .cmd.selecionado{box-s
 .demo-seta.esq{left:8px}.demo-seta.dir{right:8px}
 .demo-seta[disabled]{opacity:.25;cursor:default}
 .demo-fecha{position:absolute;top:8px;right:8px;width:40px;height:40px;border-radius:50%;border:2px solid #ffe9a6;background:rgba(20,14,40,.75);color:#ffe9a6;font-size:20px;cursor:pointer;z-index:3}
+
+.caveira{display:inline-block;width:1em;height:1em;background:currentColor;-webkit-mask:url(icones/fam-falacia.png) center/contain no-repeat;mask:url(icones/fam-falacia.png) center/contain no-repeat;vertical-align:-.12em}
+/* ilustração das cartas temporárias: faixa na carta pequena, quadro na carta ampliada */
+.mini.P .pimg{position:absolute;left:0;right:0;top:22px;height:44%;background-size:cover;background-repeat:no-repeat;border-top:1px solid color-mix(in srgb,var(--fam) 50%,transparent);border-bottom:1px solid color-mix(in srgb,var(--fam) 50%,transparent)}
+.mini.P .pt{padding-top:calc(22px + var(--w)*1.38*.44 + 4px)}
+.bigP .bimg{width:100%;aspect-ratio:16/10;margin-top:12px;border-radius:10px;background-size:cover;background-repeat:no-repeat;border:2px solid color-mix(in srgb,var(--fam) 60%,#fff);box-shadow:0 2px 8px rgba(0,0,0,.25)}
 </style>
 </head>
 <body>
