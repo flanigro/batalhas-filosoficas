@@ -43,7 +43,7 @@ function rotFam(c){ return c.fam==='escola'?'Carta de escola · '+(ESC[c.esc]?ES
 function caveiras(p){ var n=S.players[p].caveiras-(ocultos['cav:'+p]||0); return n>0?'<span class="cav" data-cav="'+p+'" title="Falácias usadas: '+n+' ponto'+(n>1?'s':'')+' perdido'+(n>1?'s':'')+'">'+CAVEIRA+'×'+n+'</span>':''; }
 // livros da Biblioteca em HTML (Minha Biblioteca, na faixa de baixo): em grupos de cinco, para contar a olho
 function livrosHTML(n){ var h=''; for(var i=0;i<Math.min(n,60);i++)h+='<i class="liv"></i>'; return h; }
-var TIPO={c:'Citação · tradução livre',p:'Paráfrase',i:'Inferência a partir da doutrina'};
+var TIPO={c:'Tradução livre',p:'Em outras palavras',i:'A partir de suas ideias'};
 function pode(){return S&&S.turn===0&&!S.over&&!ocupado&&!emPalco&&!animando;}
 function areasNaMesa(){var o={};S.debates.forEach(function(d){o[DEB[d.id].area]=1;});return o;}
 function m3d(){ if(window.M3D&&M3D.pronto)M3D.sync(S,ocultos); }
@@ -308,7 +308,7 @@ function palcoBaixa(f){
 function palcoDebate(f){
   var c=C(f.id), q=DEB[f.did], pl=S.players[f.P], x=f.fala;
   var h='<div class="cena">'+retHTML(c,pl.nome)+'<div class="fala"><div class="et">'+esc(c.nome)+' entra no debate · '+esc(AREA[q.area].nome)+'</div><h3>'+esc(q.q)+'</h3>';
-  if(x)h+='<p class="'+(x[0]==='c'?'cit':'')+'">'+(x[0]==='c'?'“'+esc(x[1])+'”':esc(x[1]))+'</p><div class="fonte">'+esc(x[2])+'<span class="tipo '+x[0]+'">'+TIPO[x[0]]+'</span> · a verificar</div>';
+  if(x)h+='<p class="'+(x[0]==='c'?'cit':'')+'">'+(x[0]==='c'?'“'+esc(x[1])+'”':esc(x[1]))+'</p><div class="fonte"><span class="tipo">'+TIPO[x[0]]+'</span> — '+esc(x[2])+' · a verificar</div>'+(x[3]?'<div class="nota-hist">'+esc(x[3])+'</div>':'');
   (f.rels||[]).forEach(function(r){h+=relHTML(r);});
   return palco(h+'%CONT%</div></div>');
 }
