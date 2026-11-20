@@ -155,13 +155,13 @@
       d: 'Num debate em que você e um oponente participam, +2 ideias para você e −3 para ele.',
       oq: 'Um raciocínio que parece válido e foi feito para enganar. O nome vem dos sofistas, professores de retórica da Atenas do século V a.C., que Platão acusava de vender a aparência da sabedoria (Aristóteles, Refutações Sofísticas, a verificar). Os sofistas cobravam caro pelas aulas; esta carta cobra só 2 ideias, mas a conta chega depois.' },
     { id: 'petitio', nome: 'Petitio Principii', custo: 3, fam: 'falacia', pen: 1, sub: 'Falácia — raciocínio circular',
-      d: 'Ponha 5 ideias num filósofo seu que esteja em ação e não tenha nenhuma ideia.',
+      d: 'Ponha 6 ideias num filósofo seu que esteja em ação e não tenha nenhuma ideia.',
       oq: 'A petição de princípio: a conclusão já está escondida na premissa. “Esta carta é ótima porque é a melhor carta.” Aristóteles a descreve nos Primeiros Analíticos II, 16 (a verificar). Prova-se o que se queria provar porque já se começou provando.' },
     { id: 'mutatio', nome: 'Mutatio Controversiae', custo: 3, fam: 'falacia', pen: 1, sub: 'Falácia — mudando de assunto',
       d: 'Retire até 4 ideias suas de um debate e ponha-as em outro debate da Ágora.',
       oq: 'Mudar de assunto quando a discussão aperta. Em inglês, a manobra ganhou o nome de red herring, o arenque vermelho, um peixe defumado de cheiro forte capaz de despistar os cães de caça.' },
     { id: 'nonsequitur', nome: 'Non Sequitur', custo: 2, fam: 'falacia', pen: 1, sub: 'Falácia — não se segue',
-      d: 'Um oponente descarta até 2 cartas temporárias da mão, sorteadas.',
+      d: 'Um oponente descarta até 3 cartas temporárias da mão, sorteadas.',
       oq: 'Em latim, “não se segue”: a conclusão não decorre das premissas. “Está chovendo; logo, o seu adversário descarta duas cartas.” Faz tanto sentido quanto esta carta, e funciona do mesmo jeito.' },
 
     { id: 'retorsio', nome: 'Retorsio Argumenti', custo: 3, fam: 'argumento', sub: 'Argumento — bumerangue',
@@ -331,7 +331,7 @@
     maquiavel: ['O Príncipe', 'No momento de Reflexão, o filósofo de maior custo do seu grupo, o soberano, recebe +1. Se for o Bibliotecário ou já tiver 10 ideias, a ideia vai para a Biblioteca.'],
     erasmo: ['Elogio da Loucura', 'No momento de Reflexão, o adversário que lidera um debate de Metafísica / Religião perde 1 ideia.'],
     hobbes: ['Guerra de todos contra todos', 'No momento de Reflexão, o adversário com mais ideias num debate perde 1 ideia nesse debate.'],
-    bacon: ['“Conhecimento é poder”', 'No momento de Reflexão, Bacon espia duas cartas da mão de um adversário.'],
+    bacon: ['“Conhecimento é poder”', 'No momento de Reflexão, se houver um debate de Lógica / Ciência na mesa, +1 ideia na sua Biblioteca. E Bacon espia duas cartas da mão de um adversário.'],
     rousseau: ['Contrato Social', 'No momento de Reflexão, todos os filósofos de custo 1 da mesa recebem +1 ideia, inclusive os dos adversários.'],
     arendt: ['A Condição Humana', 'No momento de Reflexão, recebe +1 ideia se houver um debate de Ética / Política na mesa.'],
     aristoteles: ['Silogismo – Premissa', 'No momento de Reflexão, acrescenta +1 ideia sua a um debate de Lógica.'],
@@ -650,7 +650,8 @@
         }
         if (bd >= 0) { s.debates[bd].stakes[bo] -= 1; diz(nomeJ(s, bo) + ' perde 1 ideia em «' + DEB[s.debates[bd].id].q + '».', 'neg'); }
         break;
-      case 'bacon':
+      case 'bacon':   // desde 20/11/2026: +1 na Biblioteca se houver debate de Lógica / Ciência na mesa
+        if (s.debates.some(function (d) { return DEB[d.id].area === 'logica'; })) { pl.library += 1; diz('+1 ideia na Biblioteca: há debate de Lógica na mesa.'); }
         if (pl.human) {
           var alvo = -1;
           for (o = 0; o < s.players.length; o++) if (o !== P && (alvo < 0 || s.players[o].hand.length > s.players[alvo].hand.length)) alvo = o;
@@ -692,9 +693,9 @@
         break;
       case 'erasmo':
         var ed = -1, eo = -1, ev = 0;
-        for (di = 0; di < s.debates.length; di++) {
+        for (di = 0; di < s.debates.length; di++) {   // desde 20/11/2026: só o adversário que lidera (mais ideias que todos os outros)
           if (DEB[s.debates[di].id].area !== 'meta' || !livre(s.debates[di])) continue;
-          for (o = 0; o < s.players.length; o++) if (o !== P && s.debates[di].stakes[o] > ev) { ev = s.debates[di].stakes[o]; ed = di; eo = o; }
+          for (o = 0; o < s.players.length; o++) if (o !== P && s.debates[di].stakes[o] > ev && s.debates[di].stakes[o] > oppMax(s.debates[di], o)) { ev = s.debates[di].stakes[o]; ed = di; eo = o; }
         }
         if (ed >= 0) { s.debates[ed].stakes[eo] -= 1; diz(nomeJ(s, eo) + ' perde 1 ideia em «' + DEB[s.debates[ed].id].q + '».', 'neg'); }
         break;
@@ -899,7 +900,7 @@
         });
         break;
       case 'petitio':
-        pl.group.forEach(function (g, fi) { if (g.ideas === 0 && ativo(g) && !g.lib) out.push({ label: '5 ideias para ' + C(g.id).nome, prm: { fi: fi } }); });
+        pl.group.forEach(function (g, fi) { if (g.ideas === 0 && ativo(g) && !g.lib) out.push({ label: '6 ideias para ' + C(g.id).nome, prm: { fi: fi } }); });
         break;
       case 'mutatio':
         M.forEach(function (i) {
@@ -911,7 +912,7 @@
       case 'nonsequitur':
         ops(function (x) {
           var n = s.players[x].hand.filter(temporariaNaMao).length;
-          if (n) out.push({ label: nomeJ(s, x) + ' descarta ' + Math.min(2, n) + ' carta' + (n > 1 ? 's' : '') + ' temporária' + (n > 1 ? 's' : ''), prm: { o: x } });
+          if (n) out.push({ label: nomeJ(s, x) + ' descarta ' + Math.min(3, n) + ' carta' + (n > 1 ? 's' : '') + ' temporária' + (n > 1 ? 's' : ''), prm: { o: x } });
         });
         break;
       case 'tautologia':
@@ -945,6 +946,32 @@
     }
     return out.filter(function (o) { return custoPraxis(s, P, base, o.prm) <= pl.library; });
   }
+  // Quem ficou fora do alcance de uma carta e por quê (para a dica da mesa; desde 20/11/2026)
+  function foraDoAlcance(s, P, base) {
+    var out = [], pl = s.players[P], x, gs;
+    for (x = 0; x < s.players.length; x++) {
+      if (x === P) continue;
+      var op = s.players[x], nj = op.nome;
+      if (base === 'cicuta') {
+        op.group.forEach(function (g) {
+          if (C(g.id).escola !== 'grega') return;
+          if (imune(g)) out.push(C(g.id).nome + ' (' + nj + ') é imune.');
+          else if (g.lib) out.push(C(g.id).nome + ' (' + nj + ') é o Bibliotecário: a Cicuta não chega à Biblioteca.');
+          else if (custoPraxis(s, P, base, { o: x, fi: op.group.indexOf(g) }) > pl.library) out.push(C(g.id).nome + ' (' + nj + '): a Cicuta custa ' + nI(CARTAS.cicuta.custo) + '.');
+        });
+      } else if (base === 'niilismo') {
+        gs = op.group.filter(function (g) { return C(g.id).escola === 'germ'; });
+        if (op.niil) out.push(nj + ' já está sob o Niilismo.');
+        else if (!gs.length) out.push(nj + ' não tem Germânicos.');
+        else if (gs.every(function (g) { return g.lib; })) out.push(nj + ': o único Germânico é o Bibliotecário.');
+      } else if (base === 'dogma') {
+        gs = op.group.filter(function (g) { return C(g.id).escola === 'mat'; });
+        if (!gs.length) out.push(nj + ' não tem Materialistas.');
+        else if (!alvosDogma(s, x).length) out.push(nj + ': ' + (gs.some(function (g) { return g.dogma; }) ? 'os Materialistas já estão sob o Dogma.' : 'o único Materialista é o Bibliotecário.'));
+      }
+    }
+    return out;
+  }
   // Dogma: os dois Materialistas que mais receberiam no próximo momento de Reflexão
   function alvosDogma(s, o) {
     return s.players[o].group.filter(function (g) { return !g.lib && !g.dogma && C(g.id).escola === 'mat'; })
@@ -965,13 +992,13 @@
         d.stakes[prm.o] = Math.max(0, d.stakes[prm.o] - n); break;
       case 'adhominem':
         g = s.players[prm.o].group[prm.fi]; n = Math.min(5, g.ideas); g.ideas -= n; d.stakes[P] += n; break;   // até 5 (18/11/2026)
-      case 'petitio': poe(s, s.players[P].group[prm.fi], 5); break;
+      case 'petitio': poe(s, s.players[P].group[prm.fi], 6); break;   // 6 desde 20/11/2026 (era 5)
       case 'mutatio':
         n = Math.min(4, d.stakes[P]); d.stakes[P] -= n; s.debates[prm.d2].stakes[P] += n; break;
       case 'nonsequitur':
         op = s.players[prm.o];
         var foi = [];
-        for (n = 0; n < 2; n++) {
+        for (n = 0; n < 3; n++) {   // até 3 desde 20/11/2026 (era 2)
           var ts = []; op.hand.forEach(function (id, k) { if (temporariaNaMao(id)) ts.push(k); });
           if (!ts.length) break;
           var k = ts[Math.floor(rnd(s) * ts.length)];
@@ -1217,7 +1244,7 @@
     C: C, newGame: newGame, moveOptions: moveOptions, porqueNao: porqueNao, moveToDebate: moveToDebate,
     playPhilosopher: playPhilosopher, trocar: trocar, podeTrocar: podeTrocar, libIdx: libIdx, nI: nI, canGive: canGive, giveIdea: giveIdea, buyExtra: buyExtra,
     praxisOptions: praxisOptions, playPraxis: playPraxis, endTurn: endTurn, aiStep: aiStep,
-    oppMax: oppMax, lidera: lidera, ativo: ativo, evalState: evalState, livre: livre, custoPraxis: custoPraxis, custoMin: custoMin
+    oppMax: oppMax, lidera: lidera, ativo: ativo, evalState: evalState, livre: livre, custoPraxis: custoPraxis, custoMin: custoMin, foraDoAlcance: foraDoAlcance
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = API;
   else root.BF = API;

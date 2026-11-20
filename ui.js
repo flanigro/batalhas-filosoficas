@@ -595,6 +595,7 @@ function reaplicarSel(){
   sel.alvos.forEach(function(a){a.el.classList.add('alvo');});
   if(!sel.alvos.length&&!sel.erroTocado){ sel.erroTocado=true; som('erro'); }   // jogada sem alvo possível
   var t=sel.alvos.length?(sel.dicaPasso||DICAS[sel.tipo](sel.ref)):'<b>'+esc(motivoSemAlvo(sel.tipo,sel.ref))+'</b>';
+  if(sel.tipo==='mao'&&!sel.passo){ var fora=BF.foraDoAlcance(S,0,sel.ref); if(fora.length)t+='<span class="fora">Fora do alcance: '+fora.map(esc).join(' ')+'</span>'; }
   var cid=sel.tipo==='fil'?S.players[0].group[sel.ref].id:sel.tipo==='mao'?sel.ref:null;
   $('dica').innerHTML='<span class="t">'+t+'</span>'+(cid?'<button class="btn sm" data-a="lupa" data-id="'+cid+'">Ver carta</button>':'')+'<button class="btn sm" data-a="cancelar">'+(sel.tipo==='livro'&&sel.dadas?'Pronto':'Cancelar')+'</button>';
   document.body.classList.add('escolhendo');

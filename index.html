@@ -522,6 +522,11 @@ body.diario .log{transform:none}
 .ident .back{width:5.5cqh;height:8cqh;border-radius:1cqh}
 .ident .jog{position:absolute;left:50%;bottom:-3px;transform:translate(-50%,100%);font-size:11px;font-weight:800;font-style:italic;color:#fff8e0;background:rgba(42,30,18,.75);border-radius:6px;padding:0 6px;white-space:nowrap}
 .ident.vez .emb{filter:drop-shadow(0 0 5px var(--pc)) drop-shadow(0 0 9px var(--pc))}
+/* alvo de carta que mira um adversário inteiro (Niilismo, Dogma, Non Sequitur): o bloco passa a aceitar clique */
+.ident.alvo{pointer-events:auto!important;cursor:pointer}
+#dica .fora{display:block;font-size:.88em;opacity:.85;margin-top:2px;white-space:normal}
+.ident.alvo .emb{filter:drop-shadow(0 0 6px #7fd0ea) drop-shadow(0 0 12px #4fc3ee)}
+.ident.alvo.sobre .emb{filter:drop-shadow(0 0 8px #fff) drop-shadow(0 0 16px #4fc3ee)}
 .ident.vez .pts{box-shadow:0 0 0 2px var(--pc),0 0 14px 2px var(--pc)}
 /* número da Biblioteca do adversário, sobre o móvel 3D */
 .bibop{transform:translate(-100%,-100%);pointer-events:none!important;white-space:nowrap;font-family:var(--serif);font-weight:900;font-size:16px;line-height:18px;color:#fff8e0;padding:0 6px 1px;min-width:24px;text-align:center;border-radius:5px;
@@ -600,6 +605,7 @@ body.escolhendo .rodape .mao .selecionado,body.escolhendo .cmd.selecionado{box-s
 /* dica da seleção: na faixa livre entre as placas e os púlpitos (posição dada pela cena) */
 .dica{transform:translate(-50%,-50%);padding:2px 5px 2px 12px;border-radius:9px;border-width:1.5px;gap:8px;max-width:min(820px,calc(100vw - 24px));box-shadow:0 6px 18px rgba(0,0,0,.45);z-index:9}
 .dica .t{font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.dica .t:has(.fora){white-space:normal}
 .dica .btn.sm{padding:2px 9px;font-size:12.5px;flex:none}
 /* aviso de ideias insuficientes: caixa no centro; o fundo transparente pega o clique fora (fecha sem agir) */
 .aviso{position:fixed;inset:0;z-index:46;display:none;align-items:center;justify-content:center}

@@ -268,7 +268,7 @@ Os poderes valem enquanto o filósofo está no grupo. Os que agem "no momento de
 - **Marx — Mais-Valia.** No momento de Reflexão, o filósofo adversário com mais ideias perde 1. Ignora Diógenes e os Bibliotecários.
 - **Hegel — Dialética.** Hegel é o único que pode ir a um debate com menos ideias que o seu valor na área: leva o que tiver, até esse valor. Precisa ter pelo menos 1 ideia. No digital, ele sempre leva o máximo possível. **Síntese:** ao entrar num debate em que um adversário tem mais ideias que você (antes de Hegel chegar), +1 ideia sua nesse debate. A tese encontra a antítese.
 - **Hobbes — Guerra de todos contra todos.** No momento de Reflexão, o adversário com mais ideias num debate, de qualquer área, perde 1 ideia nesse debate. Computador: o maior número de ideias de um adversário entre todos os debates (empate: o primeiro debate). Nome do poder tirado do Leviatã, cap. XIII (a verificar); até 18/11/2026 o poder valia só para debates de Lógica e se chamava "Tudo no Universo é físico".
-- **Bacon — "Conhecimento é poder".** No momento de Reflexão, você espia duas cartas da mão de um adversário. Computador: o adversário com mais cartas, duas cartas ao acaso. No digital, por enquanto, só tem efeito quando é do jogador humano.
+- **Bacon — "Conhecimento é poder".** No momento de Reflexão, se houver um debate de Lógica / Ciência na mesa, +1 ideia na sua Biblioteca (desde 20/11/2026). E você espia duas cartas da mão de um adversário (computador: o adversário com mais cartas, duas cartas ao acaso; a espiada só aparece para o jogador humano).
 - **Locke — Tábula Rasa.** Locke recebe +1 ideia sempre que você baixa uma carta, um filósofo (inclusive como Bibliotecário, exceto o próprio Locke) ou uma carta temporária, e sempre que um adversário baixa um filósofo (as cartas temporárias dos adversários não contam). Locke precisa estar em ação. As ideias vêm da experiência.
 - **Rousseau — Contrato Social.** No momento de Reflexão, todos os filósofos de custo 1 da mesa recebem +1 ideia, inclusive os dos adversários e o próprio Rousseau. Ficam de fora os recém-chegados e os Bibliotecários.
 
@@ -284,7 +284,7 @@ Os poderes valem enquanto o filósofo está no grupo. Os que agem "no momento de
 ### Livres-Pensadores
 
 - **Maquiavel — O Príncipe.** No momento de Reflexão, o filósofo de maior custo do seu grupo, o soberano, recebe +1. Pode ser o próprio Maquiavel. Se o soberano for o Bibliotecário, ou já tiver 10 ideias, a ideia vai para a Biblioteca. Empate de custo: a primeira cadeira. (Até 19/11/2026, o +1 ia para o filósofo com mais ideias.)
-- **Erasmo — Elogio da Loucura.** No momento de Reflexão, um adversário perde 1 ideia num debate de Metafísica / Religião. Computador: o adversário com mais ideias num debate dessa área. (O texto da carta diz "o adversário que lidera"; o motor escolhe o adversário com mais ideias, mesmo que ele não lidere. Ver Apêndice C.)
+- **Erasmo — Elogio da Loucura.** No momento de Reflexão, o adversário que lidera um debate de Metafísica / Religião (mais ideias que todos os outros, você incluído) perde 1 ideia nele. Se ninguém além de você lidera, nada acontece. Havendo mais de um, o computador escolhe o de mais ideias. (Decidido em 20/11/2026: vale o texto da carta.)
 
 ---
 
@@ -300,9 +300,9 @@ Saem do jogo depois de usadas e tiram pontos de quem as usa (seção 6.5).
 - **Espantalho** (custo 5; −2 pontos). Num debate do qual você e um oponente participam: +4 para você e −4 para ele.
 - **Ad Hominem** (custo 2; −2 pontos). Tire **até 5** ideias de um filósofo adversário e acrescente a mesma quantidade num debate do qual você participa. Não pode mirar Diógenes. Você precisa participar de algum debate.
 - **Sofisma** (custo 2; −1 ponto). Num debate do qual você e um oponente participam: +2 para você e −3 para ele.
-- **Petitio Principii** (custo 3; −1 ponto). Coloque 5 ideias num filósofo seu que já esteja em ação e não tenha ideias. Não vale para recém-chegados nem para o Bibliotecário.
+- **Petitio Principii** (custo 3; −1 ponto). Coloque 6 ideias num filósofo seu que já esteja em ação e não tenha ideias. Não vale para recém-chegados nem para o Bibliotecário.
 - **Mutatio Controversiae** (custo 3; −1 ponto). Retire até 4 ideias suas de um debate e ponha-as em outro debate da Ágora. No digital, move sempre 4 (ou todas, se tiver menos).
-- **Non Sequitur** (custo 2; −1 ponto). Um oponente descarta até 2 cartas temporárias da mão, sorteadas. Os filósofos da mão ficam.
+- **Non Sequitur** (custo 2; −1 ponto). Um oponente descarta até 3 cartas temporárias da mão, sorteadas. Os filósofos da mão ficam.
 
 ### Argumentos
 
@@ -318,9 +318,10 @@ Técnicas legítimas de prova e refutação. Voltam ao monte pelo descarte.
 
 Cada uma ataca uma escola e só entra no baralho quando essa escola está em jogo. Voltam ao monte pelo descarte.
 
-- **Cicuta** (Gregos; custo 3, ou **1** se o alvo for Sócrates). Elimine um filósofo grego do grupo de um adversário. Ele vai para o descarte; as ideias que tinha se perdem (as que já levou a debates ficam). Diógenes é imune. O Bibliotecário não é alvo.
+- **Cicuta** (Gregos; custo 3, ou **1** se o alvo for Sócrates). Elimine um filósofo grego do grupo de um adversário. Ele vai para o descarte; as ideias que tinha se perdem (as que já levou a debates ficam). Diógenes é imune. O Bibliotecário não é alvo (confirmado pelo Flavio em 20/11/2026): a Cicuta não chega à Biblioteca.
 - **Dogma** (Materialistas; custo 4). Escolha um adversário: dois Materialistas e Empiristas do grupo dele não recebem ideias no próximo momento de Reflexão dele (nem da Reflexão, nem de bônus, nem de poderes de colegas). Os poderes deles continuam agindo. No digital, a carta atinge os dois de maior custo; no impresso, quem joga escolhe.
 - **Niilismo** (Germânicos; custo 3). No próximo turno de um adversário, nenhum filósofo Germânico dele leva ideias a debates. Continuam recebendo ideias e usando poderes da Reflexão.
+- **No digital, alvos fora do alcance:** quando uma carta de escola é escolhida, a dica da mesa diz quem ficou de fora e por quê (Bibliotecário, Diógenes imune, adversário já sob o efeito, sem filósofos da escola, ideias insuficientes).
 
 ### Práxis
 
@@ -409,8 +410,6 @@ Ordem: Metafísica, Lógica, Ética, Psicologia.
 
 ## Apêndice C — Pendências de regra registradas
 
-- **Erasmo:** texto da carta ("o adversário que lidera") e motor ("o adversário com mais ideias") divergem. Decidir qual vale.
-- **Bacon:** sem efeito para os jogadores do computador.
 - **Hegel:** no digital, leva sempre o máximo; no impresso, o jogador poderia escolher quanto levar.
 - **Vantagem por assento:** ainda irregular nas simulações.
 - **Cartas de custo 4 e 5:** rendem pouco com a economia atual.

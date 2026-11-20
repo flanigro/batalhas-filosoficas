@@ -65,10 +65,10 @@ function opc(s, P, id, f) { return BF.praxisOptions(s, P, id).find(f || (() => t
   confere('Espantalho: sai do jogo', s.exiladas.indexOf(c) >= 0 && s.discard.indexOf(c) < 0);
   const c2 = daCarta(s, 0, 'retorsio'); s.debates[0].stakes[1] = 3; BF.playPraxis(s, 0, c2, opc(s, 0, 'retorsio').prm);
   confere('Argumento volta com o descarte e não tira pontos', s.discard.indexOf(c2) >= 0 && s.players[0].points === -2); }
-{ // Non Sequitur: descarta até 2 temporárias sorteadas
+{ // Non Sequitur: descarta até 3 temporárias sorteadas (desde 20/11/2026)
   const s = jogo(9); zera(s); s.players[1].hand = ['kant', 'sofisma#1', 'reductio#1', 'tautologia#1'];
   const c = daCarta(s, 0, 'nonsequitur'); BF.playPraxis(s, 0, c, opc(s, 0, 'nonsequitur', x => x.prm.o === 1).prm);
-  confere('Non Sequitur: fica o filósofo e 1 temporária', s.players[1].hand.length === 2 && s.players[1].hand.indexOf('kant') >= 0, s.players[1].hand);
+  confere('Non Sequitur: fica só o filósofo', s.players[1].hand.length === 1 && s.players[1].hand[0] === 'kant', s.players[1].hand);
   confere('Non Sequitur: −1 ponto', s.players[0].points === -1); }
 { // Tautologia: no recém-chegado ou no debate
   const s = jogo(10); zera(s); s.players[0].group = [Object.assign(G('kant'), { novo: true })]; const c = daCarta(s, 0, 'tautologia', 2);
@@ -127,6 +127,24 @@ function opc(s, P, id, f) { return BF.praxisOptions(s, P, id).find(f || (() => t
   confere('Maquiavel: soberano Bibliotecário → +1 na Biblioteca', s.players[1].library === 3 + 5 + 1, s.players[1].library); }
 { const s = jogo(17); zera(s); s.players[1].group = [G('maquiavel', 0), G('kant', 10)]; passaPara1(s);
   confere('Maquiavel: soberano no teto → +1 na Biblioteca', s.players[1].library === 3 + 1 && s.players[1].group[1].ideas === 10, s.players[1].library); }
+
+// 10. Ajustes de 20/11/2026: Petitio 6, Erasmo só no líder, Bacon com debate de Lógica, explicação dos alvos fora do alcance
+{ const s = jogo(18); zera(s); s.players[0].group = [G('kant', 0)]; const c = daCarta(s, 0, 'petitio', 3);
+  BF.playPraxis(s, 0, c, opc(s, 0, 'petitio').prm); confere('Petitio: 6 ideias', s.players[0].group[0].ideas === 6, s.players[0].group[0].ideas); }
+{ const s = jogo(19); zera(s); s.debates[0].id = 'd04'; const di = 0;
+  if (di >= 0) { s.players[1].group = [G('erasmo')]; s.debates[di].stakes[1] = 6; s.debates[di].stakes[2] = 4; s.debates[di].stakes[0] = 4; passaPara1(s);
+    confere('Erasmo: quem lidera não é o jogador 2 (o dono lidera)', s.debates[di].stakes[2] === 4 && s.debates[di].stakes[0] === 4, s.debates[di].stakes); }
+  else confere('Erasmo: semente sem debate de Metafísica', true); }
+{ const s = jogo(19); zera(s); s.debates[0].id = 'd04'; const di = 0;
+  if (di >= 0) { s.players[1].group = [G('erasmo')]; s.debates[di].stakes[0] = 5; s.debates[di].stakes[2] = 3; passaPara1(s);
+    confere('Erasmo: o líder perde 1, o segundo não', s.debates[di].stakes[0] === 4 && s.debates[di].stakes[2] === 3, s.debates[di].stakes); }
+  else confere('Erasmo: semente sem debate de Metafísica', true); }
+for (const ids of [['d01', 'd07'], ['d04', 'd07']]) { const s = jogo(20); zera(s); ids.forEach((id, i) => { s.debates[i].id = id; });
+  s.players[1].group = [G('bacon')]; const temLog = s.debates.some(d => BF.DEB[d.id].area === 'logica'); passaPara1(s);
+  confere('Bacon: +1 na Biblioteca só com debate de Lógica (' + temLog + ')', s.players[1].library === 3 + (temLog ? 1 : 0), [s.players[1].library, temLog]); }
+{ const s = jogo(21); zera(s); s.players[1].group = [Object.assign(G('socrates'), { lib: true }), G('nietzsche')]; s.players[0].library = 5;
+  const f = BF.foraDoAlcance(s, 0, 'cicuta'); confere('Cicuta: explica o Sócrates Bibliotecário', f.length === 1 && /Bibliotecário/.test(f[0]), f);
+  s.players[1].niil = 1; confere('Niilismo: explica quem já está sob o efeito', /já está sob o Niilismo/.test(BF.foraDoAlcance(s, 0, 'niilismo').join(' '))); }
 
 // 7. partidas só de IA
 { let erros = 0, rod = 0, venc = [0, 0, 0], N = 300;
