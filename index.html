@@ -658,6 +658,20 @@ body.escolhendo .rodape .mao .selecionado,body.escolhendo .cmd.selecionado{box-s
 .deb .tranca{position:absolute;left:50%;top:2%;transform:translate(-50%,0);display:flex;align-items:center;gap:4px;white-space:nowrap;pointer-events:none;
   background:rgba(30,22,40,.88);color:#f3ecff;border:2px solid var(--pc);border-radius:10px;padding:2px 8px;font-size:11.5px;font-weight:800;letter-spacing:.3px;box-shadow:0 3px 10px rgba(0,0,0,.5);z-index:3}
 .deb .tranca svg{width:12px;height:15px}
+
+/* ---------- demonstração "Conheça o jogo" (pranchas provisórias em imagem) ---------- */
+.demo{position:fixed;inset:0;z-index:49;display:none;align-items:center;justify-content:center;background:#0b0820}
+.demo.on{display:flex}
+.demo-palco{position:relative;width:min(100vw,calc(100vh * 1672 / 941));aspect-ratio:1672/941;box-shadow:0 0 60px rgba(0,0,0,.6)}
+.demo-palco img{position:absolute;inset:0;width:100%;height:100%;display:block;user-select:none;-webkit-user-drag:none}
+.demo-hot{position:absolute;background:transparent;border:0;border-radius:999px;cursor:pointer;padding:0}
+.demo-hot:hover,.demo-hot:focus-visible{box-shadow:0 0 0 3px rgba(255,222,120,.9),0 0 18px rgba(255,210,90,.7);outline:none}
+.demo-hot[hidden]{display:none}
+.demo-seta{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:64px;border-radius:12px;border:0;background:rgba(20,14,40,.55);color:#ffe9a6;font-size:40px;line-height:1;cursor:pointer;z-index:2}
+.demo-seta:hover{background:rgba(20,14,40,.85)}
+.demo-seta.esq{left:8px}.demo-seta.dir{right:8px}
+.demo-seta[disabled]{opacity:.25;cursor:default}
+.demo-fecha{position:absolute;top:8px;right:8px;width:40px;height:40px;border-radius:50%;border:2px solid #ffe9a6;background:rgba(20,14,40,.75);color:#ffe9a6;font-size:20px;cursor:pointer;z-index:3}
 </style>
 </head>
 <body>
@@ -702,11 +716,23 @@ body.escolhendo .rodape .mao .selecionado,body.escolhendo .cmd.selecionado{box-s
       <button class="ab-b" data-a="ab-galeria">Galeria dos filósofos</button>
       <button class="ab-bat" data-a="ab-batalha" id="abbat">Batalha!</button>
       <button class="ab-b" data-a="ab-regras">As regras</button>
-      <button class="ab-b ab-tut" disabled title="O tutorial ainda está sendo preparado">Tutorial · em breve</button>
+      <button class="ab-b" data-a="ab-demo" title="Demonstração do jogo em sete pranchas">Conheça o jogo</button>
     </div>
     <div class="ab-passos"><div><b>1</b>Monte seu grupo de filósofos</div><div><b>2</b>Junte ideias, convença adversários</div><div><b>3</b>Vença os debates no argumento</div></div>
     <button class="ab-cont" data-a="ab-continuar" id="abcont" hidden>Voltar à partida</button>
   </div>
+</div>
+<!-- demonstração "Conheça o jogo": as sete pranchas provisórias, como imagens (19/11/2026); a versão em HTML virá com as imagens decupadas -->
+<div class="demo" id="demo" role="dialog" aria-modal="true" aria-label="Conheça o jogo">
+  <div class="demo-palco" id="demopalco">
+    <img id="demoimg" alt="">
+    <button class="demo-hot" data-a="demo-ant" id="demoant" aria-label="Anterior" style="left:69.6%;top:84.6%;width:9.2%;height:6.2%"></button>
+    <button class="demo-hot" data-a="demo-prox" id="demoprox" aria-label="Próximo" style="left:88.8%;top:84.6%;width:9.6%;height:6.2%"></button>
+    <button class="demo-hot" data-a="demo-jogar" id="demojogar" aria-label="Começar a batalha" style="left:70%;top:83%;width:28.6%;height:9.6%"></button>
+  </div>
+  <button class="demo-seta esq" data-a="demo-ant" aria-label="Prancha anterior">‹</button>
+  <button class="demo-seta dir" data-a="demo-prox" aria-label="Próxima prancha">›</button>
+  <button class="demo-fecha" data-a="demo-fechar" aria-label="Fechar a demonstração">✕</button>
 </div>
 <div class="ov" id="ov"><div class="box" id="box"></div></div>
 

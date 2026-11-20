@@ -740,7 +740,26 @@ function abAcao(a,id){
     case 'ab-carta': verCarta(id,true); break;
     case 'ab-regras': abrirManual(); break;
     case 'ab-continuar': esconderAbertura(); break;
+    case 'ab-demo': abrirDemo(); break;
   }
+}
+/* "Conheça o jogo": demonstração em sete pranchas (por ora as imagens provisórias, como vieram; os botões
+   Anterior, Próximo e Começar a batalha desenhados nelas recebem áreas clicáveis). Setas, teclado e Esc. */
+var demoN=0, DEMO_TOT=7;
+function abrirDemo(){ demoN=1; for(var i=2;i<=DEMO_TOT;i++){ var im=new Image(); im.src='demo/prancha'+i+'.webp'; } mostrarDemo(); $('demo').classList.add('on'); }
+function fecharDemo(){ $('demo').classList.remove('on'); }
+function demoAberta(){ return $('demo').classList.contains('on'); }
+function mostrarDemo(){
+  $('demoimg').src='demo/prancha'+demoN+'.webp'; $('demoimg').alt='Conheça o jogo, prancha '+demoN+' de '+DEMO_TOT;
+  $('demoant').hidden=demoN===1||demoN===DEMO_TOT; $('demoprox').hidden=demoN===1||demoN===DEMO_TOT; $('demojogar').hidden=demoN!==DEMO_TOT;
+  document.querySelector('.demo-seta.esq').disabled=demoN===1; document.querySelector('.demo-seta.dir').disabled=demoN===DEMO_TOT;
+}
+function passoDemo(d){ var n=demoN+d; if(n<1||n>DEMO_TOT)return; demoN=n; mostrarDemo(); }
+function demoAcao(a){
+  if(a==='demo-ant')passoDemo(-1);
+  else if(a==='demo-prox')passoDemo(1);
+  else if(a==='demo-fechar')fecharDemo();
+  else if(a==='demo-jogar'){ fecharDemo(); escolherOponentes(); }
 }
 function nova(nivel){ S=BF.newGame({niveis:['mestre',nivel,nivel]});
   var h=location.hash.slice(1).split('-'); ['diogenes','nietzsche'].forEach(function(id){ if(h.indexOf(id)>=0)comFilosofo(id); });
@@ -778,6 +797,7 @@ document.addEventListener('click',function(ev){
   if(!t){ if(ev.target===$('ov')&&(S&&aberto||abertaAbertura()))fechar(); return; }
   var a2=t.dataset.a, i=t.dataset.i!==undefined?+t.dataset.i:undefined, id=t.dataset.id;
   if(a2.indexOf('ab-')===0){ abAcao(a2,id); return; }
+  if(a2.indexOf('demo-')===0){ demoAcao(a2); return; }
   if(a2==='bio'){ var bt=$('box').querySelector('.bio-txt'); if(bt)bt.classList.toggle('on'); return; }   // biografias ainda por escrever
   if(a2==='comecar'){var r=document.querySelector('input[name=niv]:checked'); nova(r?r.value:'aprendiz'); return;}
   if(a2==='inicio'){mostrarAbertura();return;}
@@ -815,6 +835,12 @@ document.addEventListener('dblclick',function(e){
   e.preventDefault(); verCarta(m.dataset.cid);
 });
 document.addEventListener('keydown',function(e){
+  if(demoAberta()){
+    if(e.key==='ArrowRight'||e.key==='PageDown'||e.key===' '){ e.preventDefault(); passoDemo(1); }
+    else if(e.key==='ArrowLeft'||e.key==='PageUp'){ e.preventDefault(); passoDemo(-1); }
+    else if(e.key==='Escape')fecharDemo();
+    return;
+  }
   if(e.key!=='Escape')return;
   if(abertaAbertura()){ if($('ov').classList.contains('on'))fechar(); return; }
   if(!S)return;
