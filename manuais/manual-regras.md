@@ -36,7 +36,7 @@ As ideias só andam num sentido: Biblioteca → filósofo → debate. Ideias da 
 
 **As ideias num debate pertencem ao jogador, e não ao filósofo que as levou.** Depois que chegam ao debate, ninguém sabe mais de quem vieram. Por isso, um efeito que tira ideias de um debate atinge o jogador, nunca um filósofo em particular. (No digital, as ideias de cada jogador num debate aparecem numa prateleira da placa; o nome serve só para descrever a tela.)
 
-A Biblioteca não tem teto. **Cada filósofo pode ter no máximo 10 ideias**: o que passaria disso se perde, venha de onde vier (Reflexão, escola, duplas, poderes, Petitio), e a Biblioteca não pode dar ideias a quem já tem 10.
+A Biblioteca não tem teto. **Cada filósofo pode ter no máximo 10 ideias**: o que passaria disso se perde, venha de onde vier (Reflexão, escola, duplas, poderes, Tautologia), e a Biblioteca não pode dar ideias a quem já tem 10.
 
 ### 2.2 Cartas de filósofo (20)
 
@@ -85,7 +85,7 @@ Cada debate é uma pergunta de uma das quatro áreas, com um **valor**: 15, 12, 
 - **Recém-chegado:** filósofo que acabou de entrar num grupo, por baixa ou por troca. Fica fora de ação até o início do próximo turno do seu dono (seção 6.6). No digital, aparece semitransparente.
 - **Já debateu:** filósofo que já foi a um debate neste turno. No digital, aparece acinzentado.
 - **Participar de um debate:** ter pelo menos 1 ideia nele. Quem perde todas as ideias num debate deixa de participar dele.
-- **Liderar um debate:** ter ali ideias em número igual ou maior que o valor **e** pelo menos uma a mais que cada adversário.
+- **Liderar um debate:** ter ali ideias em número igual ou maior que o valor **e** pelo menos uma a mais que cada adversário. (Com a Petitio Principii, quem a jogou lidera só com ter mais que cada adversário.)
 - **Colega:** outro filósofo do mesmo grupo. **Colega de escola:** colega da mesma escola.
 - **Vizinho:** filósofo da cadeira imediatamente ao lado.
 - **Adversário** (ou **oponente**): qualquer outro jogador, ou um filósofo de outro jogador.
@@ -199,7 +199,7 @@ Depois da abertura, o jogador faz, **em qualquer ordem e quantas vezes puder**, 
 
 - Pague o custo com ideias da Biblioteca e aplique o efeito.
 - Argumentos, cartas de escola e Práxis vão para o descarte.
-- **Falácias saem do jogo** e cobram pontos de quem as usou: −2 por Ad Hominem e Espantalho, −1 pelas demais. O placar pode ficar **negativo**. Ao lado dos troféus, as caveiras registram quantos pontos as falácias já custaram (caveira ×3, por exemplo).
+- **Falácias saem do jogo** e cobram pontos de quem as usou: −2 por Ad Hominem, Espantalho e Petitio Principii, −1 pelas demais. O placar pode ficar **negativo**. Ao lado dos troféus, as caveiras registram quantos pontos as falácias já custaram (caveira ×3, por exemplo).
 - A maioria exige que você **participe** do debate escolhido (seção 9).
 - Não há limite de cartas temporárias por turno.
 - Depois de cada carta: Locke reage (se estiver no seu grupo e em ação); Freud reage, se estiver no grupo de um adversário e a carta for uma falácia; confere-se a vitória imediata para quem jogou.
@@ -300,7 +300,7 @@ Saem do jogo depois de usadas e tiram pontos de quem as usa (seção 6.5).
 - **Espantalho** (custo 5; −2 pontos). Num debate do qual você e um oponente participam: +4 para você e −4 para ele.
 - **Ad Hominem** (custo 2; −2 pontos). Tire **até 5** ideias de um filósofo adversário e acrescente a mesma quantidade num debate do qual você participa. Não pode mirar Diógenes. Você precisa participar de algum debate.
 - **Sofisma** (custo 2; −1 ponto). Num debate do qual você e um oponente participam: +2 para você e −3 para ele.
-- **Petitio Principii** (custo 3; −1 ponto). Coloque 6 ideias num filósofo seu que já esteja em ação e não tenha ideias. Não vale para recém-chegados nem para o Bibliotecário.
+- **Petitio Principii** (custo 2; −2 pontos; desde 20/11/2026). Num debate em que você tem mais ideias que cada adversário, dê a conclusão por provada: se no início do seu próximo turno você ainda tiver mais ideias que cada um, vence o debate, mesmo sem ter chegado ao valor (marca o valor inteiro). Os adversários têm uma volta da mesa para recusar a premissa, empatando ou passando você; nesse caso o selo sai e nada acontece. No digital, o debate mostra o selo "Petitio".
 - **Mutatio Controversiae** (custo 3; −1 ponto). Retire até 4 ideias suas de um debate e ponha-as em outro debate da Ágora. No digital, move sempre 4 (ou todas, se tiver menos).
 - **Non Sequitur** (custo 2; −1 ponto). Um oponente descarta até 3 cartas temporárias da mão, sorteadas. Os filósofos da mão ficam.
 

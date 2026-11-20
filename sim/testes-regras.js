@@ -128,9 +128,17 @@ function opc(s, P, id, f) { return BF.praxisOptions(s, P, id).find(f || (() => t
 { const s = jogo(17); zera(s); s.players[1].group = [G('maquiavel', 0), G('kant', 10)]; passaPara1(s);
   confere('Maquiavel: soberano no teto → +1 na Biblioteca', s.players[1].library === 3 + 1 && s.players[1].group[1].ideas === 10, s.players[1].library); }
 
-// 10. Ajustes de 20/11/2026: Petitio 6, Erasmo só no líder, Bacon com debate de Lógica, explicação dos alvos fora do alcance
-{ const s = jogo(18); zera(s); s.players[0].group = [G('kant', 0)]; const c = daCarta(s, 0, 'petitio', 3);
-  BF.playPraxis(s, 0, c, opc(s, 0, 'petitio').prm); confere('Petitio: 6 ideias', s.players[0].group[0].ideas === 6, s.players[0].group[0].ideas); }
+// 10. Ajustes de 20/11/2026: Petitio nova, Erasmo só no líder, Bacon com debate de Lógica, explicação dos alvos fora do alcance
+{ // Petitio (desde 20/11/2026): dá a conclusão por provada; vence abaixo do valor se ainda liderar depois de uma volta da mesa
+  const volta = s => { for (let k = 0; k < 3; k++) { const pl = s.players[s.turn]; pl.hand = pl.hand.slice(0, 5); BF.endTurn(s, []); } };
+  const s = jogo(18); zera(s); s.debates[0].id = 'd01'; s.debates[0].stakes = [3, 1, 0]; s.debates[1].stakes = [0, 2, 0];
+  const c = daCarta(s, 0, 'petitio', 2); const ops = BF.praxisOptions(s, 0, 'petitio');
+  confere('Petitio: só onde você tem mais ideias que cada um', ops.length === 1 && ops[0].prm.d === 0, ops);
+  BF.playPraxis(s, 0, c, ops[0].prm); confere('Petitio: custo 2, −2 pontos, selo no debate', s.players[0].library === 0 && s.players[0].points === -2 && s.debates[0].petitio.P === 0);
+  volta(s); confere('Petitio: ninguém recusou, vence abaixo do valor (15 pontos)', s.players[0].points === 13 && s.players[0].won.indexOf('d01') >= 0, s.players[0].points);
+  const t = jogo(18); zera(t); t.debates[0].id = 'd01'; t.debates[0].stakes = [3, 1, 0]; const c2 = daCarta(t, 0, 'petitio', 2);
+  BF.playPraxis(t, 0, c2, BF.praxisOptions(t, 0, 'petitio')[0].prm); t.debates[0].stakes[1] = 3;
+  volta(t); confere('Petitio: empate recusa a conclusão; o selo sai', t.players[0].points === -2 && !t.debates[0].petitio && t.players[0].won.length === 0, [t.players[0].points, t.debates[0]]); }
 { const s = jogo(19); zera(s); s.debates[0].id = 'd04'; const di = 0;
   if (di >= 0) { s.players[1].group = [G('erasmo')]; s.debates[di].stakes[1] = 6; s.debates[di].stakes[2] = 4; s.debates[di].stakes[0] = 4; passaPara1(s);
     confere('Erasmo: quem lidera não é o jogador 2 (o dono lidera)', s.debates[di].stakes[2] === 4 && s.debates[di].stakes[0] === 4, s.debates[di].stakes); }

@@ -154,9 +154,9 @@
     { id: 'sofisma', nome: 'Sofisma', custo: 2, fam: 'falacia', pen: 1, sub: 'Falácia — argumento enganoso',
       d: 'Num debate em que você e um oponente participam, +2 ideias para você e −3 para ele.',
       oq: 'Um raciocínio que parece válido e foi feito para enganar. O nome vem dos sofistas, professores de retórica da Atenas do século V a.C., que Platão acusava de vender a aparência da sabedoria (Aristóteles, Refutações Sofísticas, a verificar). Os sofistas cobravam caro pelas aulas; esta carta cobra só 2 ideias, mas a conta chega depois.' },
-    { id: 'petitio', nome: 'Petitio Principii', custo: 3, fam: 'falacia', pen: 1, sub: 'Falácia — raciocínio circular',
-      d: 'Ponha 6 ideias num filósofo seu que esteja em ação e não tenha nenhuma ideia.',
-      oq: 'A petição de princípio: a conclusão já está escondida na premissa. “Esta carta é ótima porque é a melhor carta.” Aristóteles a descreve nos Primeiros Analíticos II, 16 (a verificar). Prova-se o que se queria provar porque já se começou provando.' },
+    { id: 'petitio', nome: 'Petitio Principii', custo: 2, fam: 'falacia', pen: 2, sub: 'Falácia — dar por provado',
+      d: 'Num debate em que você tem mais ideias que cada adversário, dê a conclusão por provada: se no início do seu próximo turno você ainda tiver mais ideias que cada um, vence o debate, mesmo sem ter chegado ao valor.',
+      oq: 'Petição de princípio: usar como premissa justamente o que está em discussão. “Tenho razão porque estou certo.” A premissa não foi aceita pelos outros e costuma vir do senso comum: “todo mundo sabe que…”. Aristóteles a descreve nos Primeiros Analíticos II, 16 (a verificar).' },
     { id: 'mutatio', nome: 'Mutatio Controversiae', custo: 3, fam: 'falacia', pen: 1, sub: 'Falácia — mudando de assunto',
       d: 'Retire até 4 ideias suas de um debate e ponha-as em outro debate da Ágora.',
       oq: 'Mudar de assunto quando a discussão aperta. Em inglês, a manobra ganhou o nome de red herring, o arenque vermelho, um peixe defumado de cheiro forte capaz de despistar os cães de caça.' },
@@ -473,7 +473,7 @@
   // ---------- consultas ----------
   function inGroup(pl, id) { for (var i = 0; i < pl.group.length; i++) if (pl.group[i].id === id) return pl.group[i]; return null; }
   function oppMax(d, P) { var m = 0; for (var i = 0; i < d.stakes.length; i++) if (i !== P && d.stakes[i] > m) m = d.stakes[i]; return m; }
-  function lidera(s, di, P) { var d = s.debates[di]; return d.stakes[P] >= DEB[d.id].valor && d.stakes[P] > oppMax(d, P); }
+  function lidera(s, di, P) { var d = s.debates[di]; var req = d.petitio && d.petitio.P === P ? 1 : DEB[d.id].valor; return d.stakes[P] >= req && d.stakes[P] > oppMax(d, P); }
   function ativo(g) { return !g.novo; }
   // Diógenes: nenhum adversário o escolhe como alvo nem tira ideias dele; não pode ser trocado (nem pelo dono).
   function imune(g) { return g.id === 'diogenes'; }
@@ -496,8 +496,9 @@
       if (d.tranca && d.tranca.P === P) { delete d.tranca; log(s, 'O Paradoxo se desfaz: «' + DEB[d.id].q + '» volta a andar.', 'sis', P); fx(s, { k: 'destranca', di: di, did: d.id }); }
     });
     for (var i = s.debates.length - 1; i >= 0; i--) {
-      if (livre(s.debates[i]) && lidera(s, i, P)) win(s, P, i, 'sustentou a liderança até seu turno');
+      if (livre(s.debates[i]) && lidera(s, i, P)) win(s, P, i, s.debates[i].petitio && s.debates[i].petitio.P === P && s.debates[i].stakes[P] < DEB[s.debates[i].id].valor ? 'deu a conclusão por provada, e ninguém a recusou' : 'sustentou a liderança até seu turno');
     }
+    s.debates.forEach(function (d) { if (d.petitio && d.petitio.P === P) { delete d.petitio; log(s, 'A Petitio de ' + pl.nome + ' em «' + DEB[d.id].q + '» foi recusada pelos adversários.', 'sis', P); } });
     draw(s, P, 1);
     pl.library += s.cfg.bibPorTurno;
     fx(s, { k: 'bib', P: P, n: s.cfg.bibPorTurno });
@@ -900,7 +901,7 @@
         });
         break;
       case 'petitio':
-        pl.group.forEach(function (g, fi) { if (g.ideas === 0 && ativo(g) && !g.lib) out.push({ label: '6 ideias para ' + C(g.id).nome, prm: { fi: fi } }); });
+        M.forEach(function (i) { var dd = s.debates[i]; if (!dd.petitio && dd.stakes[P] > oppMax(dd, P)) out.push({ label: 'Dar por provado «' + DEB[dd.id].q + '»', prm: { d: i } }); });
         break;
       case 'mutatio':
         M.forEach(function (i) {
@@ -992,7 +993,7 @@
         d.stakes[prm.o] = Math.max(0, d.stakes[prm.o] - n); break;
       case 'adhominem':
         g = s.players[prm.o].group[prm.fi]; n = Math.min(5, g.ideas); g.ideas -= n; d.stakes[P] += n; break;   // até 5 (18/11/2026)
-      case 'petitio': poe(s, s.players[P].group[prm.fi], 6); break;   // 6 desde 20/11/2026 (era 5)
+      case 'petitio': d.petitio = { P: P }; break;   // desde 20/11/2026: dá a conclusão por provada (vence abaixo do valor se ainda liderar)
       case 'mutatio':
         n = Math.min(4, d.stakes[P]); d.stakes[P] -= n; s.debates[prm.d2].stakes[P] += n; break;
       case 'nonsequitur':
@@ -1126,8 +1127,9 @@
       var d = s.debates[i], val = DEB[d.id].valor, mine = d.stakes[P], om = oppMax(d, P);
       v += 0.6 * Math.min(mine, val);
       v += 0.25 * Math.max(-val, Math.min(val, mine - om));
-      if (mine >= val && mine > om) v += 0.8 * val;
-      if (om >= val && om > mine) v -= 0.6 * val;
+      var pv = d.petitio ? d.petitio.P : -1, req = pv === P ? 1 : val, reqO = pv >= 0 && pv !== P ? 1 : val;   // Petitio: o limiar cai para 1
+      if (mine >= req && mine > om) v += 0.8 * val;
+      if (om >= reqO && om > mine) v -= 0.6 * val;
       if (d.tranca) {   // Paradoxo: liderança protegida (ou a do adversário adiada)
         if (d.tranca.P === P && mine >= val && mine > om) v += 0.7 * val;
         else if (d.tranca.P === P && om >= val && om > mine) v += 0.3 * val;

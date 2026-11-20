@@ -117,7 +117,8 @@ function renderAgora(){
   S.debates.forEach(function(d,i){
     var q=DEB[d.id], a=AREA[q.area];
     h+='<div class="trib'+(d.tranca?' trancado':'')+'"><div class="deb" data-di="'+i+'" data-anc="deb:'+i+'" title="«'+esc(q.q)+'» · '+esc(a.nome)+' · vale '+q.valor+(d.tranca?' · trancado pelo Paradoxo Lógico até o turno de '+esc(S.players[d.tranca.P].nome):'')+'">'
-      +(d.tranca?'<div class="tranca" style="--pc:'+S.players[d.tranca.P].cor+'">'+AMPULHETA+'Paradoxo · '+(d.tranca.P===0?'até o seu turno':'até o turno de '+esc(S.players[d.tranca.P].nome))+'</div>':'');
+      +(d.tranca?'<div class="tranca" style="--pc:'+S.players[d.tranca.P].cor+'">'+AMPULHETA+'Paradoxo · '+(d.tranca.P===0?'até o seu turno':'até o turno de '+esc(S.players[d.tranca.P].nome))+'</div>':'')
+      +(d.petitio?'<div class="petit" style="--pc:'+S.players[d.petitio.P].cor+'">Petitio · '+(d.petitio.P===0?'você':esc(S.players[d.petitio.P].nome))+' dá por provado</div>':'');
     S.players.forEach(function(pl,p){
       var n=d.stakes[p], lid=BF.lidera(S,i,p), vis=Math.min(n,2*q.valor), oc=Math.min(vis,ocultos[d.id+':'+p]||0);
       h+='<div class="est" data-row="'+i+':'+p+'" data-anc="est:'+i+':'+p+'" style="--pc:'+pl.cor+'" title="'+esc(pl.nome)+(lid?' · leva o debate no início do próprio turno':'')+'"><div class="torre'+(lid&&!oc?' lider':'')+'" data-est="'+d.id+':'+p+'"></div>'
@@ -329,6 +330,7 @@ function palcoCarta(f){
   if(c.id==='nonsequitur')res.push(prm.foram&&prm.foram.length?alvo+' descarta '+prm.foram.map(function(x){return C(x).nome;}).join(' e '):alvo+' não tinha cartas temporárias');
   if(c.id==='cicuta'&&prm.morto)res.push(C(prm.morto).nome+(prm.o===0?' deixa a sua mesa':' deixa a mesa de '+alvo)+(f.custo<c.custo?' (contra Sócrates, a cicuta custa 1)':''));
   if(c.id==='paradoxo'&&q)res.push('«'+q.q+'» fica trancado até o próximo turno de '+pl.nome);
+  if(c.id==='petitio'&&q)res.push(pl.nome+' dá «'+q.q+'» por provado: se ainda liderar no próximo turno, vence mesmo abaixo do valor');
   if(c.id==='dogma'||c.id==='niilismo')res.push(f.label);
   if(c.id==='tautologia'&&prm.fi!==undefined)res.push(f.label);
   if(c.pen)res.push(pl.nome+' perde '+c.pen+' ponto'+(c.pen>1?'s':'')+'; a carta sai do jogo');
@@ -518,7 +520,7 @@ function alvosDe(tipo,ref){
       var po=BF.praxisOptions(S,0,c.id);
       function jogar(o){return function(){BF.playPraxis(S,0,id,o.prm,o.label);};}
       if(c.id==='autoridade') po.forEach(function(o){var e=q$('.deb[data-di="'+o.prm.d+'"]'); if(e)out.push({el:e,fn:jogar(o)});});
-      else if(c.id==='petitio') po.forEach(function(o){var e=q$('[data-seat="'+o.prm.fi+'"] .mini'); if(e)out.push({el:e,fn:jogar(o)});});
+      else if(c.id==='petitio') po.forEach(function(o){var e=q$('.deb[data-di="'+o.prm.d+'"]'); if(e)out.push({el:e,fn:jogar(o)});});
       else if(c.id==='paradoxo') po.forEach(function(o){var e=q$('.deb[data-di="'+o.prm.d+'"]'); if(e)out.push({el:e,fn:jogar(o)});});
       else if(c.id==='tautologia') po.forEach(function(o){var e=o.prm.d!==undefined?q$('.deb[data-di="'+o.prm.d+'"]'):q$('[data-seat="'+o.prm.fi+'"] .mini'); if(e)out.push({el:e,fn:jogar(o)});});
       else if(c.id==='cicuta') po.forEach(function(o){var e=q$('[data-op="'+o.prm.o+'"][data-oi="'+o.prm.fi+'"] .mini'); if(e)out.push({el:e,fn:jogar(o)});});
@@ -549,7 +551,7 @@ function alvosDe(tipo,ref){
 var SEM_ALVO={
   autoridade:'Sem alvo: esta carta age num debate em que você já tem ideias.', espantalho:'Sem alvo: precisa de um debate em que você e um oponente tenham ideias.',
   sofisma:'Sem alvo: precisa de um debate em que você e um oponente tenham ideias.', adhominem:'Sem alvo: precisa de um debate seu e de um filósofo adversário com ideias.',
-  petitio:'Sem alvo: precisa de um filósofo seu, já em ação, sem nenhuma ideia.', mutatio:'Sem alvo: precisa de ideias suas num debate e de outro debate livre.',
+  petitio:'Sem alvo: precisa de um debate livre em que você tenha mais ideias que cada adversário.', mutatio:'Sem alvo: precisa de ideias suas num debate e de outro debate livre.',
   nonsequitur:'Nenhum oponente tem cartas temporárias na mão.', retorsio:'Sem alvo: num debate seu, um oponente precisa ter ao menos 3 ideias.',
   reductio:'Sem alvo: num debate seu, um oponente precisa ter ao menos 2 ideias.', falseabilidade:'Sem alvo: precisa de um debate de Lógica / Ciência em que você e um oponente tenham ideias.',
   tautologia:'Sem alvo agora.', paradoxo:'Todos os debates já estão trancados.', cicuta:'Nenhum adversário tem um filósofo grego que possa ser alvo (Diógenes é imune).',
