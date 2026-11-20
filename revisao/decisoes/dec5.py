@@ -1,0 +1,13 @@
+from dec1 import d, D
+for i in ['d04','d05','d06','d17','d18','d01','d02','d03','d13','d14','d15','d07','d08','d09','d19','d20','d21','d10','d11','d12','d22','d23','d24']: d('kant-'+i,'A')
+d('kant-d16','Que posso saber? Que devo fazer? Que me é permitido esperar? As três perguntas cabem numa só: o que é o ser humano?','T','Crítica da Razão Pura, A805/B833; Lógica, Introdução, III',1,'A revisão trocou as três perguntas, que não respondem diretamente ao "propósito". Juntei a quarta pergunta, da Lógica, que fecha o sentido.')
+for i in ['d04','d05','d16','d17','d18','d01','d02','d03','d13','d14','d07','d09','d19','d20','d21','d10','d11','d12','d22','d23','d24']: d('schopenhauer-'+i,'A')
+d('schopenhauer-d06','A','P','Sobre a Liberdade da Vontade, cap. III',1,'A revisão trocou a fórmula célebre pela citação longa. A fórmula curta é a versão que ficou conhecida, fiel ao sentido.')
+d('schopenhauer-d15','Os paradoxos mostram que o intelecto foi feito para servir à Vontade, e não para decifrar o enigma do mundo.','I')
+d('schopenhauer-d08','O Estado não melhora ninguém: é um dique contra o egoísmo de todos. E, para governá-lo, prefiro a monarquia hereditária, a mais estável.','P')
+for i in ['d05','d06','d16','d17','d18','d01','d02','d03','d13','d14','d15','d09','d20','d21','d10','d12','d22','d23','d24']: d('heidegger-'+i,'A')
+d('heidegger-d04','A','T','Identidade e Diferença, "A constituição onto-teo-lógica da metafísica"')
+d('heidegger-d07','O bem não se decide por regras. Cuidar dos outros e das coisas é a própria estrutura do nosso existir.','I')
+d('heidegger-d19','Mais que o Estado, quem domina a era moderna é a técnica. A pergunta decisiva é como habitamos o mundo.','I')
+d('heidegger-d11','Cuidar do outro de modo autêntico é ajudá-lo a ser livre para si, em vez de tomar o lugar dele.','I')
+d('heidegger-d08','Não estou convencido de que a democracia seja o sistema político adequado à era da técnica.','T','Entrevista à revista Der Spiegel (1966, publicada em 1976)',5,'Caso delicado: a fala do Heidegger sobre governo. A anterior e a revisada falam do nazismo em terceira pessoa, o que no balão dele soa estranho. Proponho a frase dele na entrevista ao Spiegel, mais uma nota fixa do jogo, fora do balão: "Em 1933, Heidegger aderiu ao Partido Nazista e foi reitor em Friburgo sob o regime." Decidir se a nota aparece sempre que essa fala surge.')

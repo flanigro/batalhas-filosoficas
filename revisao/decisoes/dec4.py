@@ -1,0 +1,10 @@
+from dec1 import d, D
+for i in ['d04','d05','d16','d17','d18','d01','d02','d03','d14','d15','d07','d08','d09','d19','d20','d21','d10','d11','d12','d22','d23','d24']: d('bacon-'+i,'A')
+d('bacon-d06','R')
+d('bacon-d13','A','T','Novo Órganon I, 84')
+for i in ['d04','d05','d06','d16','d17','d18','d01','d02','d03','d13','d14','d15','d07','d08','d09','d19','d20','d21','d10','d11','d12','d22','d23','d24']: d('locke-'+i,'A')
+for i in ['d04','d05','d06','d16','d18','d01','d02','d03','d15','d07','d08','d09','d19','d21','d10','d11','d12','d22','d23','d24']: d('rousseau-'+i,'A')
+d('rousseau-d17','Sei que há uma vontade criadora. Como ela criou, não sei, e prefiro confessar a ignorância.','P')
+d('rousseau-d13','O homem natural vive no presente: o caribenho vende sua rede de manhã e chora à noite por não ter onde dormir. É a sociedade que nos ensina a temer o futuro.','P')
+d('rousseau-d14','Olho a ordem do universo e concluo: uma vontade move o mundo, e uma inteligência o ordena.','P')
+d('rousseau-d20','O mal nasce do amor-próprio, que nos compara aos outros. A piedade natural ensina: busque o seu bem com o menor mal possível aos outros.','P')
