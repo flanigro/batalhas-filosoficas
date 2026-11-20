@@ -328,7 +328,7 @@
     schopenhauer: ['Negação da Vontade', 'No momento de Reflexão, recebe +1 ideia se não foi a nenhum debate no turno anterior.'],
     heidegger: ['Ser-no-mundo', 'No momento de Reflexão, recebe +1 ideia para cada debate em que você tem ideias.'],
     freud: ['Ato Falho', 'Freud recebe +1 ideia sempre que um adversário usa uma falácia.'],
-    maquiavel: ['O Príncipe', 'No momento de Reflexão, o filósofo com mais ideias do seu grupo recebe +1.'],
+    maquiavel: ['O Príncipe', 'No momento de Reflexão, o filósofo de maior custo do seu grupo, o soberano, recebe +1. Se for o Bibliotecário ou já tiver 10 ideias, a ideia vai para a Biblioteca.'],
     erasmo: ['Elogio da Loucura', 'No momento de Reflexão, o adversário que lidera um debate de Metafísica / Religião perde 1 ideia.'],
     hobbes: ['Guerra de todos contra todos', 'No momento de Reflexão, o adversário com mais ideias num debate perde 1 ideia nesse debate.'],
     bacon: ['“Conhecimento é poder”', 'No momento de Reflexão, Bacon espia duas cartas da mão de um adversário.'],
@@ -680,9 +680,12 @@
       case 'arendt':
         if (s.debates.some(function (d) { return DEB[d.id].area === 'etica'; })) { ganha(s, P, g, 1); diz('+1 ideia: há debate de Ética na mesa.'); }
         break;
-      case 'maquiavel':
-        t = null; semLib(pl).forEach(function (x) { if (!t || x.ideas > t.ideas) t = x; });
-        if (t) { poe(s, t, 1); diz('+1 ideia para ' + C(t.id).nome + ', quem tem mais ideias.'); }
+      case 'maquiavel':   // desde 19/11/2026: o soberano é o filósofo de maior custo (Bibliotecário incluído); empate, a primeira cadeira
+        t = null; pl.group.forEach(function (x) { if (!t || C(x.id).custo > C(t.id).custo) t = x; });
+        if (t) {
+          if (t.lib || t.ideas >= s.cfg.teto) { pl.library += 1; diz('+1 ideia na Biblioteca: ' + C(t.id).nome + (t.lib ? ', o soberano, é o Bibliotecário.' : ', o soberano, já tem ' + s.cfg.teto + ' ideias.')); }
+          else { poe(s, t, 1); diz('+1 ideia para ' + C(t.id).nome + ', o soberano.'); }
+        }
         break;
       case 'diogenes':
         if (g.ideas <= 2) { ganha(s, P, g, 1); diz('+1 ideia: vive com o mínimo.'); }

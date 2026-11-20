@@ -9,7 +9,7 @@ var modo = process.argv[2] || 'uso', N = +process.argv[3] || 400, arg = process.
 function joga(seed, injeta) {
   var s = BF.newGame({ seed: seed, humans: [false, false, false] });
   if (injeta) {   // põe a carta na mão do assento P, no lugar de uma carta sorteada que não seja o filósofo de custo 1 garantido
-    var hj = s.players[injeta.P].hand, idj = injeta.id + '#1', onde = null, k;
+    var hj = s.players[injeta.P].hand, idj = BF.C(injeta.id).tipo === 'P' ? injeta.id + '#1' : injeta.id, onde = null, k;
     for (var q = 0; q < 3 && !onde; q++) { k = s.players[q].hand.indexOf(idj); if (k >= 0) onde = [s.players[q].hand, k]; }
     if (!onde) { k = s.deck.indexOf(idj); if (k >= 0) onde = [s.deck, k]; }
     if (onde && onde[0] !== hj) { var tr = 1 + (seed % (hj.length - 1)); var t = hj[tr]; hj[tr] = idj; onde[0][onde[1]] = t; }

@@ -283,7 +283,7 @@ Os poderes valem enquanto o filósofo está no grupo. Os que agem "no momento de
 
 ### Livres-Pensadores
 
-- **Maquiavel — O Príncipe.** No momento de Reflexão, o filósofo com mais ideias do seu grupo recebe +1. Pode ser o próprio Maquiavel. O Bibliotecário não entra na escolha.
+- **Maquiavel — O Príncipe.** No momento de Reflexão, o filósofo de maior custo do seu grupo, o soberano, recebe +1. Pode ser o próprio Maquiavel. Se o soberano for o Bibliotecário, ou já tiver 10 ideias, a ideia vai para a Biblioteca. Empate de custo: a primeira cadeira. (Até 19/11/2026, o +1 ia para o filósofo com mais ideias.)
 - **Erasmo — Elogio da Loucura.** No momento de Reflexão, um adversário perde 1 ideia num debate de Metafísica / Religião. Computador: o adversário com mais ideias num debate dessa área. (O texto da carta diz "o adversário que lidera"; o motor escolhe o adversário com mais ideias, mesmo que ele não lidere. Ver Apêndice C.)
 
 ---
@@ -360,7 +360,7 @@ Segunda leva (textos prontos em claude/textos-temporarias.md, mecânica a confir
 - **O que acontece com as ideias de quem perdeu um debate?** Somem junto com o debate vencido.
 - **Um adversário pode vencer no meu turno?** Não. A sustentação é conferida no início do turno de cada um, e a vitória imediata só para o jogador da vez.
 - **Se eu liderar no fim da abertura, por causa de Aristóteles ou Pitágoras, já venci?** Não, salvo se chegou ao dobro. A liderança precisa sobreviver aos turnos dos adversários (seção 5).
-- **E as ideias que passariam de 10?** Se perdem. Isso vale também para os poderes que dão ideias a um colega: se o Maquiavel der +1 ao filósofo com mais ideias e ele já tiver 10, o ponto se perde.
+- **E as ideias que passariam de 10?** Se perdem. Isso vale também para os poderes que dão ideias a um colega: se o Sócrates der +1 a um colega que já tem 10, o ponto se perde. A exceção é o Maquiavel: quando o soberano já tem 10, a ideia vai para a Biblioteca.
 - **Se Kant for a um debate de Ética, um colega sem ideias também contribui?** Não. Só quem tem pelo menos 1 ideia.
 - **O Bibliotecário pode ser alvo da Mais-Valia ou do Ad Hominem?** Na prática, não: ele nunca tem ideias (tudo o que ganharia vai para a Biblioteca).
 - **Recém-chegado faz a Reflexão?** Não há recém-chegado na Reflexão do dono: ele entra em ação no início do turno, antes dela (seção 5.1). Durante os turnos dos adversários, continua fora de ação (não recebe o +1 do Contrato Social de Rousseau, e Freud recém-chegado não reage a falácias).

@@ -120,6 +120,14 @@ function opc(s, P, id, f) { return BF.praxisOptions(s, P, id).find(f || (() => t
   s.players[0].group = [G('locke')]; c = daCarta(s, 0, 'ceticismo', 1); s.players[0].hand = s.players[0].hand.filter(x => x !== 'ceticismo#1').concat(['ceticismo#1']);
   BF.playPraxis(s, 0, 'ceticismo#1', { d: di, o: 1 }); confere('Ceticismo com materialista: −4', s.debates[di].stakes[1] === 0, s.debates[di].stakes[1]); }
 
+// 9. Maquiavel: o soberano é o filósofo de maior custo; Bibliotecário ou teto mandam a ideia para a Biblioteca (19/11/2026)
+{ const s = jogo(17); zera(s); s.players[1].group = [G('maquiavel', 0), G('marx', 3), G('locke', 0)]; passaPara1(s);
+  const g = s.players[1].group; confere('Maquiavel: +1 para o de maior custo (Marx: 3 + Reflexão 3 + escola 1 + 1)', g[1].ideas === 3 + 3 + 1 + 1, g[1].ideas); }
+{ const s = jogo(17); zera(s); s.players[1].group = [G('maquiavel', 0), Object.assign(G('kant', 0), { lib: true })]; passaPara1(s);
+  confere('Maquiavel: soberano Bibliotecário → +1 na Biblioteca', s.players[1].library === 3 + 5 + 1, s.players[1].library); }
+{ const s = jogo(17); zera(s); s.players[1].group = [G('maquiavel', 0), G('kant', 10)]; passaPara1(s);
+  confere('Maquiavel: soberano no teto → +1 na Biblioteca', s.players[1].library === 3 + 1 && s.players[1].group[1].ideas === 10, s.players[1].library); }
+
 // 7. partidas só de IA
 { let erros = 0, rod = 0, venc = [0, 0, 0], N = 300;
   for (let sd = 1; sd <= N; sd++) {
