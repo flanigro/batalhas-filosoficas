@@ -230,11 +230,11 @@ function alvoDaFalacia(ev,c){
 }
 // padrão: legenda com o nome da carta, carimbo no alvo, vaia do coro; as torres se acertam
 def('falacia:_padrao',async function(ev,c){
-  var carta=c.carta(ev.id), ehFalacia=/^Fal/.test(carta.sub||''), al=alvoDaFalacia(ev,c), p=al?caixa(al):centroMesa();
+  var carta=c.carta(ev.id), ehFalacia=!!carta.falacia, al=alvoDaFalacia(ev,c), p=al?caixa(al):centroMesa();
   var leg=legenda(c.nome(ev.P)+(ev.P===0?' usa ':' usa ')+carta.nome,ev.label,c.cor(ev.P),2200);
   await dorme(350);
   if(ehFalacia){ carimbo('Falácia!',p.x,p.y); coro('vaia',sorteia(CORO.falacia),1800); }
-  else { carimbo('Práxis!',p.x,p.y); coro('murmurio','Hmmm…',1500); }
+  else { carimbo({argumento:'Argumento!',escola:'Golpe de escola!',praxis:'Práxis!'}[carta.fam]||'Práxis!',p.x,p.y); coro('murmurio','Hmmm…',1500); }
   await dorme(300);
   if(ev.perda>0&&ev.prm.o!==undefined)livrosCaem(ev.did,ev.prm.o,ev.perda);
   if(ev.ganho>0)await c.revelar(ev.did,ev.P,ev.ganho);

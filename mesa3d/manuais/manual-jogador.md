@@ -1,6 +1,6 @@
 # Batalha dos Filósofos — Como jogar
 
-Versão de 18/11/2026 · nível 2 · 3 jogadores · cerca de 10 rodadas
+Versão de 19/11/2026 · nível 2 · 3 jogadores · cerca de 10 rodadas
 
 ---
 
@@ -17,15 +17,15 @@ Você comanda um grupo de filósofos que disputam as grandes perguntas da filoso
 - **Seu grupo.** Quatro cadeiras para os seus filósofos.
 - **A Ágora.** O centro da mesa, com até três debates abertos.
 - **Cartas de filósofo (20).** Cada uma tem um **custo** (de 1 a 5), uma **escola**, um **valor em cada uma das quatro áreas** (Metafísica, Lógica, Ética, Psicologia) e um **poder**.
-- **Cartas de Práxis (9).** Falácias e técnicas de argumentação, de uso único.
+- **Cartas temporárias (16).** Golpes de argumentação, de efeito único, em quatro famílias: falácias, argumentos, cartas de escola e Práxis.
 - **Cartas de debate (24).** Cada uma é uma pergunta de uma área, com um **valor** (5, 7, 9, 10, 12 ou 15). Esse valor é a meta para vencer e os pontos que você ganha.
 
 ---
 
 ## Preparação
 
-1. Embaralhe filósofos e Práxis numa pilha só.
-2. Cada jogador recebe um filósofo de custo 1 e mais 4 cartas.
+1. Embaralhe filósofos e cartas temporárias numa pilha só.
+2. Cada jogador recebe um filósofo de custo 1 e mais 3 cartas.
 3. Abra 2 debates na Ágora.
 4. Bibliotecas e grupos começam vazios.
 
@@ -51,7 +51,7 @@ Você comanda um grupo de filósofos que disputam as grandes perguntas da filoso
 - **Baixar um filósofo:** pague o custo com ideias da Biblioteca. Com o grupo cheio, ele toma o lugar de um dos seus, que vai para o descarte e perde as ideias que tinha. O filósofo que chega **só entra em ação no seu próximo turno**.
 - **Dar ideias:** passe ideias da Biblioteca para os seus filósofos em ação, quantas quiser, até 10 por filósofo.
 - **Levar um filósofo a um debate:** veja abaixo.
-- **Usar uma Práxis:** pague o custo e aplique o efeito.
+- **Usar uma carta temporária:** pague o custo e aplique o efeito.
 - **Comprar uma carta extra:** 2 ideias, uma vez por turno.
 - **Trocar um filósofo:** 5 ideias, uma vez por partida.
 - **Nomear o Bibliotecário.**
@@ -101,14 +101,16 @@ Quando alguém vence, **todas as ideias daquele debate se perdem** e uma nova pe
 
 ---
 
-## Falácias e técnicas
+## Cartas temporárias
 
-As cartas de Práxis são golpes de argumentação, usados uma vez e descartados. Quase todas só valem num debate **do qual você participa**, isto é, em que você já tem pelo menos uma ideia.
+São golpes de argumentação, de efeito único. Quase todas só valem num debate **do qual você participa**, isto é, em que você já tem pelo menos uma ideia. Cada carta traz o efeito (**Jogo**) e um parágrafo que explica a ideia por trás do nome (**O que é**).
 
-- **Falácias** (6): Argumento de Autoridade, Espantalho, Ad Hominem, Sofisma, Petitio Principii, Mutatio Controversiae. São argumentos que parecem bons, mas não são; Freud ganha uma ideia sempre que um adversário usa uma delas.
-- **Técnicas** (3): Retorsio Argumenti, Reductio ad Absurdum, Falseabilidade. São recursos legítimos de argumentação.
+- **Falácias** (7): Argumento de Autoridade, Espantalho, Ad Hominem, Sofisma, Petitio Principii, Mutatio Controversiae, Non Sequitur. Borda vermelho-escura e caveira. São argumentos que parecem bons, mas não são, e cobram caro: depois de usadas, **saem do jogo** e tiram pontos de quem as usou (2 pelo Ad Hominem e pelo Espantalho, 1 pelas outras). O placar pode ficar negativo; as caveiras ao lado dos troféus mostram quanto as falácias já custaram. Freud ganha uma ideia sempre que um adversário usa uma delas.
+- **Argumentos** (5): Retorsio Argumenti, Reductio ad Absurdum, Falseabilidade, Tautologia, Paradoxo Lógico. Recursos legítimos de prova e refutação. O Paradoxo tranca um debate até o seu próximo turno: ninguém mexe nele, e ninguém o vence enquanto estiver trancado.
+- **Cartas de escola** (3): Cicuta (contra os Gregos), Dogma (contra os Materialistas e Empiristas), Niilismo (contra os Germânicos). Cada uma ataca uma escola.
+- **Práxis** (1): Ceticismo. Uma ideia filosófica que vira manobra.
 
-Cada carta explica o seu efeito.
+Argumentos, cartas de escola e Práxis voltam ao monte pelo descarte.
 
 ---
 
@@ -136,7 +138,7 @@ Ao completar a rodada em que alguém chegou a **30 pontos**, ou ao fim da **12ª
 
 **Teto:** 10 ideias por filósofo; o excedente se perde.
 
-**Ações, em qualquer ordem:** baixar filósofo · dar ideias · levar ao debate (valor exato da área, um por filósofo) · Práxis · carta extra (2, uma por turno) · troca (5, uma por partida) · Bibliotecário.
+**Ações, em qualquer ordem:** baixar filósofo · dar ideias · levar ao debate (valor exato da área, um por filósofo) · cartas temporárias (falácias saem do jogo e custam pontos) · carta extra (2, uma por turno) · troca (5, uma por partida) · Bibliotecário.
 
 **Fim:** mão com até 5 cartas.
 

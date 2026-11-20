@@ -126,6 +126,21 @@ button:disabled{cursor:not-allowed;opacity:.45}
 .balao::after{content:"";position:absolute;left:50%;bottom:-9px;margin-left:-8px;border:8px solid transparent;border-top-color:var(--tc,#b8902f);border-bottom:0}
 .balao.baixo{transform:translate(-50%,0)}
 .balao.baixo::after{bottom:auto;top:-9px;border-top:0;border-bottom:8px solid var(--tc,#b8902f)}
+/* balão de pensamento (momento de Reflexão): nuvem de volutas, estilo HQ (desenhada em SVG por nuvemSVG em ui.js),
+   com três bolhinhas que levam à cabeça do filósofo (ou, na bancada de cima, ao púlpito) */
+.balao.pensa{background:none;border:0;box-shadow:none;padding:8px 18px 9px;isolation:isolate;max-width:250px}
+.balao.pensa::after{display:none}
+.balao.pensa .nuvem{position:absolute;z-index:-1;overflow:visible;filter:drop-shadow(0 5px 9px rgba(0,0,0,.4))}
+.balao.pensa .nuvem path{fill:#fffef8;stroke:var(--tc,#b8902f);stroke-width:2.2;stroke-linejoin:round}
+.balao.pensa .bolha{position:absolute;left:50%;border-radius:50%;background:#fffef8;border:2px solid var(--tc,#b8902f);box-shadow:0 3px 7px rgba(0,0,0,.35)}
+.balao.pensa .b1{width:15px;height:15px;bottom:-24px;margin-left:-12px}
+.balao.pensa .b2{width:10px;height:10px;bottom:-36px;margin-left:-18px}
+.balao.pensa .b3{width:6px;height:6px;bottom:-45px;margin-left:-22px}
+.balao.pensa.baixo .b1{bottom:auto;top:-24px}
+.balao.pensa.baixo .b2{bottom:auto;top:-36px}
+.balao.pensa.baixo .b3{bottom:auto;top:-45px}
+.pilha b.soma{display:inline-block;animation:soma .7s var(--tranco)}
+
 @keyframes bal{0%{opacity:0;margin-top:8px}9%{opacity:1;margin-top:0}86%{opacity:1}100%{opacity:0;margin-top:-6px}}
 .voa{position:absolute;left:0;top:0;width:7px;height:18px;margin:-9px 0 0 -3px;border-radius:2px 2px 0 0;background:var(--pc);box-shadow:inset -2px 0 rgba(0,0,0,.3),inset 0 2px rgba(255,255,255,.5),0 0 8px rgba(255,240,180,.8)}
 .voa.deitado{width:30px;height:7px;margin:-3px 0 0 -15px;border-radius:1.5px}
@@ -606,6 +621,63 @@ body.escolhendo .rodape .mao .selecionado,body.escolhendo .cmd.selecionado{box-s
 .medidor.min .v,.medidor.min textarea{display:none}
 @media(max-width:1100px){.rodape{gap:10px;padding-left:8px;padding-right:8px}.rodape .bib{width:226px}.rodape .mao{--w:104px}.cmds{width:200px}.cmd{font-size:13px}.cmd.fim{font-size:17px}}
 @media(max-height:780px){.rodape{height:118px;padding-top:14px}.rodape .ident{width:164px;height:92px}.rodape .bib .estante{max-height:44px}.rodape .mao{--w:102px}.rodape .bib .estante{row-gap:4px}.cmd.fim{padding:6px 14px 6px 10px}.cmds{gap:5px}}
+
+/* ============================================================
+   CARTAS TEMPORÁRIAS (19/11/2026): famílias, borda hachurada comum, caveiras no placar, debate trancado
+   Símbolos provisórios em SVG, até chegarem os definitivos.
+   ============================================================ */
+.mini.P{--fam:#5a4a2c;border:4px solid transparent;
+  background:linear-gradient(180deg,#fbf6ea,#eadfc6) padding-box,repeating-linear-gradient(135deg,var(--fam) 0 3px,color-mix(in srgb,var(--fam) 45%,#fff) 3px 6px) border-box}
+.mini.P.fam-falacia{background:linear-gradient(180deg,#f8ebe7,#ead2cb) padding-box,repeating-linear-gradient(135deg,#6e0f1b 0 3px,#e3222f 3px 6px) border-box}
+.mini.P .custo{border-color:var(--fam)}
+.mini.P .famrot{position:absolute;left:29px;right:2px;top:6px;display:flex;align-items:center;gap:2px;font-size:8px;font-weight:900;letter-spacing:.1px;overflow:hidden;white-space:nowrap;text-transform:uppercase;color:var(--fam);line-height:1}
+.mini.P .famrot svg,.mini.P .famrot .caveira{width:11px;height:11px;flex:none}
+.mini.P .penal{position:absolute;right:3px;top:19px;background:var(--fam);color:#fff;border-radius:7px;padding:0 4px;font-size:10px;font-weight:900;line-height:14px}
+.mini.P .pt{padding-top:30px}
+.mini.P .pd{padding-top:4px}
+.bigP{--fam:#5a4a2c;border:6px solid transparent;
+  background:linear-gradient(180deg,#fbf6ea,#e6d9bb) padding-box,repeating-linear-gradient(135deg,var(--fam) 0 4px,color-mix(in srgb,var(--fam) 45%,#fff) 4px 8px) border-box}
+.bigP.fam-falacia{background:linear-gradient(180deg,#f8ebe7,#e6cbc2) padding-box,repeating-linear-gradient(135deg,#6e0f1b 0 5px,#e3222f 5px 10px) border-box}
+.bigP .bc{border-color:var(--fam)}
+.bigP .famrot{margin:0 0 4px 56px;display:flex;align-items:center;gap:6px;color:var(--fam);font-weight:900;text-transform:uppercase;letter-spacing:.8px;font-size:12px;min-height:20px}
+.bigP .famrot svg,.bigP .famrot .caveira{width:18px;height:18px;flex:none}
+.bigP .famrot b{color:#fff;background:var(--fam);border-radius:6px;padding:0 5px}
+.bigP p.jogo{margin-top:14px}
+.bigP .pena{display:block;margin-top:6px;font-size:.82em;font-weight:700;color:var(--fam)}
+.bigP p.oq{font-size:14.5px;line-height:1.35;color:#4a4232;font-style:italic;margin-top:10px;border-top:1px solid color-mix(in srgb,var(--fam) 35%,transparent);padding-top:8px}
+.bigP p.oq b{font-style:normal}
+.cena.usada .cartaU .bigP p.oq{font-size:13.5px}
+/* caveiras: os pontos que as falácias já custaram, ao lado dos troféus */
+.cav{display:inline-flex;align-items:center;gap:1px;color:#fbe3dd;background:#7a1420;border:1px solid #c0485a;border-radius:9px;padding:0 5px 0 3px;font-weight:900;font-family:var(--serif);font-size:12px;line-height:17px}
+.cav svg,.cav .caveira{width:13px;height:13px}
+.ident .cav{font-size:13cqh;line-height:17cqh;border-radius:8cqh;padding:0 3cqh 0 1.5cqh}
+.ident .cav svg,.ident .cav .caveira{width:13cqh;height:13cqh}
+.cai{animation:cai .8s var(--tranco,ease)}
+@keyframes cai{0%{transform:scale(1)}30%{transform:scale(1.35) rotate(-6deg);color:#ff8a8a}60%{transform:scale(.95) rotate(4deg)}100%{transform:scale(1)}}
+/* Paradoxo Lógico: debate trancado */
+.deb .tranca{position:absolute;left:50%;top:2%;transform:translate(-50%,0);display:flex;align-items:center;gap:4px;white-space:nowrap;pointer-events:none;
+  background:rgba(30,22,40,.88);color:#f3ecff;border:2px solid var(--pc);border-radius:10px;padding:2px 8px;font-size:11.5px;font-weight:800;letter-spacing:.3px;box-shadow:0 3px 10px rgba(0,0,0,.5);z-index:3}
+.deb .tranca svg{width:12px;height:15px}
+
+/* ---------- demonstração "Conheça o jogo" (pranchas provisórias em imagem) ---------- */
+.demo{position:fixed;inset:0;z-index:49;display:none;align-items:center;justify-content:center;background:#0b0820}
+.demo.on{display:flex}
+.demo-palco{position:relative;width:min(100vw,calc(100vh * 1672 / 941));aspect-ratio:1672/941;box-shadow:0 0 60px rgba(0,0,0,.6)}
+.demo-palco img{position:absolute;inset:0;width:100%;height:100%;display:block;user-select:none;-webkit-user-drag:none}
+.demo-hot{position:absolute;background:transparent;border:0;border-radius:999px;cursor:pointer;padding:0}
+.demo-hot:hover,.demo-hot:focus-visible{box-shadow:0 0 0 3px rgba(255,222,120,.9),0 0 18px rgba(255,210,90,.7);outline:none}
+.demo-hot[hidden]{display:none}
+.demo-seta{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:64px;border-radius:12px;border:0;background:rgba(20,14,40,.55);color:#ffe9a6;font-size:40px;line-height:1;cursor:pointer;z-index:2}
+.demo-seta:hover{background:rgba(20,14,40,.85)}
+.demo-seta.esq{left:8px}.demo-seta.dir{right:8px}
+.demo-seta[disabled]{opacity:.25;cursor:default}
+.demo-fecha{position:absolute;top:8px;right:8px;width:40px;height:40px;border-radius:50%;border:2px solid #ffe9a6;background:rgba(20,14,40,.75);color:#ffe9a6;font-size:20px;cursor:pointer;z-index:3}
+
+.caveira{display:inline-block;width:1em;height:1em;background:currentColor;-webkit-mask:url(icones/fam-falacia.png) center/contain no-repeat;mask:url(icones/fam-falacia.png) center/contain no-repeat;vertical-align:-.12em}
+/* ilustração das cartas temporárias: faixa na carta pequena, quadro na carta ampliada */
+.mini.P .pimg{position:absolute;left:0;right:0;top:22px;height:44%;background-size:cover;background-repeat:no-repeat;border-top:1px solid color-mix(in srgb,var(--fam) 50%,transparent);border-bottom:1px solid color-mix(in srgb,var(--fam) 50%,transparent)}
+.mini.P .pt{padding-top:calc(22px + var(--w)*1.38*.44 + 4px)}
+.bigP .bimg{width:100%;aspect-ratio:16/10;margin-top:12px;border-radius:10px;background-size:cover;background-repeat:no-repeat;border:2px solid color-mix(in srgb,var(--fam) 60%,#fff);box-shadow:0 2px 8px rgba(0,0,0,.25)}
 </style>
 </head>
 <body>
@@ -650,11 +722,23 @@ body.escolhendo .rodape .mao .selecionado,body.escolhendo .cmd.selecionado{box-s
       <button class="ab-b" data-a="ab-galeria">Galeria dos filósofos</button>
       <button class="ab-bat" data-a="ab-batalha" id="abbat">Batalha!</button>
       <button class="ab-b" data-a="ab-regras">As regras</button>
-      <button class="ab-b ab-tut" disabled title="O tutorial ainda está sendo preparado">Tutorial · em breve</button>
+      <button class="ab-b" data-a="ab-demo" title="Demonstração do jogo em sete pranchas">Conheça o jogo</button>
     </div>
     <div class="ab-passos"><div><b>1</b>Monte seu grupo de filósofos</div><div><b>2</b>Junte ideias, convença adversários</div><div><b>3</b>Vença os debates no argumento</div></div>
     <button class="ab-cont" data-a="ab-continuar" id="abcont" hidden>Voltar à partida</button>
   </div>
+</div>
+<!-- demonstração "Conheça o jogo": as sete pranchas provisórias, como imagens (19/11/2026); a versão em HTML virá com as imagens decupadas -->
+<div class="demo" id="demo" role="dialog" aria-modal="true" aria-label="Conheça o jogo">
+  <div class="demo-palco" id="demopalco">
+    <img id="demoimg" alt="">
+    <button class="demo-hot" data-a="demo-ant" id="demoant" aria-label="Anterior" style="left:69.6%;top:84.6%;width:9.2%;height:6.2%"></button>
+    <button class="demo-hot" data-a="demo-prox" id="demoprox" aria-label="Próximo" style="left:88.8%;top:84.6%;width:9.6%;height:6.2%"></button>
+    <button class="demo-hot" data-a="demo-jogar" id="demojogar" aria-label="Começar a batalha" style="left:70%;top:83%;width:28.6%;height:9.6%"></button>
+  </div>
+  <button class="demo-seta esq" data-a="demo-ant" aria-label="Prancha anterior">‹</button>
+  <button class="demo-seta dir" data-a="demo-prox" aria-label="Próxima prancha">›</button>
+  <button class="demo-fecha" data-a="demo-fechar" aria-label="Fechar a demonstração">✕</button>
 </div>
 <div class="ov" id="ov"><div class="box" id="box"></div></div>
 
