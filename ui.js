@@ -79,7 +79,7 @@ function miniP(c,attrs,cls){
     +imgTemp(c)+'<div class="pt">'+esc(c.nome)+'</div><div class="pd">'+esc(c.d)+'</div></button>';
 }
 // ilustrações das cartas temporárias (pasta IMGS BATALHA FILO/Praxis do Flavio, 640 px em webp); y = ponto de corte vertical na carta pequena
-var CORTE_TEMP={orientalismo:50,deusmorto:55,determinismo:50,niilismo:66,nonsequitur:64,paradoxo:46,mutatio:58,petitio:50,cicuta:58,dogma:52,ceticismo:58};
+var CORTE_TEMP={fantasma:50,orientalismo:50,deusmorto:55,determinismo:50,niilismo:66,nonsequitur:64,paradoxo:46,mutatio:58,petitio:50,cicuta:58,dogma:52,ceticismo:58};
 function imgTemp(c,cls){ return '<div class="'+(cls||'pimg')+'" style="background-image:url(temporarias/'+c.id+'.webp);background-position:50% '+(CORTE_TEMP[c.id]||55)+'%"></div>'; }
 function custoMao(c){ return c.tipo==='P'?BF.custoMin(c.id,S,0):c.custo; }
 function famStyle(c){ return ' style="--fam:'+(c.fam==='escola'&&ESC[c.esc]?ESC[c.esc].cor2:BF.FAMILIA[c.fam].cor)+'"'; }
@@ -88,6 +88,7 @@ function seat(g,p,i,meu){
   var h='<div class="seat'+(meu?'':' opp-seat')+'" style="--pc:'+pl.cor+'" '+(meu?'data-seat="'+i+'"':'data-op="'+p+'" data-oi="'+i+'"')+'>'
     +ancF(g,c,(meu?'data-a="grupo" data-i="'+i+'" data-drag="fil"':'data-a="ver" data-id="'+g.id+'"')+' data-p="'+p+'"',meu?'seat:'+i:'op:'+p+':'+i,meu?'fig:0:'+i:null)
     +(g.lib?'<div class="pilha libp" data-anc="pilha:'+p+':'+i+'" title="Bibliotecário"><b>+'+c.custo+'/turno</b></div>'
+      :!BF.acumula(g)?'<div class="pilha libp wuwei" data-anc="pilha:'+p+':'+i+'" title="Wu wei: não acumula ideias; +1 em cada debate aberto no momento de Reflexão"><b>wu wei</b></div>'
       :'<div class="pilha '+(vi?'':'zero')+'" data-anc="pilha:'+p+':'+i+'" title="'+BF.nI(vi)+'"><b>'+vi+'</b>'
         +(dar?'<button class="mais1" data-a="dar" data-i="'+i+'" '+(BF.canGive(S,0,i)?'':'disabled')+' title="Dar 1 ideia da Biblioteca">+</button>':'')+'</div>');
   return h+'</div>';
@@ -334,6 +335,7 @@ function palcoCarta(f){
   if(c.id==='deusmorto'&&prm.morto)res.push(C(prm.morto).nome+(prm.o===0?' deixa a sua mesa':' deixa a mesa de '+alvo));
   if(c.id==='dogma'||c.id==='niilismo'||c.id==='determinismo'||c.id==='orientalismo')res.push(f.label);
   if(c.id==='tautologia'&&prm.fi!==undefined)res.push(f.label);
+  if(c.id==='fantasma')res.push(f.label);
   if(c.pen)res.push(pl.nome+' perde '+c.pen+' ponto'+(c.pen>1?'s':'')+'; a carta sai do jogo');
   var art={falacia:'uma falácia',argumento:'um argumento',escola:'uma carta de escola',praxis:'uma Práxis'}[c.fam];
   var lbl=res.indexOf(f.label)<0?f.label:'';  // o rótulo que já está no Resultado não se repete no cabeçalho
@@ -529,6 +531,7 @@ function alvosDe(tipo,ref){
       else if(c.id==='petitio') po.forEach(function(o){var e=q$('.deb[data-di="'+o.prm.d+'"]'); if(e)out.push({el:e,fn:jogar(o)});});
       else if(c.id==='paradoxo') po.forEach(function(o){var e=q$('.deb[data-di="'+o.prm.d+'"]'); if(e)out.push({el:e,fn:jogar(o)});});
       else if(c.id==='tautologia') po.forEach(function(o){var e=o.prm.d!==undefined?q$('.deb[data-di="'+o.prm.d+'"]'):q$('[data-seat="'+o.prm.fi+'"] .mini'); if(e)out.push({el:e,fn:jogar(o)});});
+      else if(c.id==='fantasma') po.forEach(function(o){var e=o.prm.o===0?q$('[data-seat="'+o.prm.fi+'"] .mini'):q$('[data-op="'+o.prm.o+'"][data-oi="'+o.prm.fi+'"] .mini'); if(e)out.push({el:e,fn:jogar(o)});});
       else if(c.id==='cicuta'||c.id==='deusmorto') po.forEach(function(o){var e=q$('[data-op="'+o.prm.o+'"][data-oi="'+o.prm.fi+'"] .mini'); if(e)out.push({el:e,fn:jogar(o)});});
       else if(['nonsequitur','dogma','niilismo','determinismo','orientalismo'].indexOf(c.id)>=0) po.forEach(function(o){var e=q$('#opps .ident[data-painel="'+o.prm.o+'"]'); if(e)out.push({el:e,fn:jogar(o)});});
       else if(['espantalho','sofisma','reductio','retorsio','falseabilidade','ceticismo'].indexOf(c.id)>=0)
@@ -560,7 +563,7 @@ var SEM_ALVO={
   petitio:'Sem alvo: precisa de um debate livre em que você tenha mais ideias que cada adversário.', mutatio:'Sem alvo: precisa de ideias suas num debate e de outro debate livre.',
   nonsequitur:'Nenhum oponente tem cartas temporárias na mão.', retorsio:'Sem alvo: num debate seu, um oponente precisa ter ao menos 3 ideias.',
   reductio:'Sem alvo: num debate seu, um oponente precisa ter ao menos 2 ideias.', falseabilidade:'Sem alvo: precisa de um debate de Lógica / Ciência em que você e um oponente tenham ideias.',
-  tautologia:'Sem alvo agora.', paradoxo:'Todos os debates já estão trancados.', cicuta:'Nenhum adversário tem um filósofo grego que possa ser alvo (Diógenes é imune).',
+  tautologia:'Sem alvo agora.', fantasma:'Nenhum filósofo dualista em ação na mesa (Pitágoras, Sócrates, Platão, Agostinho, Descartes, Avicena).', paradoxo:'Todos os debates já estão trancados.', cicuta:'Nenhum adversário tem um filósofo grego que possa ser alvo (Diógenes é imune).',
   dogma:'Nenhum adversário tem Materialistas e Empiristas.', deusmorto:'Nenhum adversário tem um Teísta de custo 1 ou 2 que possa ser alvo.', determinismo:'Nenhum adversário tem Franceses (ou Agostinho) com ideias.', orientalismo:'Nenhum adversário tem Orientais que vão a debates.', niilismo:'Nenhum adversário tem Germânicos (ou já estão sob o Niilismo).',
   ceticismo:'Sem alvo: precisa de um debate de Metafísica / Religião em que você e um oponente tenham ideias.'
 };

@@ -16,7 +16,7 @@ function passaPara1(s) { s.players[0].hand = s.players[0].hand.slice(0, 5); BF.e
   confere('todos têm um filósofo de custo 1', s.players.every(p => p.hand.some(id => BF.C(id).tipo === 'F' && BF.C(id).custo === 1))); }
 
 // 2. Epicuro: vizinho +1 e Epicuro +1
-{ const s = jogo(2); zera(s); s.players[1].group = [G('epicuro'), G('arendt')]; passaPara1(s);
+{ const s = jogo(2); zera(s); s.debates.forEach((d, i) => d.id = ['d01', 'd02', 'd03'][i]); s.players[1].group = [G('epicuro'), G('arendt')]; passaPara1(s);
   const g = s.players[1].group; confere('Epicuro: vizinho recebe 1 (Reflexão) + 1', g[1].ideas === 2, g[1].ideas);
   confere('Epicuro: ele mesmo recebe 1 (Reflexão) + 1', g[0].ideas === 2, g[0].ideas); }
 { const s = jogo(2); zera(s); s.players[1].group = [G('epicuro')]; passaPara1(s);
@@ -196,7 +196,7 @@ for (const ids of [['d01', 'd07'], ['d04', 'd07']]) { const s = jogo(20); zera(s
   const s2 = jogo(46); zera(s2); s2.players[1].group = [G('zoroastro', 0)]; s2.players[1].mentiu = true; passaPara1(s2);
   confere('Zoroastro: +2 sem falácia; nada depois de mentir', a === 3 && s2.players[1].group[0].ideas === 1, [a, s2.players[1].group[0].ideas]); }
 { const s = jogo(47); zera(s); s.debates[0].stakes = [0, 2, 0]; s.players[1].group = [G('laotse', 5)]; passaPara1(s);
-  confere('Lao-Tsé: +1 em cada debate aberto, sem gastar as dele', s.debates.every((d, i) => d.stakes[1] === (i === 0 ? 3 : 1)) && s.players[1].group[0].ideas === 6, [s.debates.map(d => d.stakes[1]), s.players[1].group[0].ideas]);
+  confere('Lao-Tsé: +1 em cada debate aberto, e não acumula ideias', s.debates.every((d, i) => d.stakes[1] === (i === 0 ? 3 : 1)) && s.players[1].group[0].ideas === 5 && !BF.canGive(s, 1, 0), [s.debates.map(d => d.stakes[1]), s.players[1].group[0].ideas]);
   confere('Lao-Tsé: não vai a debates', BF.moveOptions(s, 1, 0).length === 0); }
 { const s = jogo(48); zera(s); s.debates[0].id = 'd04'; s.debates[1].id = 'd07';   // Metafísica e Ética
   s.players[1].group = [G('confucio', 6)]; const c = daCarta(s, 0, 'orientalismo', 2); const o = opc(s, 0, 'orientalismo');
@@ -207,6 +207,16 @@ for (const ids of [['d01', 'd07'], ['d04', 'd07']]) { const s = jogo(20); zera(s
   confere('Orientalismo: passa depois do turno', s.players[1].orient === 0, s.players[1].orient); }
 { const s = jogo(49); zera(s); s.players[0].group = [G('avicena', 0), G('aristoteles', 0)]; s.players[1].group = [G('confucio', 0), G('laotse', 0)];
   confere('Duplas novas: Confúcio e Lao-Tsé; Avicena e Aristóteles', BF.duplasDe('laotse').some(d => d.par === 'confucio') && BF.duplasDe('avicena').some(d => d.par === 'aristoteles')); }
+
+{ const s = jogo(50); zera(s); s.players[0].group = [G('descartes', 2)]; s.players[1].group = [G('platao', 5), G('kant', 5)];
+  const c = daCarta(s, 0, 'fantasma', 2); const os = BF.praxisOptions(s, 0, 'fantasma');
+  confere('Fantasma: mira os dualistas, seus e dos adversários (Kant não)', os.length === 2 && os.some(o => o.prm.o === 0) && os.some(o => o.prm.o === 1 && o.prm.fi === 0), os.map(o => o.label));
+  BF.playPraxis(s, 0, c, os.find(o => o.prm.o === 1).prm); BF.endTurn(s, []);
+  confere('Fantasma: Platão sem piloto não vai a debates no turno do dono', BF.moveOptions(s, 1, 0).length === 0 && BF.moveOptions(s, 1, 1).length > 0);
+  BF.endTurn(s, []); BF.endTurn(s, []); BF.endTurn(s, []);
+  confere('Fantasma: o efeito passa', !s.players[1].group[0].semPiloto); }
+{ const s = jogo(51); zera(s); s.players[0].group = [G('descartes', 2)]; const c = daCarta(s, 0, 'fantasma', 2);
+  BF.playPraxis(s, 0, c, { o: 0, fi: 0 }); confere('Fantasma: o seu dualista recebe +3', s.players[0].group[0].ideas === 5); }
 
 // 7. partidas só de IA
 { let erros = 0, rod = 0, venc = [0, 0, 0], N = 300;

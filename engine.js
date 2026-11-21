@@ -229,7 +229,7 @@
       [6, 'Bem contra Mal', 'Ponha +2 ideias nos debates de que você participa e tire 2 dos oponentes.']),
     F('laotse', '', 'Lao-Tsé', 1, 'orient', [3, 1, 3, 2], 'Estado de Chu (China)', 'séc. VI a.C. (tradição)', 'Tao Te Ching',
       'Uma viagem de mil léguas começa com um passo.', 'Tao Te Ching, 64',
-      ['Wu wei, a não ação', 'Lao-Tsé nunca vai a debates. Mesmo assim, no momento de Reflexão, você ganha +1 ideia em cada debate aberto: o sábio age sem agir (Tao Te Ching, 2).'],
+      ['Wu wei, a não ação', 'Lao-Tsé não vai a debates nem acumula ideias. Mesmo assim, no momento de Reflexão, você ganha +1 ideia em cada debate aberto: o sábio age sem agir (Tao Te Ching, 2).'],
       [2, 'Fluxo de Chi', 'Remaneje as ideias dos seus filósofos dentro do grupo.'],
       [6, 'Yin / Yang', 'Escolha um debate do qual você participe. Troque as suas ideias com as de um oponente.'])
   ];
@@ -279,6 +279,9 @@
       d: 'Tranque um debate até o início do seu próximo turno: ninguém põe nem tira ideias dele, e ninguém o vence enquanto estiver trancado.',
       oq: 'O mais famoso é o do mentiroso, atribuído a Eubúlides de Mileto (Diógenes Laércio II, 108, a verificar): “esta frase é falsa”. Se for verdadeira, é falsa; se for falsa, é verdadeira. O debate fica parado até alguém resolver isso. Ninguém resolve a tempo.' },
 
+    { id: 'fantasma', nome: 'O Fantasma na Máquina', custo: 2, fam: 'argumento', sub: 'Argumento — corta para os dois lados',
+      d: 'Escolha um filósofo dualista em ação (Pitágoras, Sócrates, Platão, Agostinho, Descartes ou Avicena). Se for seu, a alma pilota o corpo: ele recebe +3 ideias. Se for de um adversário, a máquina fica sem piloto: ele não vai a debates no próximo turno do dono.',
+      oq: 'Gilbert Ryle chamou de “dogma do fantasma na máquina” a ideia, que vem de Descartes, de que somos um corpo mecânico pilotado por uma alma invisível (O Conceito de Mente, 1949, cap. 1, a verificar). Para Ryle, é um erro de categoria: procurar a mente dentro do corpo é como visitar os prédios de uma universidade e perguntar onde fica a universidade. A carta corta para os dois lados: para o dualista, o piloto existe e dá força à máquina; para o crítico, sem piloto a máquina não anda.' },
     { id: 'cicuta', nome: 'Cicuta', custo: 3, fam: 'escola', esc: 'grega', sub: 'Escola — contra os Gregos',
       d: 'Elimine um filósofo grego de um adversário (custa 1 se for Sócrates). Diógenes é imune.',
       oq: 'O veneno com que Atenas executava seus condenados. Em 399 a.C., Sócrates bebeu o cálice conversando com os amigos sobre a imortalidade da alma (Platão, Fédon, a verificar). Escolheu bem o assunto.' },
@@ -558,7 +561,11 @@
   function nI(n) { return n === 1 || n === -1 ? n + ' ideia' : n + ' ideias'; }
   // ganho do próprio filósofo; se ele é o Bibliotecário, vai para a Biblioteca
   // teto de ideias por filósofo (decisão de 18/11/2026): o que passa do teto se perde. Devolve quanto entrou.
-  function poe(s, g, n) { if (g.bloq) return 0; var a = Math.max(0, Math.min(n, s.cfg.teto - g.ideas)); g.ideas += a; return a; }
+  // Lao-Tsé não acumula (wu wei): nada do que lhe dariam entra (decisão do Flavio, 21/11/2026)
+  function acumula(g) { return g.id !== 'laotse'; }
+  // O Fantasma na Máquina: os dualistas de alma e corpo (lista a verificar)
+  var DUALISTAS = ['pitagoras', 'socrates', 'platao', 'agostinho', 'descartes', 'avicena'];
+  function poe(s, g, n) { if (g.bloq || !acumula(g)) return 0; var a = Math.max(0, Math.min(n, s.cfg.teto - g.ideas)); g.ideas += a; return a; }
   // Paradoxo Lógico: debate trancado (ninguém põe, tira nem vence) até o início do próximo turno de quem trancou
   function livre(d) { return !d.tranca; }
   function ganha(s, P, g, n) { if (g.lib) s.players[P].library += n; else poe(s, g, n); }
@@ -738,7 +745,7 @@
     var pl = s.players[P];
     pl.group.forEach(function (b) {
       if (b.id !== 'buda' || b.lib || !ativo(b) || b.ideas <= 0) return;
-      var cs = semLib(pl).filter(function (x) { return x !== b && ativo(x); }).sort(function (a, c) { return a.ideas - c.ideas; });
+      var cs = semLib(pl).filter(function (x) { return x !== b && ativo(x) && acumula(x); }).sort(function (a, c) { return a.ideas - c.ideas; });
       if (!cs.length) return;
       var dado = 0, k = 0, voltas = 0;
       while (b.ideas > 0 && voltas < cs.length) {
@@ -767,6 +774,7 @@
         }
         continue;
       }
+      if (!acumula(g)) continue;   // Lao-Tsé: wu wei, não recebe ideias
       if (g.bloq) {
         pop(s, P, g.id, C(g.id).nome + ' · Dogma', 'Não recebe ideias neste momento de Reflexão.', 'neg');
         log(s, 'Dogma: ' + C(g.id).nome + ' não recebe ideias neste momento de Reflexão.', 'neg', P);
@@ -811,7 +819,7 @@
         for (o = 0; o < s.players.length; o++) {
           if (o === P) continue;
           t = null;
-          s.players[o].group.forEach(function (x) { if (!x.lib && ativo(x) && x.ideas < s.cfg.teto && (!t || x.ideas < t.ideas)) t = x; });
+          s.players[o].group.forEach(function (x) { if (!x.lib && acumula(x) && ativo(x) && x.ideas < s.cfg.teto && (!t || x.ideas < t.ideas)) t = x; });
           if (!t) continue;
           poe(s, t, 1); ajudou.push(C(t.id).nome + ' (' + nomeJ(s, o) + ') +1');
           if (o !== P) pop(s, o, t.id, '+1 ideia', 'Amem os seus inimigos (Jesus, de ' + pl.nome + ')', 'con');
@@ -822,7 +830,7 @@
         break;
       case 'confucio':   // Respeito à Tradição
         t = null;
-        semLib(pl).forEach(function (x) { if (ativo(x) && x.ideas < s.cfg.teto && (!t || nascimento(x.id) < nascimento(t.id))) t = x; });
+        semLib(pl).forEach(function (x) { if (ativo(x) && acumula(x) && x.ideas < s.cfg.teto && (!t || nascimento(x.id) < nascimento(t.id))) t = x; });
         if (t) { poe(s, t, 1); diz('+1 ideia para ' + C(t.id).nome + ', o mais antigo do grupo (' + C(t.id).datas + ').'); }
         break;
       case 'avicena':   // Cânone da Medicina
@@ -859,18 +867,18 @@
         if (di >= 0) { s.debates[di].stakes[P] += 1; marcaPart(s, di, P, g.id); diz('+1 ideia em «' + DEB[s.debates[di].id].q + '».'); }
         break;
       case 'platao':
-        t = null; semLib(pl).forEach(function (x) { if (!t || C(x.id).custo > C(t.id).custo) t = x; });
+        t = null; semLib(pl).forEach(function (x) { if (acumula(x) && (!t || C(x.id).custo > C(t.id).custo)) t = x; });
         if (t) { poe(s, t, 1); diz('+1 ideia para ' + C(t.id).nome + ', o Rei Filósofo.'); }
         break;
       case 'socrates':
         t = null;
-        semLib(pl).forEach(function (x) { if (x !== g && (!t || x.ideas < t.ideas)) t = x; });
+        semLib(pl).forEach(function (x) { if (x !== g && acumula(x) && (!t || x.ideas < t.ideas)) t = x; });
         if (t) { poe(s, t, 1); diz('+1 ideia para ' + C(t.id).nome + '.'); }
         break;
       case 'epicuro':
         var viz = [];
-        if (idx > 0 && !pl.group[idx - 1].lib) viz.push(pl.group[idx - 1]);
-        if (idx < pl.group.length - 1 && !pl.group[idx + 1].lib) viz.push(pl.group[idx + 1]);
+        if (idx > 0 && !pl.group[idx - 1].lib && acumula(pl.group[idx - 1])) viz.push(pl.group[idx - 1]);
+        if (idx < pl.group.length - 1 && !pl.group[idx + 1].lib && acumula(pl.group[idx + 1])) viz.push(pl.group[idx + 1]);
         if (viz.length) {
           t = viz[0];
           if (viz[1] && viz[1].ideas < t.ideas) t = viz[1];
@@ -917,7 +925,7 @@
         var n = 0;
         for (o = 0; o < s.players.length; o++) for (j = 0; j < s.players[o].group.length; j++) {
           var y = s.players[o].group[j];
-          if (C(y.id).custo === 1 && ativo(y) && !y.lib) { poe(s, y, 1); n++; }
+          if (C(y.id).custo === 1 && ativo(y) && !y.lib && acumula(y)) { poe(s, y, 1); n++; }
         }
         diz('+1 ideia para cada filósofo de custo 1 da mesa (' + n + ').');
         break;
@@ -965,6 +973,7 @@
     var c = C(g.id);
     if (pl.niil === 2 && c.escola === 'germ') return out;   // Niilismo
     if (g.id === 'laotse') return out;   // Wu wei: Lao-Tsé não vai a debates
+    if (g.semPiloto) return out;   // O Fantasma na Máquina
     for (var i = 0; i < s.debates.length; i++) {
       if (!livre(s.debates[i])) continue;
       if (pl.orient === 2 && c.escola === 'orient' && DEB[s.debates[i].id].area !== 'meta') continue;   // Orientalismo
@@ -985,6 +994,7 @@
     if (g.id === 'laotse') return 'Wu wei: Lao-Tsé não vai a debates. No momento de Reflexão, você ganha +1 ideia em cada debate aberto, sem que ele saia do lugar.';
     if (s.players[P].orient === 2 && C(g.id).escola === 'orient') return 'Orientalismo: neste turno, os Orientais só vão a debates de Metafísica / Religião.';
     if (g.duvida) return 'Gênio Maligno: em dúvida, não vai a debates de Lógica nem de Metafísica neste turno.';
+    if (g.semPiloto) return 'O Fantasma na Máquina: sem a alma ao volante, ' + C(g.id).nome + ' não vai a debates neste turno.';
     if (g.ideas > 0 && !s.debates.some(livre)) return 'Os debates estão trancados pelo Paradoxo Lógico.';
     return 'Ainda não tem ideias suficientes: precisa do valor exato da área do debate.';
   }
@@ -1095,7 +1105,7 @@
 
   function canGive(s, P, fi) {
     var pl = s.players[P], g = pl.group[fi];
-    return !(s.over || s.turn !== P || !g || g.lib || pl.library < 1 || !ativo(g) || g.ideas >= s.cfg.teto);
+    return !(s.over || s.turn !== P || !g || g.lib || !acumula(g) || pl.library < 1 || !ativo(g) || g.ideas >= s.cfg.teto);
   }
   function giveIdea(s, P, fi, quieto) {
     if (!canGive(s, P, fi)) return false;
@@ -1195,6 +1205,13 @@
         break;
       case 'paradoxo':
         s.debates.forEach(function (dd, i) { if (livre(dd)) out.push({ label: 'Trancar «' + DEB[dd.id].q + '»', prm: { d: i } }); });
+        break;
+      case 'fantasma':
+        for (var xo = 0; xo < s.players.length; xo++) s.players[xo].group.forEach(function (g, fi) {
+          if (g.lib || !ativo(g) || DUALISTAS.indexOf(g.id) < 0) return;
+          if (xo === P) { if (g.ideas < s.cfg.teto) out.push({ label: 'O fantasma pilota ' + C(g.id).nome + ': +3 ideias', prm: { o: P, fi: fi } }); }
+          else if (!imune(g) && !g.semPiloto) out.push({ label: C(g.id).nome + ' sem piloto (' + nomeJ(s, xo) + ')', prm: { o: xo, fi: fi } });
+        });
         break;
       case 'cicuta':
         ops(function (x) {
@@ -1321,6 +1338,10 @@
         if (d) d.stakes[P] += 2; else poe(s, s.players[P].group[prm.fi], 2);
         break;
       case 'paradoxo': d.tranca = { P: P }; break;
+      case 'fantasma':
+        var gf = s.players[prm.o].group[prm.fi];
+        if (prm.o === P) poe(s, gf, 3); else gf.semPiloto = true;
+        break;
       case 'cicuta':
         op = s.players[prm.o]; g = op.group.splice(prm.fi, 1)[0];
         s.discard.push(g.id); prm.morto = g.id;
@@ -1421,7 +1442,7 @@
     if (s.over) return false;
     if (descartes) descartes.forEach(function (id) { var i = pl.hand.indexOf(id); if (i >= 0) s.discard.push(pl.hand.splice(i, 1)[0]); });
     autoDiscard(s, P);
-    pl.group.forEach(function (g) { g.foiAnt = !!g.foi; g.foi = false; g.acted = false; g.given = 0; delete g.duvida; });
+    pl.group.forEach(function (g) { g.foiAnt = !!g.foi; g.foi = false; g.acted = false; g.given = 0; delete g.duvida; delete g.semPiloto; });
     if (pl.niil === 2) pl.niil = 0;
     if (pl.orient === 2) pl.orient = 0;
     s.turn = (P + 1) % s.players.length;
@@ -1492,6 +1513,7 @@
           if (g.dogma) v += 0.5 * (REFLEXAO[C(g.id).custo] + 1);      // Dogma: Reflexão perdida
           if (pl.niil === 1 && C(g.id).escola === 'germ' && !g.lib) v += 0.12 * g.ideas + 0.4;   // Niilismo
           if (pl.orient === 1 && C(g.id).escola === 'orient' && !g.lib && g.id !== 'laotse') v += 0.05 * g.ideas + 0.15;   // Orientalismo
+          if (g.semPiloto) v += 0.12 * g.ideas + 0.3;   // O Fantasma na Máquina
         });
         v -= 1.2 * pl.hand.filter(temporariaNaMao).length;            // Non Sequitur
       }
@@ -1610,7 +1632,7 @@
     DUPLAS: DUPLAS, BONUS_DUPLA: BONUS_DUPLA, duplasDe: duplasDe, imune: imune, trocavel: trocavel, REFLEXAO: REFLEXAO, FALAS: FALAS,
     C: C, newGame: newGame, temColega: temColega, moveOptions: moveOptions, porqueNao: porqueNao, moveToDebate: moveToDebate,
     playPhilosopher: playPhilosopher, trocar: trocar, podeTrocar: podeTrocar, libIdx: libIdx, nI: nI, canGive: canGive, giveIdea: giveIdea, buyExtra: buyExtra,
-    praxisOptions: praxisOptions, playPraxis: playPraxis, nascimento: nascimento, endTurn: endTurn, aiStep: aiStep,
+    praxisOptions: praxisOptions, playPraxis: playPraxis, nascimento: nascimento, acumula: acumula, endTurn: endTurn, aiStep: aiStep,
     oppMax: oppMax, lidera: lidera, ativo: ativo, evalState: evalState, livre: livre, custoPraxis: custoPraxis, custoMin: custoMin, foraDoAlcance: foraDoAlcance
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = API;
