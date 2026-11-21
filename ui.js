@@ -79,7 +79,7 @@ function miniP(c,attrs,cls){
     +imgTemp(c)+'<div class="pt">'+esc(c.nome)+'</div><div class="pd">'+esc(c.d)+'</div></button>';
 }
 // ilustrações das cartas temporárias (pasta IMGS BATALHA FILO/Praxis do Flavio, 640 px em webp); y = ponto de corte vertical na carta pequena
-var CORTE_TEMP={deusmorto:55,determinismo:50,niilismo:66,nonsequitur:64,paradoxo:46,mutatio:58,petitio:50,cicuta:58,dogma:52,ceticismo:58};
+var CORTE_TEMP={orientalismo:50,deusmorto:55,determinismo:50,niilismo:66,nonsequitur:64,paradoxo:46,mutatio:58,petitio:50,cicuta:58,dogma:52,ceticismo:58};
 function imgTemp(c,cls){ return '<div class="'+(cls||'pimg')+'" style="background-image:url(temporarias/'+c.id+'.webp);background-position:50% '+(CORTE_TEMP[c.id]||55)+'%"></div>'; }
 function custoMao(c){ return c.tipo==='P'?BF.custoMin(c.id,S,0):c.custo; }
 function famStyle(c){ return ' style="--fam:'+(c.fam==='escola'&&ESC[c.esc]?ESC[c.esc].cor2:BF.FAMILIA[c.fam].cor)+'"'; }
@@ -332,7 +332,7 @@ function palcoCarta(f){
   if(c.id==='paradoxo'&&q)res.push('«'+q.q+'» fica trancado até o próximo turno de '+pl.nome);
   if(c.id==='petitio'&&q)res.push(pl.nome+' dá «'+q.q+'» por provado: se ainda liderar no próximo turno, vence mesmo abaixo do valor');
   if(c.id==='deusmorto'&&prm.morto)res.push(C(prm.morto).nome+(prm.o===0?' deixa a sua mesa':' deixa a mesa de '+alvo));
-  if(c.id==='dogma'||c.id==='niilismo'||c.id==='determinismo')res.push(f.label);
+  if(c.id==='dogma'||c.id==='niilismo'||c.id==='determinismo'||c.id==='orientalismo')res.push(f.label);
   if(c.id==='tautologia'&&prm.fi!==undefined)res.push(f.label);
   if(c.pen)res.push(pl.nome+' perde '+c.pen+' ponto'+(c.pen>1?'s':'')+'; a carta sai do jogo');
   var art={falacia:'uma falácia',argumento:'um argumento',escola:'uma carta de escola',praxis:'uma Práxis'}[c.fam];
@@ -488,7 +488,8 @@ function bigHTML(c,op){
 // a carta grande centraliza a figura na área livre à esquerda. Medido nas pranchas de 18/11/2026; sem valor, 0,58.
 var CORPO_CX={aristoteles:.59,platao:.57,socrates:.605,epicuro:.588,pitagoras:.617,diogenes:.573,marx:.563,hegel:.578,hobbes:.563,bacon:.577,
   locke:.587,rousseau:.589,kant:.562,nietzsche:.607,schopenhauer:.608,heidegger:.572,freud:.541,arendt:.601,maquiavel:.587,erasmo:.607,
-  descartes:.565,tomas:.562,agostinho:.594,leibniz:.580,averrois:.585,espinoza:.588,sartre:.588,foucault:.589,voltaire:.537,derrida:.592,camus:.634,lacan:.544};
+  descartes:.565,tomas:.562,agostinho:.594,leibniz:.580,averrois:.585,espinoza:.588,sartre:.588,foucault:.589,voltaire:.537,derrida:.592,camus:.634,lacan:.544,
+  jesus:.609,buda:.564,confucio:.575,avicena:.594,zoroastro:.587,laotse:.584};
 function verCarta(id,daGaleria){
   cancelarSel(); $('box').className='box';
   $('box').innerHTML=bigHTML(C(id))+'<div class="fecha">'+(daGaleria?'<button class="btn" data-a="ab-galeria">Voltar à galeria</button>':'')+'<button class="btn" data-a="fechar">Fechar</button></div>';
@@ -529,7 +530,7 @@ function alvosDe(tipo,ref){
       else if(c.id==='paradoxo') po.forEach(function(o){var e=q$('.deb[data-di="'+o.prm.d+'"]'); if(e)out.push({el:e,fn:jogar(o)});});
       else if(c.id==='tautologia') po.forEach(function(o){var e=o.prm.d!==undefined?q$('.deb[data-di="'+o.prm.d+'"]'):q$('[data-seat="'+o.prm.fi+'"] .mini'); if(e)out.push({el:e,fn:jogar(o)});});
       else if(c.id==='cicuta'||c.id==='deusmorto') po.forEach(function(o){var e=q$('[data-op="'+o.prm.o+'"][data-oi="'+o.prm.fi+'"] .mini'); if(e)out.push({el:e,fn:jogar(o)});});
-      else if(['nonsequitur','dogma','niilismo','determinismo'].indexOf(c.id)>=0) po.forEach(function(o){var e=q$('#opps .ident[data-painel="'+o.prm.o+'"]'); if(e)out.push({el:e,fn:jogar(o)});});
+      else if(['nonsequitur','dogma','niilismo','determinismo','orientalismo'].indexOf(c.id)>=0) po.forEach(function(o){var e=q$('#opps .ident[data-painel="'+o.prm.o+'"]'); if(e)out.push({el:e,fn:jogar(o)});});
       else if(['espantalho','sofisma','reductio','retorsio','falseabilidade','ceticismo'].indexOf(c.id)>=0)
         po.forEach(function(o){var e=q$('.est[data-row="'+o.prm.d+':'+o.prm.o+'"]'); if(e)out.push({el:e,fn:jogar(o)});});
       else if(c.id==='adhominem'){
@@ -560,7 +561,7 @@ var SEM_ALVO={
   nonsequitur:'Nenhum oponente tem cartas temporárias na mão.', retorsio:'Sem alvo: num debate seu, um oponente precisa ter ao menos 3 ideias.',
   reductio:'Sem alvo: num debate seu, um oponente precisa ter ao menos 2 ideias.', falseabilidade:'Sem alvo: precisa de um debate de Lógica / Ciência em que você e um oponente tenham ideias.',
   tautologia:'Sem alvo agora.', paradoxo:'Todos os debates já estão trancados.', cicuta:'Nenhum adversário tem um filósofo grego que possa ser alvo (Diógenes é imune).',
-  dogma:'Nenhum adversário tem Materialistas e Empiristas.', deusmorto:'Nenhum adversário tem um Teísta de custo 1 ou 2 que possa ser alvo.', determinismo:'Nenhum adversário tem Franceses (ou Agostinho) com ideias.', niilismo:'Nenhum adversário tem Germânicos (ou já estão sob o Niilismo).',
+  dogma:'Nenhum adversário tem Materialistas e Empiristas.', deusmorto:'Nenhum adversário tem um Teísta de custo 1 ou 2 que possa ser alvo.', determinismo:'Nenhum adversário tem Franceses (ou Agostinho) com ideias.', orientalismo:'Nenhum adversário tem Orientais que vão a debates.', niilismo:'Nenhum adversário tem Germânicos (ou já estão sob o Niilismo).',
   ceticismo:'Sem alvo: precisa de um debate de Metafísica / Religião em que você e um oponente tenham ideias.'
 };
 var DICAS={

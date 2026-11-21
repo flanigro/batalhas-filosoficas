@@ -176,6 +176,36 @@ for (const ids of [['d01', 'd07'], ['d04', 'd07']]) { const s = jogo(20); zera(s
   confere('Deus está morto: só Teístas de custo 1 ou 2', ops.length === 2, ops); BF.playPraxis(s, 0, c, ops[0].prm);
   confere('Deus está morto: o filósofo deixa a mesa', s.players[1].group.length === 1); }
 
+// 12. Orientais (21/11/2026)
+{ const s = jogo(40); zera(s); s.players[1].group = [G('jesus', 5), G('kant', 2)]; s.players[0].group = [G('marx', 4), G('hegel', 1)]; s.players[2].group = [G('platao', 0)];
+  passaPara1(s); const p1 = s.players[1].group, p0 = s.players[0].group, p2 = s.players[2].group;
+  confere('Jesus: +2 ao colega com menos ideias e +1 ao mais pobre de cada adversário', p0[1].ideas === 2 && p0[0].ideas === 4 && p2[0].ideas === 1, [p0.map(g => g.ideas), p2[0].ideas, p1.map(g => g.ideas)]); }
+{ const s = jogo(41); zera(s); s.players[1].group = [G('buda', 3), G('kant', 1), G('marx', 6)]; passaPara1(s); const g = s.players[1].group;
+  confere('Buda: entrega todas as ideias ao colega com menos, +1', g[0].ideas === 0 && g[1].ideas >= 1 + 3 + 3 + 1, g.map(x => x.ideas)); }
+{ const s = jogo(42); zera(s); s.players[1].group = [G('confucio', 0), G('kant', 0), G('platao', 0)]; passaPara1(s); const g = s.players[1].group;
+  confere('Confúcio: o mais antigo do grupo (Confúcio, 551 a.C., antes de Platão) recebe +1', g[0].ideas === 2 + 1 && g[2].ideas === 2, g.map(x => x.ideas)); }
+{ const s = jogo(43); zera(s); s.players[1].group = [G('confucio', 0), G('zoroastro', 0)]; passaPara1(s); const g = s.players[1].group;
+  confere('Confúcio: Zoroastro é mais antigo', g[1].ideas === 1 + 1 + 1 + 2 && g[0].ideas === 2 + 1, g.map(x => x.ideas)); }
+{ const s = jogo(44); zera(s); s.players[1].group = [G('avicena', 0), Object.assign(G('kant', 3), { ferido: 3 })]; passaPara1(s); const g = s.players[1].group;
+  confere('Avicena: o colega ferido recupera até 2', g[1].ideas === 3 + 3 + 2 && g[0].ideas === 1, g.map(x => x.ideas)); }
+{ const s = jogo(45); zera(s); s.players[1].group = [G('avicena', 0)]; passaPara1(s);
+  confere('Avicena: sem feridos, estuda (+1)', s.players[1].group[0].ideas === 1 + 1, s.players[1].group[0].ideas); }
+{ const s = jogo(46); zera(s); s.players[1].group = [G('zoroastro', 0)]; passaPara1(s); const a = s.players[1].group[0].ideas;
+  const s2 = jogo(46); zera(s2); s2.players[1].group = [G('zoroastro', 0)]; s2.players[1].mentiu = true; passaPara1(s2);
+  confere('Zoroastro: +2 sem falácia; nada depois de mentir', a === 3 && s2.players[1].group[0].ideas === 1, [a, s2.players[1].group[0].ideas]); }
+{ const s = jogo(47); zera(s); s.debates[0].stakes = [0, 2, 0]; s.players[1].group = [G('laotse', 5)]; passaPara1(s);
+  confere('Lao-Tsé: +1 em cada debate aberto, sem gastar as dele', s.debates.every((d, i) => d.stakes[1] === (i === 0 ? 3 : 1)) && s.players[1].group[0].ideas === 6, [s.debates.map(d => d.stakes[1]), s.players[1].group[0].ideas]);
+  confere('Lao-Tsé: não vai a debates', BF.moveOptions(s, 1, 0).length === 0); }
+{ const s = jogo(48); zera(s); s.debates[0].id = 'd04'; s.debates[1].id = 'd07';   // Metafísica e Ética
+  s.players[1].group = [G('confucio', 6)]; const c = daCarta(s, 0, 'orientalismo', 2); const o = opc(s, 0, 'orientalismo');
+  confere('Orientalismo: mira quem tem Orientais', o && o.prm.o === 1, BF.praxisOptions(s, 0, 'orientalismo'));
+  BF.playPraxis(s, 0, c, o.prm); BF.endTurn(s, []); const ops = BF.moveOptions(s, 1, 0);
+  confere('Orientalismo: Confúcio só vai à Metafísica', ops.length === 1 && ops[0].di === 0, ops);
+  BF.endTurn(s, []); BF.endTurn(s, []); BF.endTurn(s, []);
+  confere('Orientalismo: passa depois do turno', s.players[1].orient === 0, s.players[1].orient); }
+{ const s = jogo(49); zera(s); s.players[0].group = [G('avicena', 0), G('aristoteles', 0)]; s.players[1].group = [G('confucio', 0), G('laotse', 0)];
+  confere('Duplas novas: Confúcio e Lao-Tsé; Avicena e Aristóteles', BF.duplasDe('laotse').some(d => d.par === 'confucio') && BF.duplasDe('avicena').some(d => d.par === 'aristoteles')); }
+
 // 7. partidas só de IA
 { let erros = 0, rod = 0, venc = [0, 0, 0], N = 300;
   for (let sd = 1; sd <= N; sd++) {

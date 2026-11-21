@@ -17,7 +17,10 @@
     livre: { nome: 'Livres-Pensadores',             cor: '#6d6f85', cor2: '#3b3c4d' },
     // escolas novas (proposta de 20/11/2026, em teste no branch escolas-5): cores fora das usadas por áreas, escolas, jogadores e famílias
     teista: { nome: 'Teístas e Racionalistas',      cor: '#b0532c', cor2: '#64290f' },   // terracota, como no impresso
-    fran:   { nome: 'Franceses',                    cor: '#8a9a2a', cor2: '#4a5410' }    // verde-absinto
+    fran:   { nome: 'Franceses',                    cor: '#8a9a2a', cor2: '#4a5410' },   // verde-absinto
+    // sexta escola (proposta de 21/11/2026, branch escolas-6). O impresso usa magenta, que no digital se confunde
+    // com a Psicologia (#a13a9b) e com a Sêneca (#ea6a97); açafrão fica livre de áreas, escolas, jogadores e famílias.
+    orient: { nome: 'Orientais',                    cor: '#dc6f0e', cor2: '#7a3603' }    // açafrão
   };
 
   function F(id, pre, nome, custo, escola, v, local, datas, obra, cit, citFonte, c1, c2, c3) {
@@ -133,7 +136,7 @@
       [6, '“Mais seguro ser temido que amado”', '+2 ideias para seus filósofos. Um oponente não baixa cartas na próxima rodada.']),
     F('erasmo', 'de Roterdã', 'Erasmo', 1, 'livre', [2, 1, 3, 2], 'Roterdã, Holanda', 'c. 1466 – 1536', 'Elogio da Loucura',
       'A pior das loucuras é tentar ser sensato em um mundo de loucos.', 'atribuída; a conferir',
-      ['“A Religião é uma forma de loucura”', 'No momento de Reflexão de Erasmo, um filósofo Teísta perde 2 ideias. (Sem Teístas neste protótipo.)'],
+      ['“A Religião é uma forma de loucura”', 'No momento de Reflexão de Erasmo, um filósofo Teísta perde 2 ideias.'],
       [3, '“A felicidade depende da opinião”', 'Coloque +1 ideia em cada debate.'],
       [5, 'Elegância Retórica', 'Baixe o Legado. Seus filósofos recebem +1 ideia ao mover ideias para debates.']),
     // ---- Teístas e Racionalistas (proposta de 20/11/2026; valores do impresso v4) ----
@@ -197,7 +200,38 @@
       'O inconsciente é estruturado como uma linguagem.', 'O Seminário, livro 11',
       ['O Grande Outro', 'No momento de Reflexão, se algum adversário tiver mais pontos que você, Lacan recebe +1. O desejo é o desejo do Outro.'],
       [6, 'Estádio do Espelho', 'Escolha um debate do qual você participe. Iguale as suas ideias às de um oponente.'],
-      [7, 'O Grande Outro', 'Ganhe um debate de Psicologia.'])
+      [7, 'O Grande Outro', 'Ganhe um debate de Psicologia.']),
+    // ---- Orientais (proposta de 21/11/2026; valores do impresso v4) ----
+    F('jesus', 'de Nazaré', 'Jesus', 5, 'orient', [5, 1, 5, 4], 'Galileia – Jerusalém', 'c. 4 a.C. – c. 30', 'Sermão da Montanha (nos Evangelhos)',
+      'Amarás o teu próximo como a ti mesmo.', 'Evangelho de Mateus 22, 39',
+      ['Amai os vossos inimigos', 'No momento de Reflexão, o filósofo com menos ideias de cada grupo, o seu e os dos adversários, recebe +1. O próximo inclui o adversário (Mateus 5, 44).'],
+      [4, '“Quem não tiver pecado, atire a primeira pedra”', 'Proteja um filósofo por 2 rodadas de todos os efeitos negativos.'],
+      [6, '“A César o que é de César”', 'Remova 3 ideias de um debate de Ética / Política. Vença um debate de Metafísica / Religião.']),
+    F('buda', '', 'Buda', 4, 'orient', [4, 1, 4, 4], 'Lumbini (Nepal) – Kushinagar (Índia)', 'c. 563 – c. 483 a.C.', 'Dhammapada (ensinamentos reunidos pelos discípulos)',
+      'O ódio nunca cessa pelo ódio; só pelo não ódio ele cessa.', 'Dhammapada, verso 5',
+      ['Desapego', 'No momento de Reflexão, Buda entrega todas as suas ideias ao colega com menos ideias, que ainda recebe +1. Buda não guarda nada para si.'],
+      [5, 'Nirvana', 'Baixe o Legado Nirvana: protege um filósofo contra efeitos negativos.'],
+      [7, 'Pensamento correto, ação correta', 'Todos os seus filósofos, inclusive Buda, recebem +3 ideias.']),
+    F('confucio', '', 'Confúcio', 3, 'orient', [3, 1, 5, 3], 'Qufu (Estado de Lu, China)', '551 – 479 a.C.', 'Analectos',
+      'Não faças aos outros o que não queres para ti.', 'Analectos XV, 24',
+      ['Respeito à Tradição', 'No momento de Reflexão, o filósofo mais antigo do seu grupo, o de nascimento mais remoto, recebe +1. Confúcio dizia transmitir, e não inventar (Analectos VII, 1).'],
+      [4, 'Código de Conduta', 'Um filósofo não recebe ideias de filósofos, jogadores ou Legados nas 2 próximas rodadas.'],
+      [6, 'Justiça, Retidão, Honradez', 'Descarte sua mão. Vença um debate de Ética / Política.']),
+    F('avicena', '', 'Avicena', 2, 'orient', [4, 4, 2, 1], 'Afshana, perto de Bukhara – Hamadã (Pérsia)', '980 – 1037', 'O Livro da Cura; Cânone da Medicina',
+      'Suspenso no ar, sem ver nem tocar coisa alguma, eu ainda saberia que existo.', 'O Livro da Cura, Livro da Alma I, 1 (paráfrase do “homem voador”, a verificar)',
+      ['Cânone da Medicina', 'No momento de Reflexão, cada colega que perdeu ideias para um adversário desde o seu último turno recupera até 2. Se ninguém se feriu, Avicena estuda e recebe +1.'],
+      [3, 'O Homem Voador', 'Um filósofo Oriental coloca o dobro de ideias num debate de Metafísica / Religião neste turno.'],
+      [6, 'A Alma é distinta do corpo', 'Se Aristóteles estiver no seu grupo, ele e Avicena recebem +3 ideias.']),
+    F('zoroastro', '', 'Zoroastro', 1, 'orient', [4, 1, 2, 1], 'Irã oriental (Ásia Central)', 'c. 1500 – 1000 a.C. (incerto)', 'Gathas (no Avesta)',
+      'Bons pensamentos, boas palavras, boas ações.', 'Fórmula do Avesta (humata, hukhta, hvarshta), a verificar',
+      ['Verdade contra Mentira', 'No momento de Reflexão, Zoroastro recebe +2 se você não usou nenhuma falácia na partida. Para ele, a mentira é o lado do mal.'],
+      [5, 'Juízo Final', 'Remova as ideias de um debate de Lógica e troque-o por um debate de Metafísica / Religião da pilha.'],
+      [6, 'Bem contra Mal', 'Ponha +2 ideias nos debates de que você participa e tire 2 dos oponentes.']),
+    F('laotse', '', 'Lao-Tsé', 1, 'orient', [3, 1, 3, 2], 'Estado de Chu (China)', 'séc. VI a.C. (tradição)', 'Tao Te Ching',
+      'Uma viagem de mil léguas começa com um passo.', 'Tao Te Ching, 64',
+      ['Wu wei, a não ação', 'Lao-Tsé nunca vai a debates. Mesmo assim, no momento de Reflexão, você ganha +1 ideia em cada debate aberto: o sábio age sem agir (Tao Te Ching, 2).'],
+      [2, 'Fluxo de Chi', 'Remaneje as ideias dos seus filósofos dentro do grupo.'],
+      [6, 'Yin / Yang', 'Escolha um debate do qual você participe. Troque as suas ideias com as de um oponente.'])
   ];
 
   // Cartas temporárias (19/11/2026): quatro famílias.
@@ -257,6 +291,9 @@
     { id: 'determinismo', nome: 'Determinismo', custo: 2, fam: 'escola', esc: 'fran', sub: 'Escola — contra os Franceses',
       d: 'Cada filósofo Francês dos adversários perde 2 ideias. Se um adversário tiver Agostinho, ele perde todas.',
       oq: 'A tese de que tudo o que acontece decorre necessariamente do que veio antes. Laplace imaginou uma inteligência que, conhecendo o estado presente do universo, saberia todo o futuro (Ensaio Filosófico sobre as Probabilidades, 1814, a verificar). Os existencialistas franceses apostam na liberdade, e Agostinho defende o livre-arbítrio; por isso a carta acerta os dois. Ela já sabia que você ia jogá-la.' },
+    { id: 'orientalismo', nome: 'Orientalismo', custo: 1, fam: 'escola', esc: 'orient', sub: 'Escola — contra os Orientais',
+      d: 'No próximo turno de um adversário, os filósofos Orientais dele só levam ideias a debates de Metafísica / Religião.',
+      oq: 'Edward Said chamou de orientalismo o modo como a Europa inventou um “Oriente” único, místico e parado no tempo (Orientalismo, 1978, a verificar). Esta própria escola junta mestres da China, da Índia, da Pérsia e da Judeia sob um nome só. A carta faz o mesmo: trata Confúcio, que pensava o governo, e Avicena, médico e lógico, como se só soubessem falar de religião.' },
     { id: 'niilismo', nome: 'Niilismo', custo: 3, fam: 'escola', esc: 'germ', sub: 'Escola — contra os Germânicos',
       d: 'No próximo turno de um adversário, nenhum filósofo Germânico dele leva ideias a debates.',
       oq: 'A ideia de que nada tem sentido, valor ou propósito. Nietzsche fez dela o diagnóstico de uma época que perdeu seus fundamentos (fragmentos póstumos, a verificar). Os Germânicos atingidos ficam parados, sem motivo para ir ao debate. Afinal, para quê?' },
@@ -457,7 +494,9 @@
     ['tomas', 'agostinho', 'Os dois grandes doutores da Igreja: Tomás cita Agostinho a cada passo.'],
     ['espinoza', 'descartes', 'Espinoza expôs em livro os Princípios da Filosofia de Descartes.'],
     ['camus', 'sartre', 'Amigos, rivais e vizinhos de mesa no Café de Flore.'],
-    ['lacan', 'freud', 'O retorno a Freud.']
+    ['lacan', 'freud', 'O retorno a Freud.'],
+    ['confucio', 'laotse', 'Confúcio foi perguntar a Lao-Tsé sobre os ritos e voltou dizendo que tinha visto um dragão.'],
+    ['avicena', 'aristoteles', 'Avicena leu a Metafísica de Aristóteles quarenta vezes antes de entendê-la.']
   ];
   var BONUS_DUPLA = 1;
   function duplasDe(id) {
@@ -496,6 +535,19 @@
     ['derrida', 'heidegger', 'A desconstrução de Derrida nasce da “destruição” da metafísica proposta por Heidegger.', 'Carta a um amigo japonês (1985)'],
     ['arendt', 'agostinho', 'A tese de doutorado de Arendt foi sobre o conceito de amor em Agostinho.', 'O Conceito de Amor em Santo Agostinho (1929)'],
     ['camus', 'nietzsche', 'Camus lê em Nietzsche a revolta contra um mundo sem Deus, e também os perigos dela.', 'O Homem Revoltado, “Nietzsche e o niilismo”'],
+    // Orientais (21/11/2026; tudo a verificar)
+    ['laotse', 'confucio', 'Segundo o historiador Sima Qian, Confúcio visitou Lao-Tsé para perguntar sobre os ritos e saiu dizendo que tinha visto um dragão.', 'Sima Qian, Registros do Historiador, cap. 63'],
+    ['avicena', 'aristoteles', 'Avicena conta que leu a Metafísica de Aristóteles quarenta vezes sem entender, até achar num mercado um livrinho de al-Farabi que a explicava.', 'Autobiografia de Avicena (ed. Gohlman)'],
+    ['averrois', 'avicena', 'Averróis acusa Avicena de se afastar de Aristóteles e de ceder aos teólogos.', 'Incoerência da Incoerência'],
+    ['tomas', 'avicena', 'A distinção entre essência e existência chega a Tomás por Avicena, que ele cita a cada página.', 'O Ente e a Essência'],
+    ['nietzsche', 'zoroastro', 'Nietzsche fez de Zaratustra o seu porta-voz: quem inventou a moral do bem contra o mal devia ser o primeiro a reconhecer o erro.', 'Ecce Homo, “Por que sou um destino”, §3'],
+    ['schopenhauer', 'buda', 'Schopenhauer via no budismo a religião mais próxima da sua filosofia e guardava uma estátua do Buda em casa.', 'O Mundo como Vontade e Representação II, cap. 17; cartas'],
+    ['nietzsche', 'jesus', 'Nietzsche separa Jesus da Igreja: no fundo houve um só cristão, e ele morreu na cruz.', 'O Anticristo, §39'],
+    ['arendt', 'jesus', 'Para Arendt, foi Jesus de Nazaré quem descobriu o papel do perdão nos assuntos humanos.', 'A Condição Humana, cap. V, §33'],
+    ['leibniz', 'confucio', 'Leibniz admirava a ética chinesa e propôs que sábios da China viessem ensinar teologia natural à Europa.', 'Novissima Sinica (1697), prefácio'],
+    ['voltaire', 'confucio', 'Voltaire elogia Confúcio como o sábio que ensinou a virtude sem se dizer profeta.', 'Dicionário Filosófico, verbete “China”'],
+    ['hegel', 'confucio', 'Hegel achou os Analectos uma moral prática e comum, e disse que a fama de Confúcio teria ganhado se não tivessem sido traduzidos.', 'Lições sobre a História da Filosofia, introdução'],
+    ['heidegger', 'laotse', 'Em 1946 Heidegger tentou traduzir o Tao Te Ching com o estudioso chinês Paul Shih-yi Hsiao e parou depois de alguns capítulos.', 'Relato de Paul Shih-yi Hsiao (1977)'],
   ].forEach(function (r) { RELACOES.push(r); });
 
   // ---------- preparação ----------
@@ -529,7 +581,7 @@
       s.players.push({
         nome: nomes[i], cor: cores[i], human: opt.humans ? !!opt.humans[i] : i === 0,
         nivel: opt.niveis ? opt.niveis[i] : 'mestre',
-        hand: [], group: [], library: 0, points: 0, caveiras: 0, niil: 0, won: [], boughtExtra: false, trocou: false
+        hand: [], group: [], library: 0, points: 0, caveiras: 0, niil: 0, orient: 0, mentiu: false, won: [], boughtExtra: false, trocou: false
       });
     }
     FILOSOFOS.forEach(function (f) { s.deck.push(f.id); });
@@ -590,6 +642,7 @@
     // recém-baixados (por baixa ou por troca) entram em ação no início do próximo turno do dono
     pl.group.forEach(function (g) { g.novo = false; });
     if (pl.niil === 1) pl.niil = 2;   // Niilismo: vale durante este turno
+    if (pl.orient === 1) pl.orient = 2;   // Orientalismo: vale durante este turno
     log(s, 'Rodada ' + s.round + ' — turno de ' + pl.nome + '.', 'turno', P);
     fx(s, { k: 'turno', P: P });
     s.debates.forEach(function (d, di) {
@@ -661,6 +714,16 @@
     return m;
   }
 
+  // Ano de nascimento a partir das datas da carta (a.C. negativo), para o poder de Confúcio
+  var NASC_FIXO = { laotse: -571 };   // tradição (Sima Qian); as datas da carta dizem só "séc. VI a.C."
+  function nascimento(id) {
+    if (id in NASC_FIXO) return NASC_FIXO[id];
+    var d = C(id).datas || '', partes = d.split('–'), m = partes[0].match(/\d+/);
+    if (!m) return 9999;
+    var ac = /a\.C\./.test(partes[0]) || (/a\.C\./.test(d) && !/d\.C\./.test(d));
+    return ac ? -(+m[0]) : +m[0];
+  }
+
   function reflexao(s, P) {
     s._snap = s.mudo ? null : snapIdeias(s);
     var pl = s.players[P];
@@ -702,6 +765,7 @@
       });
     }
     for (i = 0; i < pl.group.length; i++) conceitoReflexao(s, P, pl.group[i], i);
+    pl.group.forEach(function (x) { delete x.ferido; });   // Avicena olha só o que aconteceu desde o último turno
     checkInstant(s, P);
   }
 
@@ -716,6 +780,48 @@
           s.players[o].group.forEach(function (x) { if (!x.lib && !imune(x) && x.ideas > 0 && !x.duvida && (!t || x.ideas > t.ideas)) { t = x; tdono = o; } });
         }
         if (t) { t.duvida = true; diz(C(t.id).nome + ' (' + nomeJ(s, tdono) + ') cai em dúvida: não vai a debates de Lógica nem de Metafísica no próximo turno.'); }
+        break;
+      case 'jesus':   // Amai os vossos inimigos
+        var ajudou = [];
+        for (o = 0; o < s.players.length; o++) {
+          t = null;
+          s.players[o].group.forEach(function (x) { if (!x.lib && ativo(x) && x.ideas < s.cfg.teto && (!t || x.ideas < t.ideas)) t = x; });
+          if (!t) continue;
+          var dJ = o === P ? 2 : 1; poe(s, t, dJ); ajudou.push(C(t.id).nome + (o === P ? ' +2' : ' (' + nomeJ(s, o) + ') +1'));
+          if (o !== P) pop(s, o, t.id, '+1 ideia', 'Amai os vossos inimigos (Jesus, de ' + pl.nome + ')', 'con');
+        }
+        if (ajudou.length) diz(ajudou.join(', ') + '.');
+        break;
+      case 'buda':   // Desapego
+        t = null;
+        semLib(pl).forEach(function (x) { if (x !== g && ativo(x) && (!t || x.ideas < t.ideas)) t = x; });
+        if (t && g.ideas > 0) {
+          var dado = g.ideas; g.ideas = 0;
+          var chegou = poe(s, t, dado + 1);
+          diz('entrega ' + nI(dado) + ' a ' + C(t.id).nome + ', que recebe +' + chegou + ' ao todo.');
+        }
+        break;
+      case 'confucio':   // Respeito à Tradição
+        t = null;
+        semLib(pl).forEach(function (x) { if (ativo(x) && x.ideas < s.cfg.teto && (!t || nascimento(x.id) < nascimento(t.id))) t = x; });
+        if (t) { poe(s, t, 1); diz('+1 ideia para ' + C(t.id).nome + ', o mais antigo do grupo (' + C(t.id).datas + ').'); }
+        break;
+      case 'avicena':   // Cânone da Medicina
+        var curou = [];
+        semLib(pl).forEach(function (x) { if (x.ferido > 0) { var n2 = poe(s, x, Math.min(2, x.ferido)); if (n2) curou.push(C(x.id).nome + ' +' + n2); } });
+        if (curou.length) diz('trata os feridos: ' + curou.join(', ') + '.');
+        else { ganha(s, P, g, 1); diz('+1 ideia: ninguém se feriu, e Avicena estuda.'); }
+        break;
+      case 'zoroastro':   // Verdade contra Mentira
+        if (!pl.mentiu) { ganha(s, P, g, 2); diz('+2 ideias: nenhuma falácia sua até aqui.'); }
+        break;
+      case 'laotse':   // Wu wei
+        var foram = 0;
+        s.debates.forEach(function (d, di2) {
+          if (!livre(d)) return;
+          d.stakes[P] += 1; marcaPart(s, di2, P, g.id); foram++;
+        });
+        if (foram) diz('+1 ideia em ' + (foram > 1 ? foram + ' debates' : 'um debate') + ', sem sair do lugar: age sem agir.');
         break;
       case 'agostinho':   // Graça
         if (g.ideas === 0 && !g.lib) { ganha(s, P, g, 3); diz('+3 ideias: a graça vem para quem nada tem.'); }
@@ -766,7 +872,7 @@
             if (!t || x.ideas > t.ideas) { t = x; dono = o; }
           }
         }
-        if (t) { t.ideas -= 1; diz(C(t.id).nome + ' (' + nomeJ(s, dono) + ') perde 1 ideia.', 'neg'); pop(s, dono, t.id, '−1 ideia', 'Mais-Valia de Marx', 'neg'); }
+        if (t) { t.ideas -= 1; t.ferido = (t.ferido || 0) + 1; diz(C(t.id).nome + ' (' + nomeJ(s, dono) + ') perde 1 ideia.', 'neg'); pop(s, dono, t.id, '−1 ideia', 'Mais-Valia de Marx', 'neg'); }
         break;
       case 'hobbes':
         var bd = -1, bo = -1, bv = 0;
@@ -839,8 +945,10 @@
     if (!g || g.lib || g.acted || s.over || s.turn !== P || !ativo(g) || g.ideas <= 0) return out;
     var c = C(g.id);
     if (pl.niil === 2 && c.escola === 'germ') return out;   // Niilismo
+    if (g.id === 'laotse') return out;   // Wu wei: Lao-Tsé não vai a debates
     for (var i = 0; i < s.debates.length; i++) {
       if (!livre(s.debates[i])) continue;
+      if (pl.orient === 2 && c.escola === 'orient' && DEB[s.debates[i].id].area !== 'meta') continue;   // Orientalismo
       if (g.duvida && (DEB[s.debates[i].id].area === 'logica' || DEB[s.debates[i].id].area === 'meta')) continue;   // Gênio Maligno: dúvida sobre o conhecimento
       var cap = g.id === 'sartre' ? Math.max(c.vals.meta, c.vals.logica, c.vals.etica, c.vals.psico) : c.vals[DEB[s.debates[i].id].area];
       if (g.id === 'hegel') out.push({ di: i, amt: Math.min(cap, g.ideas), cap: cap });
@@ -855,6 +963,8 @@
     if (!ativo(g)) return 'Acabou de chegar: entrará em ação no próximo turno.';
     if (g.acted) return 'Já foi a um debate neste turno.';
     if (s.players[P].niil === 2 && C(g.id).escola === 'germ') return 'Niilismo: neste turno, os Germânicos não veem sentido em debater.';
+    if (g.id === 'laotse') return 'Wu wei: Lao-Tsé não vai a debates. No momento de Reflexão, você ganha +1 ideia em cada debate aberto, sem que ele saia do lugar.';
+    if (s.players[P].orient === 2 && C(g.id).escola === 'orient') return 'Orientalismo: neste turno, os Orientais só vão a debates de Metafísica / Religião.';
     if (g.duvida) return 'Gênio Maligno: em dúvida, não vai a debates de Lógica nem de Metafísica neste turno.';
     if (g.ideas > 0 && !s.debates.some(livre)) return 'Os debates estão trancados pelo Paradoxo Lógico.';
     return 'Ainda não tem ideias suficientes: precisa do valor exato da área do debate.';
@@ -1095,6 +1205,13 @@
           if (alvos.length) out.push({ label: alvos.map(function (g) { return C(g.id).nome; }).join(' e ') + ' (' + nomeJ(s, x) + ')', prm: { o: x } });
         });
         break;
+      case 'orientalismo':
+        ops(function (x) {
+          if (s.players[x].orient) return;
+          var gs = s.players[x].group.filter(function (g) { return !g.lib && C(g.id).escola === 'orient' && g.id !== 'laotse'; });
+          if (gs.length) out.push({ label: 'Reduzir ' + gs.map(function (g) { return C(g.id).nome; }).join(', ') + ' à religião (' + nomeJ(s, x) + ')', prm: { o: x } });
+        });
+        break;
       case 'niilismo':
         ops(function (x) {
           if (s.players[x].niil) return;
@@ -1123,6 +1240,11 @@
         if (op.niil) out.push(nj + ' já está sob o Niilismo.');
         else if (!gs.length) out.push(nj + ' não tem Germânicos.');
         else if (gs.every(function (g) { return g.lib; })) out.push(nj + ': o único Germânico é o Bibliotecário.');
+      } else if (base === 'orientalismo') {
+        gs = op.group.filter(function (g) { return C(g.id).escola === 'orient'; });
+        if (op.orient) out.push(nj + ' já está sob o Orientalismo.');
+        else if (!gs.length) out.push(nj + ' não tem Orientais.');
+        else if (gs.every(function (g) { return g.lib || g.id === 'laotse'; })) out.push(nj + ': os Orientais dele não vão a debates (Bibliotecário ou Lao-Tsé).');
       } else if (base === 'deusmorto') {
         op.group.forEach(function (g) {
           if (C(g.id).escola !== 'teista') return;
@@ -1160,7 +1282,7 @@
         n = s.players[P].group.some(function (x) { return C(x.id).escola === 'mat'; }) ? 4 : 2;
         d.stakes[prm.o] = Math.max(0, d.stakes[prm.o] - n); break;
       case 'adhominem':
-        g = s.players[prm.o].group[prm.fi]; n = Math.min(5, g.ideas); g.ideas -= n; d.stakes[P] += n; break;   // até 5 (18/11/2026)
+        g = s.players[prm.o].group[prm.fi]; n = Math.min(5, g.ideas); g.ideas -= n; g.ferido = (g.ferido || 0) + n; d.stakes[P] += n; break;   // até 5 (18/11/2026)
       case 'petitio': d.petitio = { P: P }; break;   // desde 20/11/2026: dá a conclusão por provada (vence abaixo do valor se ainda liderar)
       case 'mutatio':
         n = Math.min(4, d.stakes[P]); d.stakes[P] -= n; s.debates[prm.d2].stakes[P] += n; break;
@@ -1196,10 +1318,13 @@
       case 'determinismo':
         s.players[prm.o].group.forEach(function (x) {
           if (x.lib || imune(x)) return;
+          var antes = x.ideas;
           if (x.id === 'agostinho') x.ideas = 0; else if (C(x.id).escola === 'fran') x.ideas = Math.max(0, x.ideas - 2);
+          if (x.ideas < antes) x.ferido = (x.ferido || 0) + antes - x.ideas;
         });
         break;
       case 'niilismo': s.players[prm.o].niil = 1; break;
+      case 'orientalismo': s.players[prm.o].orient = 1; break;
     }
   }
 
@@ -1224,6 +1349,7 @@
       log(s, 'Falácia: ' + pl.nome + ' perde ' + c.pen + ' ponto' + (c.pen > 1 ? 's' : '') + ' (fica com ' + pl.points + '). ' + c.nome + ' sai do jogo.', 'neg', P);
       fx(s, { k: 'caveira', P: P, id: c.id, n: c.pen, total: pl.caveiras, pontos: pl.points });
     }
+    if (c.falacia) pl.mentiu = true;   // Zoroastro: a partir daqui, sem o bônus da verdade
     gatilhoLocke(s, P, c.id);
     for (var o = 0; c.falacia && o < s.players.length; o++) {
       if (o === P) continue;
@@ -1278,6 +1404,7 @@
     autoDiscard(s, P);
     pl.group.forEach(function (g) { g.foiAnt = !!g.foi; g.foi = false; g.acted = false; g.given = 0; delete g.duvida; });
     if (pl.niil === 2) pl.niil = 0;
+    if (pl.orient === 2) pl.orient = 0;
     s.turn = (P + 1) % s.players.length;
     if (s.turn === 0) {
       var top = Math.max.apply(null, s.players.map(function (x) { return x.points; }));
@@ -1345,6 +1472,7 @@
           if (!g.lib) v -= 0.9 * C(g.id).custo;                       // perder um filósofo pesa (Cicuta)
           if (g.dogma) v += 0.5 * (REFLEXAO[C(g.id).custo] + 1);      // Dogma: Reflexão perdida
           if (pl.niil === 1 && C(g.id).escola === 'germ' && !g.lib) v += 0.12 * g.ideas + 0.4;   // Niilismo
+          if (pl.orient === 1 && C(g.id).escola === 'orient' && !g.lib && g.id !== 'laotse') v += 0.05 * g.ideas + 0.15;   // Orientalismo
         });
         v -= 1.2 * pl.hand.filter(temporariaNaMao).length;            // Non Sequitur
       }
@@ -1463,7 +1591,7 @@
     DUPLAS: DUPLAS, BONUS_DUPLA: BONUS_DUPLA, duplasDe: duplasDe, imune: imune, trocavel: trocavel, REFLEXAO: REFLEXAO, FALAS: FALAS,
     C: C, newGame: newGame, temColega: temColega, moveOptions: moveOptions, porqueNao: porqueNao, moveToDebate: moveToDebate,
     playPhilosopher: playPhilosopher, trocar: trocar, podeTrocar: podeTrocar, libIdx: libIdx, nI: nI, canGive: canGive, giveIdea: giveIdea, buyExtra: buyExtra,
-    praxisOptions: praxisOptions, playPraxis: playPraxis, endTurn: endTurn, aiStep: aiStep,
+    praxisOptions: praxisOptions, playPraxis: playPraxis, nascimento: nascimento, endTurn: endTurn, aiStep: aiStep,
     oppMax: oppMax, lidera: lidera, ativo: ativo, evalState: evalState, livre: livre, custoPraxis: custoPraxis, custoMin: custoMin, foraDoAlcance: foraDoAlcance
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = API;
