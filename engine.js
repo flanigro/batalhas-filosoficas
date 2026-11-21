@@ -203,8 +203,8 @@
       [7, 'O Grande Outro', 'Ganhe um debate de Psicologia.']),
     // ---- Orientais (proposta de 21/11/2026; valores do impresso v4) ----
     F('jesus', 'de Nazaré', 'Jesus', 5, 'orient', [5, 1, 5, 4], 'Galileia – Jerusalém', 'c. 4 a.C. – c. 30', 'Sermão da Montanha (nos Evangelhos)',
-      'Amarás o teu próximo como a ti mesmo.', 'Evangelho de Mateus 22, 39',
-      ['Amai os vossos inimigos', 'No momento de Reflexão, o filósofo com menos ideias do seu grupo recebe +2, e o de cada grupo adversário, +1. O próximo inclui o adversário (Mateus 5, 44).'],
+      'Ame o próximo como a si mesmo.', 'Evangelho de Mateus 22, 39',
+      ['Amem os seus inimigos', 'No momento de Reflexão, o filósofo com menos ideias do seu grupo recebe +2, e o de cada grupo adversário, +1. O próximo inclui o adversário (Mateus 5, 44).'],
       [4, '“Quem não tiver pecado, atire a primeira pedra”', 'Proteja um filósofo por 2 rodadas de todos os efeitos negativos.'],
       [6, '“A César o que é de César”', 'Remova 3 ideias de um debate de Ética / Política. Vença um debate de Metafísica / Religião.']),
     F('buda', '', 'Buda', 4, 'orient', [4, 1, 4, 4], 'Lumbini (Nepal) – Kushinagar (Índia)', 'c. 563 – c. 483 a.C.', 'Dhammapada (ensinamentos reunidos pelos discípulos)',
@@ -781,14 +781,14 @@
         }
         if (t) { t.duvida = true; diz(C(t.id).nome + ' (' + nomeJ(s, tdono) + ') cai em dúvida: não vai a debates de Lógica nem de Metafísica no próximo turno.'); }
         break;
-      case 'jesus':   // Amai os vossos inimigos
+      case 'jesus':   // Amem os seus inimigos
         var ajudou = [];
         for (o = 0; o < s.players.length; o++) {
           t = null;
           s.players[o].group.forEach(function (x) { if (!x.lib && ativo(x) && x.ideas < s.cfg.teto && (!t || x.ideas < t.ideas)) t = x; });
           if (!t) continue;
           var dJ = o === P ? 2 : 1; poe(s, t, dJ); ajudou.push(C(t.id).nome + (o === P ? ' +2' : ' (' + nomeJ(s, o) + ') +1'));
-          if (o !== P) pop(s, o, t.id, '+1 ideia', 'Amai os vossos inimigos (Jesus, de ' + pl.nome + ')', 'con');
+          if (o !== P) pop(s, o, t.id, '+1 ideia', 'Amem os seus inimigos (Jesus, de ' + pl.nome + ')', 'con');
         }
         if (ajudou.length) diz(ajudou.join(', ') + '.');
         break;

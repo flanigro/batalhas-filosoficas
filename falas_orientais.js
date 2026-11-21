@@ -1,34 +1,34 @@
 /* Batalha dos Filósofos — falas por pergunta: Orientais (escrita em 21/11/2026).
    Tipos: c = tradução livre, p = em outras palavras, i = a partir de suas ideias.
-   Jesus fala só com palavras dos Evangelhos (tradução livre), sem frases inventadas.
+   Jesus fala com palavras dos Evangelhos, em português de hoje (tu e vós saíram), sem frases inventadas.
    Tudo a verificar. */
 (function (r) {
   var F = r.BF_FALAS = r.BF_FALAS || {};
   F.jesus = {
-    d01: ['c', 'Eu te louvo, Pai, porque escondeste estas coisas aos sábios e as revelaste aos pequeninos.', 'Mateus 11, 25'],
-    d02: ['p', 'Nenhum pardal cai sem que o Pai saiba. Até os cabelos da vossa cabeça estão contados.', 'Mateus 10, 29-30'],
-    d03: ['c', 'Conhecereis a verdade, e a verdade vos libertará.', 'João 8, 32'],
-    d04: ['c', 'Deus é espírito, e os que o adoram devem adorá-lo em espírito e verdade.', 'João 4, 24'],
+    d01: ['p', 'Pai, obrigado por esconder estas coisas dos sábios e mostrá-las aos pequenos.', 'Mateus 11, 25'],
+    d02: ['p', 'Nenhum passarinho cai sem que o Pai saiba. Até os fios do seu cabelo estão contados.', 'Mateus 10, 29-30'],
+    d03: ['c', 'Vocês vão conhecer a verdade, e a verdade vai libertar vocês.', 'João 8, 32'],
+    d04: ['p', 'É meu Pai.', 'João 10, 30; 20, 17'],
     d05: ['c', 'De que adianta ganhar o mundo inteiro e perder a própria alma?', 'Marcos 8, 36'],
-    d06: ['c', 'Quantas vezes quis reunir os teus filhos, como a galinha reúne os pintinhos, e tu não quiseste!', 'Mateus 23, 37'],
-    d07: ['c', 'Por que me chamas bom? Ninguém é bom senão um só, que é Deus.', 'Marcos 10, 18'],
-    d08: ['c', 'Os reis das nações as dominam. Entre vós não será assim: quem quiser ser o maior, seja o servo de todos.', 'Lucas 22, 25-26'],
-    d09: ['c', 'O Pai faz nascer o sol sobre maus e bons, e chover sobre justos e injustos.', 'Mateus 5, 45'],
-    d10: ['c', 'Olhai os lírios do campo: nem Salomão, em toda a sua glória, se vestiu como um deles.', 'Mateus 6, 28-29'],
-    d11: ['c', 'Ninguém tem amor maior do que aquele que dá a vida pelos amigos.', 'João 15, 13'],
-    d12: ['c', 'O espírito está pronto, mas a carne é fraca.', 'Marcos 14, 38'],
-    d13: ['c', 'Não vos preocupeis com o amanhã, pois o amanhã cuidará de si mesmo. Basta a cada dia o seu mal.', 'Mateus 6, 34'],
-    d14: ['p', 'Não vim abolir a Lei, mas cumpri-la. O sábado foi feito para o ser humano, e não o ser humano para o sábado.', 'Mateus 5, 17; Marcos 2, 27'],
-    d15: ['c', 'Quem quiser salvar a sua vida vai perdê-la; quem perder a vida por minha causa vai encontrá-la.', 'Mateus 16, 25'],
-    d16: ['c', 'Vós sois a luz do mundo. Ninguém acende uma lâmpada para escondê-la debaixo de uma vasilha.', 'Mateus 5, 14-15'],
+    d06: ['p', 'Quantas vezes eu quis reunir vocês, como a galinha reúne os pintinhos, e vocês não quiseram!', 'Mateus 23, 37'],
+    d07: ['c', 'Por que você me chama de bom? Só Deus é bom.', 'Marcos 10, 18'],
+    d08: ['p', 'Os reis mandam nos povos. Entre vocês não vai ser assim: quem quiser ser o maior, que sirva a todos.', 'Lucas 22, 25-26'],
+    d09: ['c', 'O Pai faz o sol nascer para maus e bons, e a chuva cair sobre justos e injustos.', 'Mateus 5, 45'],
+    d10: ['c', 'Olhem os lírios do campo: nem o rei Salomão, com toda a sua riqueza, se vestiu como um deles.', 'Mateus 6, 28-29'],
+    d11: ['c', 'Ninguém tem amor maior do que quem dá a vida pelos amigos.', 'João 15, 13'],
+    d12: ['c', 'O espírito está disposto, mas a carne é fraca.', 'Marcos 14, 38'],
+    d13: ['c', 'Não se preocupem com o amanhã: o amanhã cuida de si. Cada dia já tem problemas que bastem.', 'Mateus 6, 34'],
+    d14: ['p', 'Não vim acabar com a Lei, mas cumpri-la. O sábado foi feito para o ser humano, e não o ser humano para o sábado.', 'Mateus 5, 17; Marcos 2, 27'],
+    d15: ['c', 'Quem quiser salvar a própria vida vai perdê-la; quem perder a vida por minha causa vai encontrá-la.', 'Mateus 16, 25'],
+    d16: ['c', 'Vocês são a luz do mundo. Ninguém acende uma lâmpada para escondê-la debaixo de um balde.', 'Mateus 5, 14-15'],
     d17: ['c', 'Antes que Abraão existisse, eu sou.', 'João 8, 58'],
-    d18: ['c', 'Pelos frutos os conhecereis. Colhem-se uvas dos espinheiros?', 'Mateus 7, 16'],
-    d19: ['c', 'Dai a César o que é de César, e a Deus o que é de Deus.', 'Mateus 22, 21'],
-    d20: ['c', 'No sábado é permitido fazer o bem ou fazer o mal? Salvar uma vida ou deixá-la perder?', 'Marcos 3, 4'],
-    d21: ['c', 'Ouvistes que foi dito: olho por olho, dente por dente. Eu, porém, vos digo: não pagueis o mal com o mal.', 'Mateus 5, 38-39'],
-    d22: ['c', 'Onde está o teu tesouro, aí estará também o teu coração.', 'Mateus 6, 21'],
-    d23: ['c', 'Falo por parábolas porque, vendo, não veem, e, ouvindo, não ouvem nem entendem.', 'Mateus 13, 13'],
-    d24: ['c', 'Por que vês o cisco no olho do teu irmão e não percebes a trave no teu?', 'Mateus 7, 3']
+    d18: ['c', 'Pelos frutos se conhece a árvore. Alguém colhe uva de espinheiro?', 'Mateus 7, 16'],
+    d19: ['c', 'Deem a César o que é de César, e a Deus o que é de Deus.', 'Mateus 22, 21'],
+    d20: ['c', 'No sábado pode-se fazer o bem ou o mal? Salvar uma vida ou deixar morrer?', 'Marcos 3, 4'],
+    d21: ['p', 'Vocês ouviram: olho por olho, dente por dente. Pois eu digo: não paguem o mal com o mal.', 'Mateus 5, 38-39'],
+    d22: ['c', 'Onde está o seu tesouro, aí também estará o seu coração.', 'Mateus 6, 21'],
+    d23: ['c', 'Falo por parábolas porque eles olham e não veem, escutam e não ouvem nem entendem.', 'Mateus 13, 13'],
+    d24: ['c', 'Por que você vê o cisco no olho do seu irmão e não percebe a trave no seu?', 'Mateus 7, 3']
   };
   F.buda = {
     d01: ['p', 'Quem é ferido por uma flecha não pergunta quem a fabricou antes de tirá-la. Há perguntas que não curam ninguém.', 'Cula-Malunkyovada Sutta (Majjhima Nikaya 63)'],

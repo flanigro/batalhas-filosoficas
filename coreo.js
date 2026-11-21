@@ -86,7 +86,7 @@ var BORDAO={
   derrida:{p:['Différance!|Com a, mesmo','Desconstrução!','Il n’y a pas de hors-texte!|Não há fora-do-texto'],l:['frances']},
   camus:{p:['Imaginemos Sísifo feliz!','Absurdo!','Eu me revolto, logo existimos!'],l:['frances']},
   lacan:{p:['O inconsciente é uma linguagem!','Retorno a Freud!','Estádio do espelho!'],l:['frances']},
-  jesus:{p:['Quem tem ouvidos, ouça!','Vinde e vede!','Talitá cumi!|Menina, levanta-te!'],l:['aramaico']},
+  jesus:{p:['Quem tem ouvidos, ouça!','Venham ver!','Talitá cumi!|Menina, levanta-te!'],l:['aramaico']},
   buda:{p:['Ehipassiko!|Venha e veja!','O caminho do meio!','Tudo passa!'],l:['pali']},
   confucio:{p:['Pelos ritos!','Estudar e praticar!','O nobre não se zanga!'],l:['chines']},
   avicena:{p:['Pelo Cânone!','Eu existo, mesmo voando!','Diagnóstico!'],l:['persa','arabe']},
