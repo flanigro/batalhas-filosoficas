@@ -1302,13 +1302,24 @@
   }
 
   // ---------- IA ----------
+  function horizonte(s) {   // 1 com a partida em curso; cai na penúltima e na última rodada
+    var top = Math.max.apply(null, s.players.map(function (x) { return x.points; }));
+    var resta = top >= s.cfg.pontos ? 0 : s.cfg.rodadas - s.round;
+    return resta >= 2 ? 1 : resta === 1 ? 0.6 : 0.15;
+  }
+
   function evalState(s, P) {
     var v = 0, i, o;
     for (i = 0; i < s.debates.length; i++) {
       var d = s.debates[i], val = DEB[d.id].valor, mine = d.stakes[P], om = oppMax(d, P);
-      v += 0.6 * Math.min(mine, val);
-      v += 0.25 * Math.max(-val, Math.min(val, mine - om));
       var pv = d.petitio ? d.petitio.P : -1, req = pv === P ? 1 : val, reqO = pv >= 0 && pv !== P ? 1 : val;   // Petitio: o limiar cai para 1
+      // Debate perdido: um adversário já vence no turno dele e você não o alcança. As suas ideias ali vão se perder,
+      // então não valem nada (antes valiam, e a IA despejava ideias em debates que o próximo jogador levaria).
+      var perdido = om >= reqO && om > mine && !(d.tranca && d.tranca.P === P);
+      if (!perdido) {
+        v += 0.6 * Math.min(mine, val);
+        v += 0.25 * Math.max(-val, Math.min(val, mine - om));
+      }
       if (mine >= req && mine > om) v += 0.8 * val;
       if (om >= reqO && om > mine) v -= 0.6 * val;
       if (d.tranca) {   // Paradoxo: liderança protegida (ou a do adversário adiada)
@@ -1320,7 +1331,13 @@
     var maxOpp = 0;
     for (o = 0; o < s.players.length; o++) {
       var pl = s.players[o];
-      if (o === P) { v += pl.points * 3 + pl.library * 0.4; pl.group.forEach(function (g) { v += 0.45 * g.ideas; }); }
+      if (o === P) {
+        // Ideia parada vale menos quanto mais sobra e quanto mais perto do fim: no fim da partida não vale nada.
+        // (Antes, 0,4 por ideia sempre; a IA terminava a partida com 16 ideias na Biblioteca, em média.)
+        var h = horizonte(s);
+        v += pl.points * 3 + h * (0.4 * Math.min(pl.library, 8) + 0.15 * Math.max(0, pl.library - 8));
+        pl.group.forEach(function (g) { v += h * 0.45 * g.ideas; });
+      }
       else {
         maxOpp = Math.max(maxOpp, pl.points);
         pl.group.forEach(function (g) {
@@ -1372,11 +1389,28 @@
         if (w < wv) { wv = w; wi = i; }
       }
       if (wi >= 0 && c.custo >= wv + 2) { playPhilosopher(s, P, pl.hand[cand], wi); return true; }
+      // Biblioteca sobrando: o gargalo são as ações, não as ideias. Troca o filósofo que leva menos aos debates
+      // da mesa por um que leve bem mais (antes a IA guardava 15 ou 20 ideias sem ter onde pôr).
+      if (pl.library >= 8 && horizonte(s) > 0.15) {
+        var alcance = function (id) { var cc = C(id), m = 0; s.debates.forEach(function (d) { m = Math.max(m, cc.vals[DEB[d.id].area]); }); return m; };
+        var mi = -1, mv2 = 1e9, ni = -1, nv = -1;
+        for (i = 0; i < pl.group.length; i++) {
+          if (pl.group[i].lib) continue;
+          var a = alcance(pl.group[i].id) + 0.3 * pl.group[i].ideas;
+          if (a < mv2) { mv2 = a; mi = i; }
+        }
+        for (i = 0; i < pl.hand.length; i++) {
+          var ch = C(pl.hand[i]);
+          if (ch.tipo !== 'F' || ch.custo > pl.library) continue;
+          if (alcance(ch.id) > nv) { nv = alcance(ch.id); ni = i; }
+        }
+        if (mi >= 0 && ni >= 0 && nv >= mv2 + 2) { playPhilosopher(s, P, pl.hand[ni], mi); return true; }
+      }
     }
     // 2) práxis
     var base = evalState(s, P);
     if (mestre || rnd(s) < 0.35) {
-      var bestP = null, bpv = 0.6;
+      var bestP = null, bpv = pl.library >= 8 ? 0.3 : 0.6;   // com ideias sobrando, a carta temporária precisa render menos
       for (i = 0; i < pl.hand.length; i++) {
         c = C(pl.hand[i]);
         if (c.tipo !== 'P' || custoMin(c.id, s, P) > pl.library) continue;
@@ -1408,7 +1442,9 @@
         if (sc > pv) { pv = sc; plano = lista[lista.length - 1]; }
       }
     }
-    if (!mestre && lista.length && rnd(s) < 0.45) plano = lista[Math.floor(rnd(s) * lista.length)];
+    // Nível básico: às vezes escolhe uma jogada qualquer, mas só entre as que ajudam (antes podia despejar ideias num debate já perdido).
+    var boas = lista.filter(function (x) { return x.sc > 0; });
+    if (!mestre && boas.length && rnd(s) < 0.45) plano = boas[Math.floor(rnd(s) * boas.length)];
     if (plano) {
       for (i = 0; i < plano.falta; i++) giveIdea(s, P, plano.fi, true);
       if (plano.falta) fx(s, { k: 'dar', P: P, id: pl.group[plano.fi].id, n: plano.falta });
@@ -1416,7 +1452,8 @@
       return true;
     }
     // 4) carta extra
-    if (!pl.boughtExtra && pl.library >= 4 && pl.hand.length <= 2) { buyExtra(s, P); return true; }
+    // Com ideias sobrando, compra mais opções (antes só com a mão quase vazia, e a Biblioteca acumulava).
+    if (!pl.boughtExtra && pl.library >= 4 && (pl.hand.length <= 2 || (pl.library >= 7 && pl.hand.length <= 4 && horizonte(s) > 0.15))) { buyExtra(s, P); return true; }
     endTurn(s);
     return true;
   }
