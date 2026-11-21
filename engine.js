@@ -14,7 +14,10 @@
     grega: { nome: 'Grécia Clássica',            cor: '#2a6db3', cor2: '#17406e' },
     mat:   { nome: 'Materialistas e Empiristas', cor: '#c4861c', cor2: '#7a4f0c' },
     germ:  { nome: 'Germânicos',                 cor: '#2f9e4a', cor2: '#17592a' },
-    livre: { nome: 'Livres-Pensadores',             cor: '#6d6f85', cor2: '#3b3c4d' }
+    livre: { nome: 'Livres-Pensadores',             cor: '#6d6f85', cor2: '#3b3c4d' },
+    // escolas novas (proposta de 20/11/2026, em teste no branch escolas-5): cores fora das usadas por áreas, escolas, jogadores e famílias
+    teista: { nome: 'Teístas e Racionalistas',      cor: '#b0532c', cor2: '#64290f' },   // terracota, como no impresso
+    fran:   { nome: 'Franceses',                    cor: '#8a9a2a', cor2: '#4a5410' }    // verde-absinto
   };
 
   function F(id, pre, nome, custo, escola, v, local, datas, obra, cit, citFonte, c1, c2, c3) {
@@ -132,7 +135,69 @@
       'A pior das loucuras é tentar ser sensato em um mundo de loucos.', 'atribuída; a conferir',
       ['“A Religião é uma forma de loucura”', 'No momento de Reflexão de Erasmo, um filósofo Teísta perde 2 ideias. (Sem Teístas neste protótipo.)'],
       [3, '“A felicidade depende da opinião”', 'Coloque +1 ideia em cada debate.'],
-      [5, 'Elegância Retórica', 'Baixe o Legado. Seus filósofos recebem +1 ideia ao mover ideias para debates.'])
+      [5, 'Elegância Retórica', 'Baixe o Legado. Seus filósofos recebem +1 ideia ao mover ideias para debates.']),
+    // ---- Teístas e Racionalistas (proposta de 20/11/2026; valores do impresso v4) ----
+    F('descartes', 'René', 'Descartes', 5, 'teista', [5, 5, 2, 4], 'La Haye (França) – Estocolmo', '1596 – 1650', 'Meditações Metafísicas',
+      'Penso, logo existo.', 'Discurso do Método, IV',
+      ['Gênio Maligno', 'No momento de Reflexão, o filósofo adversário com mais ideias cai em dúvida: no próximo turno do dono, não vai a debates de Lógica nem de Metafísica. Ética e Psicologia continuam: Descartes mantinha uma moral provisória enquanto duvidava. Diógenes e o Bibliotecário escapam.'],
+      [3, 'O Demônio da Dúvida', 'Um filósofo oponente não pode levar ideias a debates nem usar poderes nesta rodada.'],
+      [7, 'Sistema Cartesiano', 'Reorganize todos os filósofos em jogo, fazendo as trocas que quiser. Elimine as ideias das cartas.']),
+    F('tomas', 'Santo', 'Tomás de Aquino', 4, 'teista', [5, 2, 4, 3], 'Roccasecca (Itália) – Fossanova', '1225 – 1274', 'Suma Teológica',
+      'A graça não destrói a natureza, mas a aperfeiçoa.', 'Suma Teológica I, q. 1, a. 8, ad 2',
+      ['Fé e Razão', 'Quando Tomás leva ideias a um debate de Lógica, +1 ideia sua num debate de Metafísica em que você já tem ideias; e vice-versa. Fé e razão andam juntas.'],
+      [4, 'Igreja', 'Baixe o Legado Igreja: protege todos os filósofos Teístas contra efeitos negativos.'],
+      [7, 'Pecado Original', 'Expulse um filósofo definitivamente do jogo.']),
+    F('agostinho', 'Santo', 'Agostinho', 3, 'teista', [5, 1, 3, 3], 'Tagaste – Hipona (norte da África)', '354 – 430', 'Confissões',
+      'Inquieto está o nosso coração enquanto não repousa em ti.', 'Confissões I, 1',
+      ['Graça', 'No momento de Reflexão, se Agostinho estiver sem nenhuma ideia, recebe +3. A graça vem para quem nada tem.'],
+      [4, 'Seres Morais e Imorais', 'Os Teístas, inclusive Agostinho, ganham +2 ideias; os Empiristas perdem 2.'],
+      [6, 'Alma Imortal', 'Baixe o Legado Alma Imortal: um filósofo fica imune a efeitos e ações de oponentes.']),
+    F('leibniz', 'Gottfried W.', 'Leibniz', 2, 'teista', [4, 5, 1, 1], 'Leipzig – Hanôver', '1646 – 1716', 'Monadologia',
+      'Calculemos!', 'A Ciência Geral (c. 1685), a verificar',
+      ['Cálculo', 'Toda vez que Leibniz entra num debate de Lógica / Ciência, +1 ideia sua nesse debate.'],
+      [5, 'Verdades da Razão e de Fato', 'Troque um filósofo de custo 1 da sua mão por um de custo 1 de um oponente.'],
+      [6, 'O Melhor dos Mundos', 'Duplique suas ideias num debate de Lógica.']),
+    F('averrois', 'Ibn Rushd,', 'Averróis', 1, 'teista', [2, 1, 3, 1], 'Córdoba – Marrakech', '1126 – 1198', 'Discurso Decisivo',
+      'A verdade não contradiz a verdade; concorda com ela e dá testemunho dela.', 'Discurso Decisivo',
+      ['O Comentador', 'No momento de Reflexão, se Aristóteles estiver na mesa, em qualquer grupo, Averróis recebe +2. Os latinos o chamavam simplesmente de "o Comentador".'],
+      [4, 'Leis religiosas são políticas necessárias', 'Todos os filósofos Teístas, inclusive Averróis, recebem +2 ideias.'],
+      [5, 'Alcorão, verdade poética', 'Se suas ideias já forem suficientes, vença imediatamente um debate de Metafísica.']),
+    F('espinoza', 'Baruch', 'Espinoza', 1, 'teista', [4, 1, 3, 1], 'Amsterdã – Haia', '1632 – 1677', 'Ética',
+      'Não rir, não lamentar, nem detestar, mas compreender.', 'Tratado Político I, 4',
+      ['Deus sive Natura', 'Espinoza conta como Teísta e como Materialista para o bônus de escola: dele e dos colegas. Deus e a Natureza são uma só substância.'],
+      [2, 'Substância Única', 'Nesta rodada seus filósofos só geram ideias de uma única área à sua escolha.'],
+      [5, 'Razão: autopreservação e entendimento', 'Espinoza recebe +2 ideias. O grupo fica protegido de efeitos negativos por uma rodada.']),
+    // ---- Franceses ----
+    F('sartre', 'Jean-Paul', 'Sartre', 5, 'fran', [3, 2, 4, 4], 'Paris', '1905 – 1980', 'O Ser e o Nada',
+      'O homem está condenado a ser livre.', 'O Existencialismo é um Humanismo',
+      ['A Existência Precede a Essência', 'Sartre leva a qualquer debate o seu maior valor (4), seja qual for a área. Ele se faz o que escolhe ser.'],
+      [4, 'Condenado a ser livre', 'Troque um filósofo da sua mão por um de mesmo custo do grupo de um oponente.'],
+      [7, '“O inferno são os outros”', 'Reduza pela metade (arredondando para baixo) as ideias dos oponentes nos debates.']),
+    F('foucault', 'Michel', 'Foucault', 4, 'fran', [2, 2, 4, 3], 'Poitiers – Paris', '1926 – 1984', 'Vigiar e Punir',
+      'Onde há poder, há resistência.', 'História da Sexualidade I, IV, 2',
+      ['Vigiar e Punir', 'Enquanto Foucault estiver em ação no seu grupo, cada falácia usada por um adversário custa a ele 1 ponto a mais.'],
+      [4, 'Arqueologia do Saber', 'Escolha uma carta da pilha de descartes.'],
+      [6, 'Vigiar e Punir', 'Baixe o Legado Vigiar e Punir: um filósofo escolhido não participa de debates.']),
+    F('voltaire', '', 'Voltaire', 3, 'fran', [2, 1, 3, 3], 'Paris', '1694 – 1778', 'Cândido',
+      'É preciso cultivar nosso jardim.', 'Cândido, cap. 30',
+      ['Contra o Fanatismo', 'Os Argumentos e as cartas de Práxis que você joga custam 1 ideia a menos (mínimo 1). As falácias, não.'],
+      [4, '“A certeza é agradável, mas absurda”', 'Elimine 2 ideias de todos os filósofos Germânicos e Racionalistas.'],
+      [6, 'Iluminismo', 'Todos os filósofos do seu grupo, incluindo Voltaire, recebem +3 ideias.']),
+    F('derrida', 'Jacques', 'Derrida', 2, 'fran', [2, 4, 1, 2], 'El Biar (Argélia) – Paris', '1930 – 2004', 'Gramatologia',
+      'Não há fora-de-texto.', 'Gramatologia, parte II, cap. 2',
+      ['Desconstrução', 'Ao entrar num debate, cada adversário que tem ali mais ideias que você passa 1 delas para você. A desconstrução inverte as hierarquias.'],
+      [4, 'Desconstrutivismo', 'As ideias em todos os debates são igualmente redistribuídas entre os jogadores.'],
+      [6, '“O significado é sempre incompleto”', 'Escolha um debate do qual você participe. Elimine todas as ideias de um oponente.']),
+    F('camus', 'Albert', 'Camus', 1, 'fran', [1, 1, 4, 2], 'Mondovi (Argélia) – Villeblevin', '1913 – 1960', 'O Mito de Sísifo',
+      'É preciso imaginar Sísifo feliz.', 'O Mito de Sísifo, final',
+      ['Sísifo', 'No momento de Reflexão, se você não lidera nenhum debate, Camus recebe +1. E sempre que um adversário vence um debate em que você tinha ideias, Camus recebe +2: a pedra rola, e ele recomeça.'],
+      [5, 'O Estrangeiro', 'Elimine um filósofo que tenha custo 1 ou 2. Uma vez por partida.'],
+      [6, '“O suicídio é a única questão filosófica séria”', 'Elimine a carta Camus. Ganhe um debate de Metafísica.']),
+    F('lacan', 'Jacques', 'Lacan', 1, 'fran', [1, 2, 1, 5], 'Paris', '1901 – 1981', 'Escritos',
+      'O inconsciente é estruturado como uma linguagem.', 'O Seminário, livro 11',
+      ['O Grande Outro', 'No momento de Reflexão, se algum adversário tiver mais pontos que você, Lacan recebe +1. O desejo é o desejo do Outro.'],
+      [6, 'Estádio do Espelho', 'Escolha um debate do qual você participe. Iguale as suas ideias às de um oponente.'],
+      [7, 'O Grande Outro', 'Ganhe um debate de Psicologia.'])
   ];
 
   // Cartas temporárias (19/11/2026): quatro famílias.
@@ -186,6 +251,12 @@
     { id: 'dogma', nome: 'Dogma', custo: 4, fam: 'escola', esc: 'mat', sub: 'Escola — contra os Materialistas',
       d: 'Dois filósofos Materialistas e Empiristas de um adversário não recebem ideias no próximo momento de Reflexão dele.',
       oq: 'Uma verdade declarada indiscutível. Kant contou que a leitura de Hume o despertou do “sono dogmático” (Prolegômenos, prefácio, a verificar). Os empiristas, que só confiam na experiência, detestam dogmas. Esta carta os põe para dormir mesmo assim.' },
+    { id: 'deusmorto', nome: '“Deus está morto”', custo: 4, fam: 'escola', esc: 'teista', sub: 'Escola — contra os Teístas',
+      d: 'Remova do jogo um filósofo Teísta de custo 1 ou 2 de um adversário. O Bibliotecário não é alvo.',
+      oq: 'A frase é de Nietzsche, em A Gaia Ciência §125 (a verificar). Quem a anuncia é um louco que acende uma lanterna em plena manhã e procura Deus na praça. A lanterna lembra outro filósofo do jogo, que saía de dia procurando um homem. Nietzsche não comemora: para ele, a morte de Deus deixa a cultura sem chão.' },
+    { id: 'determinismo', nome: 'Determinismo', custo: 2, fam: 'escola', esc: 'fran', sub: 'Escola — contra os Franceses',
+      d: 'Cada filósofo Francês dos adversários perde 2 ideias. Se um adversário tiver Agostinho, ele perde todas.',
+      oq: 'A tese de que tudo o que acontece decorre necessariamente do que veio antes. Laplace imaginou uma inteligência que, conhecendo o estado presente do universo, saberia todo o futuro (Ensaio Filosófico sobre as Probabilidades, 1814, a verificar). Os existencialistas franceses apostam na liberdade, e Agostinho defende o livre-arbítrio; por isso a carta acerta os dois. Ela já sabia que você ia jogá-la.' },
     { id: 'niilismo', nome: 'Niilismo', custo: 3, fam: 'escola', esc: 'germ', sub: 'Escola — contra os Germânicos',
       d: 'No próximo turno de um adversário, nenhum filósofo Germânico dele leva ideias a debates.',
       oq: 'A ideia de que nada tem sentido, valor ou propósito. Nietzsche fez dela o diagnóstico de uma época que perdeu seus fundamentos (fragmentos póstumos, a verificar). Os Germânicos atingidos ficam parados, sem motivo para ir ao debate. Afinal, para quê?' },
@@ -382,7 +453,11 @@
     ['aristoteles', 'platao', 'Vinte anos de Academia ao lado do mestre.'],
     ['marx', 'hegel', 'A dialética herdada, posta de pé.'],
     ['schopenhauer', 'kant', 'O herdeiro declarado de Kant.'],
-    ['arendt', 'heidegger', 'A aluna de Marburgo.']
+    ['arendt', 'heidegger', 'A aluna de Marburgo.'],
+    ['tomas', 'agostinho', 'Os dois grandes doutores da Igreja: Tomás cita Agostinho a cada passo.'],
+    ['espinoza', 'descartes', 'Espinoza expôs em livro os Princípios da Filosofia de Descartes.'],
+    ['camus', 'sartre', 'Amigos, rivais e vizinhos de mesa no Café de Flore.'],
+    ['lacan', 'freud', 'O retorno a Freud.']
   ];
   var BONUS_DUPLA = 1;
   function duplasDe(id) {
@@ -478,8 +553,15 @@
   // Diógenes: nenhum adversário o escolhe como alvo nem tira ideias dele; não pode ser trocado (nem pelo dono).
   function imune(g) { return g.id === 'diogenes'; }
   function trocavel(g) { return !g.lib && !imune(g); }
+  // Espinoza (Deus sive Natura) conta como Teísta e como Materialista para o bônus de escola
+  function escolasDe(id) { return id === 'espinoza' ? ['teista', 'mat'] : [C(id).escola]; }
   function temColega(pl, g) {
-    for (var i = 0; i < pl.group.length; i++) if (pl.group[i] !== g && C(pl.group[i].id).escola === C(g.id).escola) return true;
+    var minhas = escolasDe(g.id);
+    for (var i = 0; i < pl.group.length; i++) {
+      if (pl.group[i] === g) continue;
+      var dele = escolasDe(pl.group[i].id);
+      if (minhas.some(function (e) { return dele.indexOf(e) >= 0; })) return true;
+    }
     return false;
   }
 
@@ -513,6 +595,11 @@
     pl.won.push(d.id);
     log(s, pl.nome + ' vence o debate «' + q.q + '» e marca ' + q.valor + ' pontos (' + motivo + ').', 'vit', P);
     fx(s, { k: 'vit', P: P, q: q.q, valor: q.valor, di: di, did: d.id, area: q.area, stakes: d.stakes.slice() });
+    for (var oc = 0; oc < s.players.length; oc++) {   // Sísifo (Camus): quem perdeu ideias no debate recomeça
+      if (oc === P || !(d.stakes[oc] > 0)) continue;
+      var cm = temAtivo(s.players[oc], 'camus');
+      if (cm && !cm.lib) { ganha(s, oc, cm, 2); pop(s, oc, 'camus', 'Sísifo', '+2 ideias: a pedra rolou; é preciso imaginar Sísifo feliz.'); }
+    }
     s.debates.splice(di, 1);
     if (s.debDeck.length) {
       var id = s.debDeck.pop();
@@ -604,6 +691,26 @@
     var pl = s.players[P], di, o, j, t, c = C(g.id), nome = c.c1.t;
     function diz(txt, tom) { pop(s, P, g.id, c.nome + ' · ' + nome, txt, tom); log(s, nome + ' (' + c.nome + '): ' + txt, tom === 'neg' ? 'neg' : 'con', P); }
     switch (g.id) {
+      case 'descartes':   // Gênio Maligno (proposta de 20/11/2026)
+        t = null; var tdono = -1;
+        for (o = 0; o < s.players.length; o++) {
+          if (o === P) continue;
+          s.players[o].group.forEach(function (x) { if (!x.lib && !imune(x) && x.ideas > 0 && !x.duvida && (!t || x.ideas > t.ideas)) { t = x; tdono = o; } });
+        }
+        if (t) { t.duvida = true; diz(C(t.id).nome + ' (' + nomeJ(s, tdono) + ') cai em dúvida: não vai a debates de Lógica nem de Metafísica no próximo turno.'); }
+        break;
+      case 'agostinho':   // Graça
+        if (g.ideas === 0 && !g.lib) { ganha(s, P, g, 3); diz('+3 ideias: a graça vem para quem nada tem.'); }
+        break;
+      case 'averrois':   // O Comentador
+        if (s.players.some(function (x) { return inGroup(x, 'aristoteles'); })) { ganha(s, P, g, 2); diz('+2 ideias: Aristóteles está na mesa.'); }
+        break;
+      case 'camus':   // O Absurdo (e Sísifo, na vitória dos adversários)
+        if (!s.debates.some(function (x, i) { return lidera(s, i, P); })) { ganha(s, P, g, 1); diz('+1 ideia: nenhum debate na mão, e mesmo assim é preciso continuar.'); }
+        break;
+      case 'lacan':   // O Grande Outro
+        if (s.players.some(function (x, o) { return o !== P && x.points > pl.points; })) { ganha(s, P, g, 1); diz('+1 ideia: há um adversário à frente no placar.'); }
+        break;
       case 'aristoteles':
         di = melhorDebate(s, P, function (q) { return q.area === 'logica'; });
         if (di >= 0) { s.debates[di].stakes[P] += 1; marcaPart(s, di, P, g.id); diz('+1 ideia em «' + DEB[s.debates[di].id].q + '».'); }
@@ -716,7 +823,8 @@
     if (pl.niil === 2 && c.escola === 'germ') return out;   // Niilismo
     for (var i = 0; i < s.debates.length; i++) {
       if (!livre(s.debates[i])) continue;
-      var cap = c.vals[DEB[s.debates[i].id].area];
+      if (g.duvida && (DEB[s.debates[i].id].area === 'logica' || DEB[s.debates[i].id].area === 'meta')) continue;   // Gênio Maligno: dúvida sobre o conhecimento
+      var cap = g.id === 'sartre' ? Math.max(c.vals.meta, c.vals.logica, c.vals.etica, c.vals.psico) : c.vals[DEB[s.debates[i].id].area];
       if (g.id === 'hegel') out.push({ di: i, amt: Math.min(cap, g.ideas), cap: cap });
       else if (g.ideas >= cap) out.push({ di: i, amt: cap, cap: cap });
     }
@@ -729,6 +837,7 @@
     if (!ativo(g)) return 'Acabou de chegar: entrará em ação no próximo turno.';
     if (g.acted) return 'Já foi a um debate neste turno.';
     if (s.players[P].niil === 2 && C(g.id).escola === 'germ') return 'Niilismo: neste turno, os Germânicos não veem sentido em debater.';
+    if (g.duvida) return 'Gênio Maligno: em dúvida, não vai a debates de Lógica nem de Metafísica neste turno.';
     if (g.ideas > 0 && !s.debates.some(livre)) return 'Os debates estão trancados pelo Paradoxo Lógico.';
     return 'Ainda não tem ideias suficientes: precisa do valor exato da área do debate.';
   }
@@ -770,6 +879,17 @@
     if (g.id === 'hegel' && oppMax(d, P) > d.stakes[P] - o.amt) {   // Síntese (desde 19/11/2026)
       d.stakes[P] += 1; pop(s, P, 'hegel', 'Síntese', '+1 ideia no debate: a tese encontrou a antítese.');
     }
+    if (g.id === 'leibniz' && q.area === 'logica') { d.stakes[P] += 1; pop(s, P, 'leibniz', 'Cálculo', '+1 ideia em «' + q.q + '».'); }
+    if (g.id === 'tomas' && (q.area === 'logica' || q.area === 'meta')) {
+      var outra = q.area === 'logica' ? 'meta' : 'logica', dt = -1;
+      s.debates.forEach(function (x, i) { if (DEB[x.id].area === outra && livre(x) && x.stakes[P] > 0 && (dt < 0 || DEB[x.id].valor > DEB[s.debates[dt].id].valor)) dt = i; });
+      if (dt >= 0) { s.debates[dt].stakes[P] += 1; pop(s, P, 'tomas', 'Fé e Razão', '+1 ideia em «' + DEB[s.debates[dt].id].q + '».'); }
+    }
+    if (g.id === 'derrida') {
+      var nd = 0;
+      for (var od = 0; od < s.players.length; od++) if (od !== P && d.stakes[od] > d.stakes[P]) { d.stakes[od] -= 1; d.stakes[P] += 1; nd++; }
+      if (nd) pop(s, P, 'derrida', 'Desconstrução', 'a hierarquia se inverte: ' + nd + ' ideia(s) passam para você em «' + q.q + '».');
+    }
     if (g.id === 'nietzsche') {
       var mo = -1, mv = 0;
       for (var oo = 0; oo < s.players.length; oo++) if (oo !== P && d.stakes[oo] > mv) { mv = d.stakes[oo]; mo = oo; }
@@ -786,7 +906,7 @@
 
   function draw(s, P, n) {
     for (var i = 0; i < n; i++) {
-      if (!s.deck.length && s.discard.length) { s.deck = shuffle(s, s.discard); s.discard = []; log(s, 'A pilha de descartes foi reembaralhada.', 'sis'); }
+      if (!s.deck.length && s.discard.length) { s.deck = shuffle(s, s.discard); s.discard = []; s.reemb = (s.reemb || 0) + 1; log(s, 'A pilha de descartes foi reembaralhada.', 'sis'); }
       if (!s.deck.length) return;
       s.players[P].hand.push(s.deck.pop());
     }
@@ -859,15 +979,21 @@
   }
 
   // custo de uma carta temporária para um alvo (a Cicuta custa 1 contra Sócrates)
+  function temAtivo(pl, id) { var g = inGroup(pl, id); return g && ativo(g) ? g : null; }
   function custoPraxis(s, P, cardId, prm) {
     var c = C(cardId);
+    if ((c.fam === 'argumento' || c.fam === 'praxis') && s && temAtivo(s.players[P], 'voltaire')) return Math.max(1, c.custo - 1);   // Contra o Fanatismo
     if (c.id === 'cicuta' && prm && prm.o !== undefined) {
       var g = s.players[prm.o] && s.players[prm.o].group[prm.fi];
       if (g && g.id === 'socrates') return 1;
     }
     return c.custo;
   }
-  function custoMin(cardId) { var c = C(cardId); return c.id === 'cicuta' ? 1 : c.custo; }
+  function custoMin(cardId, s, P) {
+    var c = C(cardId);
+    if (s && (c.fam === 'argumento' || c.fam === 'praxis') && temAtivo(s.players[P], 'voltaire')) return Math.max(1, c.custo - 1);
+    return c.id === 'cicuta' ? 1 : c.custo;
+  }
   function temporariaNaMao(id) { return C(id).tipo === 'P'; }
 
   function praxisOptions(s, P, base) {
@@ -929,6 +1055,20 @@
             if (g.lib || imune(g) || C(g.id).escola !== 'grega') return;
             out.push({ label: 'Eliminar ' + C(g.id).nome + ' (' + nomeJ(s, x) + ')' + (g.id === 'socrates' ? ' · custa 1' : ''), prm: { o: x, fi: fi } });
           });
+        });
+        break;
+      case 'deusmorto':
+        ops(function (x) {
+          s.players[x].group.forEach(function (g, fi) {
+            if (g.lib || imune(g) || C(g.id).escola !== 'teista' || C(g.id).custo > 2) return;
+            out.push({ label: 'Remover ' + C(g.id).nome + ' (' + nomeJ(s, x) + ')', prm: { o: x, fi: fi } });
+          });
+        });
+        break;
+      case 'determinismo':
+        ops(function (x) {
+          var n = 0; s.players[x].group.forEach(function (g) { if (!g.lib && !imune(g) && (C(g.id).escola === 'fran' || g.id === 'agostinho') && g.ideas > 0) n++; });
+          if (n) out.push({ label: nomeJ(s, x) + ': ' + n + ' filósofo(s) perdem ideias', prm: { o: x } });
         });
         break;
       case 'dogma':
@@ -1020,6 +1160,17 @@
       case 'dogma':
         alvosDogma(s, prm.o).forEach(function (x) { x.dogma = true; });
         break;
+      case 'deusmorto':
+        op = s.players[prm.o]; g = op.group.splice(prm.fi, 1)[0];
+        s.discard.push(g.id); prm.morto = g.id;
+        log(s, C(g.id).nome + ' (' + op.nome + ') deixa a mesa: Deus está morto' + (g.ideas ? ', e leva ' + nI(g.ideas) : '') + '.', 'neg', prm.o);
+        break;
+      case 'determinismo':
+        s.players[prm.o].group.forEach(function (x) {
+          if (x.lib || imune(x)) return;
+          if (x.id === 'agostinho') x.ideas = 0; else if (C(x.id).escola === 'fran') x.ideas = Math.max(0, x.ideas - 2);
+        });
+        break;
       case 'niilismo': s.players[prm.o].niil = 1; break;
     }
   }
@@ -1039,6 +1190,8 @@
     fx(s, { k: 'praxis', P: P, id: c.id, label: label || '', prm: prm, did: d0 ? d0.id : null, custo: custo,
       ganho: d0 ? d0.stakes[P] - antes[P] : 0, perda: d0 && prm.o !== undefined ? antes[prm.o] - d0.stakes[prm.o] : 0 });
     if (c.pen) {
+      var vigia = s.players.some(function (x, o) { return o !== P && temAtivo(x, 'foucault'); });
+      if (vigia) { c = Object.assign({}, c, { pen: c.pen + 1 }); log(s, 'Vigiar e Punir: Foucault cobra 1 ponto a mais pela falácia.', 'con'); }
       pl.points -= c.pen; pl.caveiras += c.pen;
       log(s, 'Falácia: ' + pl.nome + ' perde ' + c.pen + ' ponto' + (c.pen > 1 ? 's' : '') + ' (fica com ' + pl.points + '). ' + c.nome + ' sai do jogo.', 'neg', P);
       fx(s, { k: 'caveira', P: P, id: c.id, n: c.pen, total: pl.caveiras, pontos: pl.points });
@@ -1095,7 +1248,7 @@
     if (s.over) return false;
     if (descartes) descartes.forEach(function (id) { var i = pl.hand.indexOf(id); if (i >= 0) s.discard.push(pl.hand.splice(i, 1)[0]); });
     autoDiscard(s, P);
-    pl.group.forEach(function (g) { g.foiAnt = !!g.foi; g.foi = false; g.acted = false; g.given = 0; });
+    pl.group.forEach(function (g) { g.foiAnt = !!g.foi; g.foi = false; g.acted = false; g.given = 0; delete g.duvida; });
     if (pl.niil === 2) pl.niil = 0;
     s.turn = (P + 1) % s.players.length;
     if (s.turn === 0) {
@@ -1198,7 +1351,7 @@
       var bestP = null, bpv = 0.6;
       for (i = 0; i < pl.hand.length; i++) {
         c = C(pl.hand[i]);
-        if (c.tipo !== 'P' || custoMin(c.id) > pl.library) continue;
+        if (c.tipo !== 'P' || custoMin(c.id, s, P) > pl.library) continue;
         var po = praxisOptions(s, P, c.id);
         for (j = 0; j < po.length; j++) {
           var t2 = clone(s); t2.mudo = true;

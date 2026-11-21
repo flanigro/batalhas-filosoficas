@@ -44,8 +44,9 @@ var LINGUA={
   latim:['Ergo!|Logo!','Distinguo!|Faço uma distinção!','Quod erat demonstrandum!|Como se queria demonstrar','Nego!|Discordo!'],
   ingles:['Indeed!|De fato!','Evidence!|Provas!'],
   alemao:['Also!|Pois bem!','Genau!|Exatamente!','Ach so!|Ah, então é isso!','Achtung!|Atenção!'],
-  frances:['Voilà!|Eis aí!','Mon Dieu!|Meu Deus!'],
-  italiano:['Ecco!|Eis!','Basta!|Chega!']
+  frances:['Voilà!|Eis aí!','Mon Dieu!|Meu Deus!','Touché!|Acertou!','Bien sûr!|Claro!'],
+  italiano:['Ecco!|Eis!','Basta!|Chega!'],
+  arabe:['Al-ḥaqq!|A verdade!','Yallah!|Vamos!']
 };
 var BORDAO={
   socrates:{p:['Só sei que nada sei!','Posso fazer uma perguntinha?','Conhece-te a ti mesmo!'],l:['grego']},
@@ -67,7 +68,19 @@ var BORDAO={
   freud:{p:['Ato falho!','Ahá, um lapso!','Isso é recalque!'],l:['alemao']},
   arendt:{p:['Pensar sem corrimão!','Ação!','Banalidade do mal!'],l:['alemao']},
   maquiavel:{p:['Virtù!|Coragem e engenho','Fortuna!|A sorte','Raposa e leão!'],l:['italiano']},
-  erasmo:{p:['Viva a Loucura!','Festina lente!|Apressa-te devagar','Ad fontes!|Às fontes!'],l:['latim']}
+  erasmo:{p:['Viva a Loucura!','Festina lente!|Apressa-te devagar','Ad fontes!|Às fontes!'],l:['latim']},
+  descartes:{p:['Cogito, ergo sum!|Penso, logo existo','Duvido, logo penso!','Larvatus prodeo!|Avanço mascarado'],l:['latim','frances']},
+  tomas:{p:['Sed contra!|Mas, em contrário…','Fé e razão!','As cinco vias!'],l:['latim']},
+  agostinho:{p:['Tolle, lege!|Toma e lê!','Si fallor, sum!|Se me engano, existo','Inquieto é o coração!'],l:['latim']},
+  leibniz:{p:['Calculemus!|Calculemos!','O melhor dos mundos possíveis!','Mônadas!'],l:['latim','alemao']},
+  averrois:{p:['A verdade não contradiz a verdade!','Comento Aristóteles!','Ao Filósofo!'],l:['arabe','latim']},
+  espinoza:{p:['Deus sive Natura!|Deus, ou seja, a Natureza','Caute!|Cuidado!','Compreender, não chorar!'],l:['latim']},
+  sartre:{p:['O inferno são os outros!','Condenado a ser livre!','Engajamento!'],l:['frances']},
+  foucault:{p:['Vigiar e punir!','Onde há poder, há resistência!','O homem é uma invenção recente!'],l:['frances']},
+  voltaire:{p:['Écrasez l’infâme!|Esmagai a infâmia!','Il faut cultiver notre jardin!|É preciso cultivar nosso jardim','Tudo vai pelo melhor! (Será?)'],l:['frances']},
+  derrida:{p:['Différance!|Com a, mesmo','Desconstrução!','Il n’y a pas de hors-texte!|Não há fora-do-texto'],l:['frances']},
+  camus:{p:['Imaginemos Sísifo feliz!','Absurdo!','Eu me revolto, logo existimos!'],l:['frances']},
+  lacan:{p:['O inconsciente é uma linguagem!','Retorno a Freud!','Estádio do espelho!'],l:['frances']}
 };
 // dois em cada três vezes, um bordão próprio; na outra, um da língua dele
 function bordao(id){
