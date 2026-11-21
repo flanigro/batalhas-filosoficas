@@ -79,9 +79,9 @@ function miniP(c,attrs,cls){
     +imgTemp(c)+'<div class="pt">'+esc(c.nome)+'</div><div class="pd">'+esc(c.d)+'</div></button>';
 }
 // ilustrações das cartas temporárias (pasta IMGS BATALHA FILO/Praxis do Flavio, 640 px em webp); y = ponto de corte vertical na carta pequena
-var CORTE_TEMP={niilismo:66,nonsequitur:64,paradoxo:46,mutatio:58,petitio:50,cicuta:58,dogma:52,ceticismo:58};
+var CORTE_TEMP={deusmorto:55,determinismo:50,niilismo:66,nonsequitur:64,paradoxo:46,mutatio:58,petitio:50,cicuta:58,dogma:52,ceticismo:58};
 function imgTemp(c,cls){ return '<div class="'+(cls||'pimg')+'" style="background-image:url(temporarias/'+c.id+'.webp);background-position:50% '+(CORTE_TEMP[c.id]||55)+'%"></div>'; }
-function custoMao(c){ return c.tipo==='P'?BF.custoMin(c.id):c.custo; }
+function custoMao(c){ return c.tipo==='P'?BF.custoMin(c.id,S,0):c.custo; }
 function famStyle(c){ return ' style="--fam:'+(c.fam==='escola'&&ESC[c.esc]?ESC[c.esc].cor2:BF.FAMILIA[c.fam].cor)+'"'; }
 function seat(g,p,i,meu){
   var c=C(g.id), pl=S.players[p], dar=meu&&S.turn===0&&!S.over&&BF.ativo(g)&&!g.lib, vi=g.ideas-(ocultos['ide:'+p+':'+g.id]||0);
@@ -331,7 +331,8 @@ function palcoCarta(f){
   if(c.id==='cicuta'&&prm.morto)res.push(C(prm.morto).nome+(prm.o===0?' deixa a sua mesa':' deixa a mesa de '+alvo)+(f.custo<c.custo?' (contra Sócrates, a cicuta custa 1)':''));
   if(c.id==='paradoxo'&&q)res.push('«'+q.q+'» fica trancado até o próximo turno de '+pl.nome);
   if(c.id==='petitio'&&q)res.push(pl.nome+' dá «'+q.q+'» por provado: se ainda liderar no próximo turno, vence mesmo abaixo do valor');
-  if(c.id==='dogma'||c.id==='niilismo')res.push(f.label);
+  if(c.id==='deusmorto'&&prm.morto)res.push(C(prm.morto).nome+(prm.o===0?' deixa a sua mesa':' deixa a mesa de '+alvo));
+  if(c.id==='dogma'||c.id==='niilismo'||c.id==='determinismo')res.push(f.label);
   if(c.id==='tautologia'&&prm.fi!==undefined)res.push(f.label);
   if(c.pen)res.push(pl.nome+' perde '+c.pen+' ponto'+(c.pen>1?'s':'')+'; a carta sai do jogo');
   var art={falacia:'uma falácia',argumento:'um argumento',escola:'uma carta de escola',praxis:'uma Práxis'}[c.fam];
@@ -523,8 +524,8 @@ function alvosDe(tipo,ref){
       else if(c.id==='petitio') po.forEach(function(o){var e=q$('.deb[data-di="'+o.prm.d+'"]'); if(e)out.push({el:e,fn:jogar(o)});});
       else if(c.id==='paradoxo') po.forEach(function(o){var e=q$('.deb[data-di="'+o.prm.d+'"]'); if(e)out.push({el:e,fn:jogar(o)});});
       else if(c.id==='tautologia') po.forEach(function(o){var e=o.prm.d!==undefined?q$('.deb[data-di="'+o.prm.d+'"]'):q$('[data-seat="'+o.prm.fi+'"] .mini'); if(e)out.push({el:e,fn:jogar(o)});});
-      else if(c.id==='cicuta') po.forEach(function(o){var e=q$('[data-op="'+o.prm.o+'"][data-oi="'+o.prm.fi+'"] .mini'); if(e)out.push({el:e,fn:jogar(o)});});
-      else if(['nonsequitur','dogma','niilismo'].indexOf(c.id)>=0) po.forEach(function(o){var e=q$('#opps .ident[data-painel="'+o.prm.o+'"]'); if(e)out.push({el:e,fn:jogar(o)});});
+      else if(c.id==='cicuta'||c.id==='deusmorto') po.forEach(function(o){var e=q$('[data-op="'+o.prm.o+'"][data-oi="'+o.prm.fi+'"] .mini'); if(e)out.push({el:e,fn:jogar(o)});});
+      else if(['nonsequitur','dogma','niilismo','determinismo'].indexOf(c.id)>=0) po.forEach(function(o){var e=q$('#opps .ident[data-painel="'+o.prm.o+'"]'); if(e)out.push({el:e,fn:jogar(o)});});
       else if(['espantalho','sofisma','reductio','retorsio','falseabilidade','ceticismo'].indexOf(c.id)>=0)
         po.forEach(function(o){var e=q$('.est[data-row="'+o.prm.d+':'+o.prm.o+'"]'); if(e)out.push({el:e,fn:jogar(o)});});
       else if(c.id==='adhominem'){
@@ -555,7 +556,7 @@ var SEM_ALVO={
   nonsequitur:'Nenhum oponente tem cartas temporárias na mão.', retorsio:'Sem alvo: num debate seu, um oponente precisa ter ao menos 3 ideias.',
   reductio:'Sem alvo: num debate seu, um oponente precisa ter ao menos 2 ideias.', falseabilidade:'Sem alvo: precisa de um debate de Lógica / Ciência em que você e um oponente tenham ideias.',
   tautologia:'Sem alvo agora.', paradoxo:'Todos os debates já estão trancados.', cicuta:'Nenhum adversário tem um filósofo grego que possa ser alvo (Diógenes é imune).',
-  dogma:'Nenhum adversário tem Materialistas e Empiristas.', niilismo:'Nenhum adversário tem Germânicos (ou já estão sob o Niilismo).',
+  dogma:'Nenhum adversário tem Materialistas e Empiristas.', deusmorto:'Nenhum adversário tem um Teísta de custo 1 ou 2 que possa ser alvo.', determinismo:'Nenhum adversário tem Franceses (ou Agostinho) com ideias.', niilismo:'Nenhum adversário tem Germânicos (ou já estão sob o Niilismo).',
   ceticismo:'Sem alvo: precisa de um debate de Metafísica / Religião em que você e um oponente tenham ideias.'
 };
 var DICAS={

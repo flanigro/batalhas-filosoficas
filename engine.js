@@ -157,7 +157,7 @@
       ['Cálculo', 'Toda vez que Leibniz entra num debate de Lógica / Ciência, +1 ideia sua nesse debate.'],
       [5, 'Verdades da Razão e de Fato', 'Troque um filósofo de custo 1 da sua mão por um de custo 1 de um oponente.'],
       [6, 'O Melhor dos Mundos', 'Duplique suas ideias num debate de Lógica.']),
-    F('averrois', 'Ibn Rushd,', 'Averróis', 1, 'teista', [2, 1, 3, 1], 'Córdoba – Marrakech', '1126 – 1198', 'Discurso Decisivo',
+    F('averrois', 'de Córdoba', 'Averróis', 1, 'teista', [2, 1, 3, 1], 'Córdoba – Marrakech', '1126 – 1198', 'Discurso Decisivo',
       'A verdade não contradiz a verdade; concorda com ela e dá testemunho dela.', 'Discurso Decisivo',
       ['O Comentador', 'No momento de Reflexão, se Aristóteles estiver na mesa, em qualquer grupo, Averróis recebe +2. Os latinos o chamavam simplesmente de "o Comentador".'],
       [4, 'Leis religiosas são políticas necessárias', 'Todos os filósofos Teístas, inclusive Averróis, recebem +2 ideias.'],
@@ -477,7 +477,25 @@
     ['pitagoras', 'platao', 'A cosmologia matemática de Platão deve muito aos pitagóricos.', 'Platão, Timeu 35b–36b e República VII, 530d–531c; Aristóteles, Metafísica I, 6, 987a29–b14; Filolau, fr. 6a, ed. Huffman'],
     ['hegel', 'aristoteles', 'Hegel considera Aristóteles um dos gênios mais ricos e profundos que já existiram.', 'Lições sobre a História da Filosofia, seção «Aristóteles», abertura (Werke 19, p. 132)'],
     ['locke', 'bacon', 'O empirismo de Locke segue o caminho aberto por Bacon: começar pela experiência, e não pela autoridade.', 'Locke, Ensaio sobre o Entendimento Humano, Introdução, §2, e IV, 12, §§9–10; Bacon, Novum Organum I, 19 e 82'],
-    ['maquiavel', 'aristoteles', 'Maquiavel troca a pergunta clássica pelo melhor regime pela pergunta de como o poder de fato se conquista e se mantém.', 'Aristóteles, Política IV, 1, 1288b21–1289a7; Maquiavel, O Príncipe, I–II e XV']
+    ['maquiavel', 'aristoteles', 'Maquiavel troca a pergunta clássica pelo melhor regime pela pergunta de como o poder de fato se conquista e se mantém.', 'Aristóteles, Política IV, 1, 1288b21–1289a7; Maquiavel, O Príncipe, I–II e XV'],
+    // relações das escolas novas (20/11/2026; a verificar)
+    ['tomas', 'aristoteles', 'Tomás chama Aristóteles simplesmente de “o Filósofo” e constrói a Suma com as ferramentas dele.', 'Suma Teológica, passim'],
+    ['averrois', 'aristoteles', 'Averróis comentou quase toda a obra de Aristóteles; os latinos o chamavam simplesmente de “o Comentador”.', 'Grandes Comentários'],
+    ['tomas', 'averrois', 'Tomás escreveu um tratado inteiro contra os averroístas e a tese de um só intelecto para todos.', 'A Unidade do Intelecto contra os Averroístas (1270)'],
+    ['tomas', 'agostinho', 'Tomás cita Agostinho a cada passo, mesmo quando discorda dele com delicadeza.', 'Suma Teológica, passim'],
+    ['agostinho', 'platao', 'Agostinho diz que nenhum filósofo chegou tão perto do cristianismo quanto os platônicos.', 'Cidade de Deus VIII, 5'],
+    ['descartes', 'agostinho', 'Arnauld mostrou a Descartes que Agostinho já dizia “se me engano, existo”, parente próximo do “penso, logo existo”.', 'Quartas Objeções às Meditações'],
+    ['espinoza', 'descartes', 'Espinoza publicou uma exposição geométrica dos Princípios da Filosofia de Descartes, antes de se afastar dele.', 'Princípios da Filosofia de Descartes (1663)'],
+    ['leibniz', 'espinoza', 'Leibniz visitou Espinoza em Haia em 1676 e conversou com ele por dias; depois preferiu não falar muito do encontro.', 'Carta de Leibniz a Gallois, 1677'],
+    ['voltaire', 'leibniz', 'Voltaire ridiculariza o “melhor dos mundos possíveis” de Leibniz na figura de Pangloss.', 'Cândido (1759)'],
+    ['voltaire', 'locke', 'Voltaire apresentou Locke aos franceses como o homem que fez a anatomia da alma, como um bom anatomista do corpo.', 'Cartas Filosóficas XIII'],
+    ['sartre', 'camus', 'Sartre e Camus foram amigos e romperam em 1952, numa troca de cartas públicas sobre O Homem Revoltado.', 'Les Temps Modernes, agosto de 1952'],
+    ['sartre', 'heidegger', 'Sartre leu Heidegger em Berlim e O Ser e o Nada responde a Ser e Tempo; Heidegger não se reconheceu no existencialismo.', 'Carta sobre o Humanismo (1946)'],
+    ['lacan', 'freud', 'Lacan chamou seu ensino de “retorno a Freud”: reler Freud ao pé da letra, contra seus herdeiros.', 'Escritos, “A coisa freudiana”'],
+    ['foucault', 'nietzsche', 'Foucault tomou de Nietzsche a genealogia: procurar a origem baixa das ideias que parecem eternas.', 'Nietzsche, a Genealogia e a História (1971)'],
+    ['derrida', 'heidegger', 'A desconstrução de Derrida nasce da “destruição” da metafísica proposta por Heidegger.', 'Carta a um amigo japonês (1985)'],
+    ['arendt', 'agostinho', 'A tese de doutorado de Arendt foi sobre o conceito de amor em Agostinho.', 'O Conceito de Amor em Santo Agostinho (1929)'],
+    ['camus', 'nietzsche', 'Camus lê em Nietzsche a revolta contra um mundo sem Deus, e também os perigos dela.', 'O Homem Revoltado, “Nietzsche e o niilismo”'],
   ].forEach(function (r) { RELACOES.push(r); });
 
   // ---------- preparação ----------
@@ -1105,6 +1123,16 @@
         if (op.niil) out.push(nj + ' já está sob o Niilismo.');
         else if (!gs.length) out.push(nj + ' não tem Germânicos.');
         else if (gs.every(function (g) { return g.lib; })) out.push(nj + ': o único Germânico é o Bibliotecário.');
+      } else if (base === 'deusmorto') {
+        op.group.forEach(function (g) {
+          if (C(g.id).escola !== 'teista') return;
+          if (g.lib) out.push(C(g.id).nome + ' (' + nj + ') é o Bibliotecário.');
+          else if (C(g.id).custo > 2) out.push(C(g.id).nome + ' (' + nj + ') custa ' + C(g.id).custo + ': a carta só alcança Teístas de custo 1 ou 2.');
+        });
+      } else if (base === 'determinismo') {
+        gs = op.group.filter(function (g) { return C(g.id).escola === 'fran' || g.id === 'agostinho'; });
+        if (!gs.length) out.push(nj + ' não tem Franceses nem Agostinho.');
+        else if (gs.every(function (g) { return g.lib || !g.ideas; })) out.push(nj + ': os Franceses dele estão sem ideias' + (gs.some(function (g) { return g.lib; }) ? ' ou são o Bibliotecário.' : '.'));
       } else if (base === 'dogma') {
         gs = op.group.filter(function (g) { return C(g.id).escola === 'mat'; });
         if (!gs.length) out.push(nj + ' não tem Materialistas.');
@@ -1396,7 +1424,7 @@
   var API = {
     AREAS: AREAS, AREA: AREA, ESCOLA: ESCOLA, FAMILIA: FAMILIA, FILOSOFOS: FILOSOFOS, PRAXIS: PRAXIS, DEBATES: DEBATES, DEB: DEB, RELACOES: RELACOES,
     DUPLAS: DUPLAS, BONUS_DUPLA: BONUS_DUPLA, duplasDe: duplasDe, imune: imune, trocavel: trocavel, REFLEXAO: REFLEXAO, FALAS: FALAS,
-    C: C, newGame: newGame, moveOptions: moveOptions, porqueNao: porqueNao, moveToDebate: moveToDebate,
+    C: C, newGame: newGame, temColega: temColega, moveOptions: moveOptions, porqueNao: porqueNao, moveToDebate: moveToDebate,
     playPhilosopher: playPhilosopher, trocar: trocar, podeTrocar: podeTrocar, libIdx: libIdx, nI: nI, canGive: canGive, giveIdea: giveIdea, buyExtra: buyExtra,
     praxisOptions: praxisOptions, playPraxis: playPraxis, endTurn: endTurn, aiStep: aiStep,
     oppMax: oppMax, lidera: lidera, ativo: ativo, evalState: evalState, livre: livre, custoPraxis: custoPraxis, custoMin: custoMin, foraDoAlcance: foraDoAlcance

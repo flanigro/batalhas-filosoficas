@@ -154,6 +154,28 @@ for (const ids of [['d01', 'd07'], ['d04', 'd07']]) { const s = jogo(20); zera(s
   const f = BF.foraDoAlcance(s, 0, 'cicuta'); confere('Cicuta: explica o Sócrates Bibliotecário', f.length === 1 && /Bibliotecário/.test(f[0]), f);
   s.players[1].niil = 1; confere('Niilismo: explica quem já está sob o efeito', /já está sob o Niilismo/.test(BF.foraDoAlcance(s, 0, 'niilismo').join(' '))); }
 
+// 11. Escolas novas (20/11/2026): Teístas e Racionalistas e Franceses
+{ const s = jogo(30); zera(s); s.debates[0].id = 'd01'; s.debates[1].id = 'd07';   // Lógica e Ética
+  s.players[1].group = [G('descartes')]; s.players[2].group = [G('kant', 6), G('marx', 2)]; passaPara1(s);
+  confere('Descartes: o filósofo adversário com mais ideias cai em dúvida', s.players[2].group[0].duvida === true);
+  BF.endTurn(s, []); const ops = BF.moveOptions(s, 2, 0);
+  confere('Descartes: em dúvida, não vai à Lógica, mas vai à Ética', ops.every(o => o.di !== 0) && ops.some(o => o.di === 1), ops); }
+{ const s = jogo(31); zera(s); s.players[0].group = [G('espinoza'), G('marx')]; s.players[1].group = [G('averrois', 0)];
+  confere('Espinoza: Marx conta como colega de escola', BF.temColega(s.players[0], s.players[0].group[0]) && BF.temColega(s.players[0], s.players[0].group[1])); }
+{ const s = jogo(32); zera(s); s.debates[0].id = 'd01'; s.players[0].group = [G('sartre', 4)];
+  confere('Sartre: leva o maior valor (4) mesmo em Lógica (2)', BF.moveOptions(s, 0, 0).some(o => o.di === 0 && o.amt === 4), BF.moveOptions(s, 0, 0)); }
+{ const s = jogo(33); zera(s); s.players[0].group = [G('voltaire')];
+  confere('Voltaire: Argumento custa 1 a menos; falácia, não', BF.custoMin('reductio', s, 0) === 2 && BF.custoMin('sofisma', s, 0) === 2 && BF.custoMin('paradoxo', s, 0) === 3); }
+{ const s = jogo(34); zera(s); s.debates[0].stakes = [3, 1, 0]; s.players[1].group = [G('foucault')]; const c = daCarta(s, 0, 'sofisma', 2);
+  BF.playPraxis(s, 0, c, BF.praxisOptions(s, 0, 'sofisma')[0].prm); confere('Foucault: a falácia do adversário custa 1 ponto a mais', s.players[0].points === -2, s.players[0].points); }
+{ const s = jogo(35); zera(s); s.debates[0].id = 'd07'; s.debates[0].stakes = [0, 5, 0]; s.players[0].group = [G('derrida', 2)];
+  const o = BF.moveOptions(s, 0, 0).find(x => x.di === 0); if (o) BF.moveToDebate(s, 0, 0, 0, o.amt);
+  confere('Derrida: quem tem mais ideias passa 1 para você', s.debates[0].stakes[1] === 4 && s.debates[0].stakes[0] === 2, s.debates[0].stakes); }
+{ const s = jogo(36); zera(s); s.players[1].group = [G('averrois', 0), G('leibniz', 0)];
+  const c = daCarta(s, 0, 'deusmorto', 4); const ops = BF.praxisOptions(s, 0, 'deusmorto');
+  confere('Deus está morto: só Teístas de custo 1 ou 2', ops.length === 2, ops); BF.playPraxis(s, 0, c, ops[0].prm);
+  confere('Deus está morto: o filósofo deixa a mesa', s.players[1].group.length === 1); }
+
 // 7. partidas só de IA
 { let erros = 0, rod = 0, venc = [0, 0, 0], N = 300;
   for (let sd = 1; sd <= N; sd++) {
