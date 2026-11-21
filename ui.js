@@ -487,7 +487,8 @@ function bigHTML(c,op){
 // centro horizontal da figura de corpo inteiro (do cotovelo esquerdo à mão estendida), em fração da largura da prancha:
 // a carta grande centraliza a figura na área livre à esquerda. Medido nas pranchas de 18/11/2026; sem valor, 0,58.
 var CORPO_CX={aristoteles:.59,platao:.57,socrates:.605,epicuro:.588,pitagoras:.617,diogenes:.573,marx:.563,hegel:.578,hobbes:.563,bacon:.577,
-  locke:.587,rousseau:.589,kant:.562,nietzsche:.607,schopenhauer:.608,heidegger:.572,freud:.541,arendt:.601,maquiavel:.587,erasmo:.607};
+  locke:.587,rousseau:.589,kant:.562,nietzsche:.607,schopenhauer:.608,heidegger:.572,freud:.541,arendt:.601,maquiavel:.587,erasmo:.607,
+  descartes:.565,tomas:.562,agostinho:.594,leibniz:.580,averrois:.585,espinoza:.588,sartre:.588,foucault:.589,voltaire:.537,derrida:.592,camus:.634,lacan:.544};
 function verCarta(id,daGaleria){
   cancelarSel(); $('box').className='box';
   $('box').innerHTML=bigHTML(C(id))+'<div class="fecha">'+(daGaleria?'<button class="btn" data-a="ab-galeria">Voltar à galeria</button>':'')+'<button class="btn" data-a="fechar">Fechar</button></div>';
