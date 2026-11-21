@@ -336,9 +336,11 @@ function palcoCarta(f){
   if(c.id==='tautologia'&&prm.fi!==undefined)res.push(f.label);
   if(c.pen)res.push(pl.nome+' perde '+c.pen+' ponto'+(c.pen>1?'s':'')+'; a carta sai do jogo');
   var art={falacia:'uma falácia',argumento:'um argumento',escola:'uma carta de escola',praxis:'uma Práxis'}[c.fam];
-  var jog='<div class="jogada" style="--pc:'+pl.cor+'"><b>'+esc(pl.nome)+'</b> ▸ usa '+art+(f.label?'<span>'+esc(f.label)+'</span>':'')+'</div>';
-  return palco('<div class="cena usada"><div class="cartaU">'+bigHTML(c)+'</div><div class="fala">'+jog
-    +'<div class="et">'+esc(rotFam(c))+'</div><h3>'+esc(c.nome)+'</h3><p>'+esc(c.d)+'</p>'
+  var lbl=res.indexOf(f.label)<0?f.label:'';  // o rótulo que já está no Resultado não se repete no cabeçalho
+  var jog='<div class="jogada" style="--pc:'+pl.cor+'"><b>'+esc(pl.nome)+'</b> ▸ usa '+art+(lbl?'<span>'+esc(lbl)+'</span>':'')+'</div>';
+  // a carta, à esquerda, traz a mecânica; o painel, à direita, explica o conceito (sem repetir a regra)
+  return palco('<div class="cena usada"><div class="cartaU">'+bigHTML(c,{semOq:!!c.oq})+'</div><div class="fala">'+jog
+    +'<div class="et">'+esc(rotFam(c))+(c.oq?' · o que é':'')+'</div><h3>'+esc(c.nome)+'</h3><p>'+esc(c.oq||c.d)+'</p>'
     +(res.length?'<div class="refl"><b>Resultado:</b><ul>'+res.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul></div>':'')+'%CONT%</div></div>');
 }
 
@@ -461,9 +463,10 @@ function agir(fn){ cancelarSel(); fn(); aberto=null; $('ov').classList.remove('o
   animando=tocar(S.fx.splice(0)).then(function(){ animando=null; render(); if(S.over)telaFim(); }); }
 
 // ---------- carta ampliada (só leitura) ----------
-function bigHTML(c){
+function bigHTML(c,op){
+  op=op||{};
   if(c.tipo==='P')return '<div class="bigP fam-'+c.fam+'"'+famStyle(c)+'><span class="bc">'+c.custo+'</span><div class="famrot">'+SIMB_FAM[c.fam]+esc(rotFam(c))+(c.pen?' <b>−'+c.pen+' ponto'+(c.pen>1?'s':'')+'</b>':'')+'</div><h3>'+esc(c.nome)+'</h3>'
-    +'<div class="ps">'+esc(c.sub.replace(/^[^—]*—\s*/,''))+'</div>'+imgTemp(c,'bimg')+'<p class="jogo"><b>Jogo.</b> '+esc(c.d)+(c.pen?' <span class="pena">Quem usa perde '+c.pen+' ponto'+(c.pen>1?'s':'')+', e a carta sai do jogo.</span>':'')+'</p>'+(c.oq?'<p class="oq"><b>O que é.</b> '+esc(c.oq)+'</p>':'')+'</div>';
+    +'<div class="ps">'+esc(c.sub.replace(/^[^—]*—\s*/,''))+'</div>'+imgTemp(c,'bimg')+'<p class="jogo"><b>Jogo.</b> '+esc(c.d)+(c.pen?' <span class="pena">Quem usa perde '+c.pen+' ponto'+(c.pen>1?'s':'')+', e a carta sai do jogo.</span>':'')+'</p>'+(c.oq&&!op.semOq?'<p class="oq"><b>O que é.</b> '+esc(c.oq)+'</p>':'')+'</div>';
   var e=ESC[c.escola], ds=BF.duplasDe(c.id);
   var pills=BF.AREAS.map(function(a){return '<div class="pill" style="--c:'+AREA[a].cor+'">'+AREA[a].nome+'<b>'+c.vals[a]+'</b></div>';}).join('');
   // complemento do nome: prenome vem antes (Sigmund Freud); "de Sínope" e afins vêm depois (Diógenes de Sínope)
@@ -913,6 +916,6 @@ $('bdiario').onclick=$('bdiario2').onclick=function(){document.body.classList.to
 BFX.ligar(CTX);
 $('bregras').onclick=function(){modal('<h2>Como jogar</h2>'+regrasHTML()+'<p style="font-size:13.5px;color:var(--mute)">Protótipo de nível 2: valem os valores das áreas e o poder gratuito de cada filósofo. Os poderes pagos aparecem na carta ampliada, marcados como nível 3. Falas, citações e contextos históricos ainda estão por verificar.</p><div class="fecha"><button class="btn" data-a="ab-regras">Manual completo</button><button class="btn" data-a="fechar">Fechar</button></div>');};
 $('bnova').onclick=mostrarAbertura;
-window.__bf={abertura:mostrarAbertura,mdHTML:mdHTML,agir:agir,render:render,rodarIA:rodarIA,redesenhar:redesenhar,verCarta:verCarta,fechar:fechar,palco:palco,palcoBaixa:palcoBaixa,get S(){return S;},get ocupado(){return ocupado;},get emPalco(){return emPalco;},get animando(){return animando;},get sel(){return sel;}};
+window.__bf={abertura:mostrarAbertura,mdHTML:mdHTML,agir:agir,render:render,rodarIA:rodarIA,redesenhar:redesenhar,verCarta:verCarta,fechar:fechar,palco:palco,palcoCarta:palcoCarta,palcoBaixa:palcoBaixa,get S(){return S;},get ocupado(){return ocupado;},get emPalco(){return emPalco;},get animando(){return animando;},get sel(){return sel;}};
 mostrarAbertura();
 })();
