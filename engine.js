@@ -204,7 +204,7 @@
     // ---- Orientais (proposta de 21/11/2026; valores do impresso v4) ----
     F('jesus', 'de Nazaré', 'Jesus', 5, 'orient', [5, 1, 5, 4], 'Galileia – Jerusalém', 'c. 4 a.C. – c. 30', 'Sermão da Montanha (nos Evangelhos)',
       'Amarás o teu próximo como a ti mesmo.', 'Evangelho de Mateus 22, 39',
-      ['Amai os vossos inimigos', 'No momento de Reflexão, o filósofo com menos ideias de cada grupo, o seu e os dos adversários, recebe +1. O próximo inclui o adversário (Mateus 5, 44).'],
+      ['Amai os vossos inimigos', 'No momento de Reflexão, o filósofo com menos ideias do seu grupo recebe +2, e o de cada grupo adversário, +1. O próximo inclui o adversário (Mateus 5, 44).'],
       [4, '“Quem não tiver pecado, atire a primeira pedra”', 'Proteja um filósofo por 2 rodadas de todos os efeitos negativos.'],
       [6, '“A César o que é de César”', 'Remova 3 ideias de um debate de Ética / Política. Vença um debate de Metafísica / Religião.']),
     F('buda', '', 'Buda', 4, 'orient', [4, 1, 4, 4], 'Lumbini (Nepal) – Kushinagar (Índia)', 'c. 563 – c. 483 a.C.', 'Dhammapada (ensinamentos reunidos pelos discípulos)',
