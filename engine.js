@@ -204,12 +204,12 @@
     // ---- Orientais (proposta de 21/11/2026; valores do impresso v4) ----
     F('jesus', 'de Nazaré', 'Jesus', 5, 'orient', [5, 1, 5, 4], 'Galileia – Jerusalém', 'c. 4 a.C. – c. 30', 'Sermão da Montanha (nos Evangelhos)',
       'Ame o próximo como a si mesmo.', 'Evangelho de Mateus 22, 39',
-      ['Amem os seus inimigos', 'No momento de Reflexão, o filósofo com menos ideias do seu grupo recebe +2, e o de cada grupo adversário, +1. O próximo inclui o adversário (Mateus 5, 44).'],
+      ['Amem os seus inimigos', 'No momento de Reflexão, os quatro Evangelhos põem +4 ideias na sua Biblioteca, e o filósofo com menos ideias de cada grupo adversário recebe +1: o próximo inclui o adversário (Mateus 5, 44).'],
       [4, '“Quem não tiver pecado, atire a primeira pedra”', 'Proteja um filósofo por 2 rodadas de todos os efeitos negativos.'],
       [6, '“A César o que é de César”', 'Remova 3 ideias de um debate de Ética / Política. Vença um debate de Metafísica / Religião.']),
     F('buda', '', 'Buda', 4, 'orient', [4, 1, 4, 4], 'Lumbini (Nepal) – Kushinagar (Índia)', 'c. 563 – c. 483 a.C.', 'Dhammapada (ensinamentos reunidos pelos discípulos)',
       'O ódio nunca cessa pelo ódio; só pelo não ódio ele cessa.', 'Dhammapada, verso 5',
-      ['Desapego', 'No momento de Reflexão, Buda entrega todas as suas ideias ao colega com menos ideias, que ainda recebe +1. Buda não guarda nada para si.'],
+      ['Desapego', 'No momento de Reflexão, antes de receber, Buda entrega uma a uma as ideias que tem, do colega com menos ideias para o com mais. Depois recebe as suas, como todos.'],
       [5, 'Nirvana', 'Baixe o Legado Nirvana: protege um filósofo contra efeitos negativos.'],
       [7, 'Pensamento correto, ação correta', 'Todos os seus filósofos, inclusive Buda, recebem +3 ideias.']),
     F('confucio', '', 'Confúcio', 3, 'orient', [3, 1, 5, 3], 'Qufu (Estado de Lu, China)', '551 – 479 a.C.', 'Analectos',
@@ -730,9 +730,33 @@
     pl.group.forEach(function (g) { if (g.dogma) { g.bloq = true; delete g.dogma; } });   // Dogma: só neste momento de Reflexão
     try { reflexao0(s, P); } finally { delete s._snap; pl.group.forEach(function (g) { delete g.bloq; }); }
   }
+  var JESUS_BIB = 4;   // os quatro Evangelhos (com 3 a força medida é a mesma; com 2 cai pela metade)
+
+  // Buda, Desapego: antes de receber as ideias do momento de Reflexão, entrega uma a uma as que tem,
+  // do colega com menos ideias para o com mais, e recomeça a volta se sobrar.
+  function desapego(s, P) {
+    var pl = s.players[P];
+    pl.group.forEach(function (b) {
+      if (b.id !== 'buda' || b.lib || !ativo(b) || b.ideas <= 0) return;
+      var cs = semLib(pl).filter(function (x) { return x !== b && ativo(x); }).sort(function (a, c) { return a.ideas - c.ideas; });
+      if (!cs.length) return;
+      var dado = 0, k = 0, voltas = 0;
+      while (b.ideas > 0 && voltas < cs.length) {
+        var t = cs[k % cs.length]; k++;
+        if (t.ideas >= s.cfg.teto) { voltas++; continue; }
+        voltas = 0; t.ideas++; b.ideas--; dado++;
+      }
+      if (dado) {
+        pop(s, P, 'buda', 'Desapego · Buda', 'Entrega ' + nI(dado) + ' aos colegas, do que tem menos ao que tem mais.', 'con');
+        log(s, 'Desapego: Buda entrega ' + nI(dado) + ' aos colegas antes de receber as suas.', 'con', P);
+      }
+    });
+  }
+
   function reflexao0(s, P) {
     var pl = s.players[P], g, i, anunciadas = {};
     if (!pl.group.length) return;
+    desapego(s, P);
     for (i = 0; i < pl.group.length; i++) {
       g = pl.group[i];
       if (g.lib) {
@@ -783,23 +807,18 @@
         break;
       case 'jesus':   // Amem os seus inimigos
         var ajudou = [];
+        pl.library += JESUS_BIB; ajudou.push('+' + JESUS_BIB + ' na sua Biblioteca, os quatro Evangelhos');
         for (o = 0; o < s.players.length; o++) {
+          if (o === P) continue;
           t = null;
           s.players[o].group.forEach(function (x) { if (!x.lib && ativo(x) && x.ideas < s.cfg.teto && (!t || x.ideas < t.ideas)) t = x; });
           if (!t) continue;
-          var dJ = o === P ? 2 : 1; poe(s, t, dJ); ajudou.push(C(t.id).nome + (o === P ? ' +2' : ' (' + nomeJ(s, o) + ') +1'));
+          poe(s, t, 1); ajudou.push(C(t.id).nome + ' (' + nomeJ(s, o) + ') +1');
           if (o !== P) pop(s, o, t.id, '+1 ideia', 'Amem os seus inimigos (Jesus, de ' + pl.nome + ')', 'con');
         }
         if (ajudou.length) diz(ajudou.join(', ') + '.');
         break;
-      case 'buda':   // Desapego
-        t = null;
-        semLib(pl).forEach(function (x) { if (x !== g && ativo(x) && (!t || x.ideas < t.ideas)) t = x; });
-        if (t && g.ideas > 0) {
-          var dado = g.ideas; g.ideas = 0;
-          var chegou = poe(s, t, dado + 1);
-          diz('entrega ' + nI(dado) + ' a ' + C(t.id).nome + ', que recebe +' + chegou + ' ao todo.');
-        }
+      case 'buda':   // Desapego: feito antes, em desapego()
         break;
       case 'confucio':   // Respeito à Tradição
         t = null;

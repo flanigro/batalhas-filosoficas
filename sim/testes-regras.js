@@ -178,10 +178,12 @@ for (const ids of [['d01', 'd07'], ['d04', 'd07']]) { const s = jogo(20); zera(s
 
 // 12. Orientais (21/11/2026)
 { const s = jogo(40); zera(s); s.players[1].group = [G('jesus', 5), G('kant', 2)]; s.players[0].group = [G('marx', 4), G('hegel', 1)]; s.players[2].group = [G('platao', 0)];
-  passaPara1(s); const p1 = s.players[1].group, p0 = s.players[0].group, p2 = s.players[2].group;
-  confere('Jesus: +2 ao colega com menos ideias e +1 ao mais pobre de cada adversário', p0[1].ideas === 2 && p0[0].ideas === 4 && p2[0].ideas === 1, [p0.map(g => g.ideas), p2[0].ideas, p1.map(g => g.ideas)]); }
-{ const s = jogo(41); zera(s); s.players[1].group = [G('buda', 3), G('kant', 1), G('marx', 6)]; passaPara1(s); const g = s.players[1].group;
-  confere('Buda: entrega todas as ideias ao colega com menos, +1', g[0].ideas === 0 && g[1].ideas >= 1 + 3 + 3 + 1, g.map(x => x.ideas)); }
+  const lib0 = s.players[1].library; passaPara1(s); const p0 = s.players[0].group, p2 = s.players[2].group;
+  confere('Jesus: +4 na Biblioteca (além das 3 do turno) e +1 ao mais pobre de cada adversário', s.players[1].library === lib0 + 3 + 4 && p0[1].ideas === 2 && p0[0].ideas === 4 && p2[0].ideas === 1, [s.players[1].library - lib0, p0.map(g => g.ideas), p2[0].ideas]); }
+{ const roda = n => { const s = jogo(41); zera(s); s.players[1].group = [G('buda', n), G('kant', 1), G('marx', 3), G('hegel', 2)]; passaPara1(s); return s.players[1].group.map(x => x.ideas); };
+  const a = roda(0), b = roda(4), dif = b.map((x, k) => x - a[k]);
+  // 4 ideias: Kant (1), Hegel (2), Marx (3) e de novo Kant; depois Buda recebe as suas (2)
+  confere('Buda: distribui uma a uma, do menor para o maior, e depois recebe as suas', b[0] === 2 && dif[1] === 2 && dif[3] === 1 && dif[2] === 1, [a, b]); }
 { const s = jogo(42); zera(s); s.players[1].group = [G('confucio', 0), G('kant', 0), G('platao', 0)]; passaPara1(s); const g = s.players[1].group;
   confere('Confúcio: o mais antigo do grupo (Confúcio, 551 a.C., antes de Platão) recebe +1', g[0].ideas === 2 + 1 && g[2].ideas === 2, g.map(x => x.ideas)); }
 { const s = jogo(43); zera(s); s.players[1].group = [G('confucio', 0), G('zoroastro', 0)]; passaPara1(s); const g = s.players[1].group;
