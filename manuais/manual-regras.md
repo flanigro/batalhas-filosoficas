@@ -38,30 +38,32 @@ As ideias só andam num sentido: Biblioteca → filósofo → debate. Ideias da 
 
 A Biblioteca não tem teto. **Cada filósofo pode ter no máximo 10 ideias**: o que passaria disso se perde, venha de onde vier (Reflexão, escola, duplas, poderes, Tautologia), e a Biblioteca não pode dar ideias a quem já tem 10.
 
-### 2.2 Cartas de filósofo (20)
+### 2.2 Cartas de filósofo (32)
 
 Cada carta traz:
 
 - **custo** (de 1 a 5): quantas ideias da Biblioteca se pagam para baixá-la; define também a Reflexão (seção 5.4);
-- **escola**: Grécia Clássica, Materialistas e Empiristas, Germânicos ou Livres-Pensadores;
+- **escola**: Grécia Clássica, Materialistas e Empiristas, Germânicos, Teístas e Racionalistas, Franceses ou Livres-Pensadores;
 - **quatro valores de área**, de 1 a 5: Metafísica e Religião; Lógica, Ciência e Matemática; Ética e Política; Psicologia e Estética;
 - **Poder** (gratuito): o efeito que vale no nível 2 (seção 8);
 - Poder 2 e Poder 3: só no nível 3.
 
-Os 20 filósofos, por escola (custo entre parênteses):
+Os 32 filósofos, por escola (custo entre parênteses):
 
 - **Grécia Clássica:** Aristóteles (5), Platão (4), Sócrates (3), Epicuro (2), Pitágoras (1), Diógenes (1).
 - **Materialistas e Empiristas:** Marx (5), Hegel (4), Hobbes (3), Bacon (2), Locke (1), Rousseau (1).
 - **Germânicos:** Kant (5), Nietzsche (4), Schopenhauer (3), Heidegger (2), Freud (1), Arendt (1).
+- **Teístas e Racionalistas** (desde 20/11/2026): Descartes (5), Tomás de Aquino (4), Agostinho (3), Leibniz (2), Averróis (1), Espinoza (1).
+- **Franceses** (desde 20/11/2026): Sartre (5), Foucault (4), Voltaire (3), Derrida (2), Camus (1), Lacan (1).
 - **Livres-Pensadores:** Maquiavel (1), Erasmo (1).
 
-### 2.3 Cartas temporárias (16)
+### 2.3 Cartas temporárias (18)
 
 São cartas de efeito único: pagas, aplicadas e tiradas da mão. Há uma cópia de cada, e todas têm a mesma textura de borda, que as distingue dos filósofos. Dividem-se em quatro famílias:
 
 - **Falácias (7):** Argumento de Autoridade, Espantalho, Ad Hominem, Sofisma, Petitio Principii, Mutatio Controversiae, Non Sequitur. Borda vermelho-escura, caveira e o rótulo FALÁCIA. Depois de usadas, **saem do jogo** e tiram 1 ou 2 pontos de quem as usou.
 - **Argumentos (5):** Retorsio Argumenti, Reductio ad Absurdum, Falseabilidade, Tautologia, Paradoxo Lógico. Técnicas legítimas de prova e refutação.
-- **Cartas de escola (3):** Cicuta (contra os Gregos), Dogma (contra os Materialistas e Empiristas), Niilismo (contra os Germânicos). Cada uma só entra no baralho quando a escola que ela ataca está em jogo.
+- **Cartas de escola (5):** Cicuta (contra os Gregos), Dogma (contra os Materialistas e Empiristas), Niilismo (contra os Germânicos), "Deus está morto" (contra os Teístas e Racionalistas), Determinismo (contra os Franceses). Cada uma só entra no baralho quando a escola que ela ataca está em jogo.
 - **Práxis (1):** Ceticismo. Ideias filosóficas que viram manobra.
 
 Argumentos, cartas de escola e Práxis vão para o descarte e voltam ao monte quando ele é reembaralhado. A família importa para o poder de Freud, que só reage a falácias. Efeitos na seção 9.
@@ -133,7 +135,7 @@ Cada filósofo do grupo recebe ideias, conforme o custo da carta:
 Somam-se a isso:
 
 - **Escola:** +1 para o filósofo que tem pelo menos um colega da mesma escola no grupo (é +1 só, qualquer que seja o número de colegas).
-- **Dupla clássica:** +1 para cada filósofo de uma dupla completa no grupo. As duplas são cinco: Platão e Sócrates; Aristóteles e Platão; Marx e Hegel; Schopenhauer e Kant; Arendt e Heidegger. Os dois membros recebem +1. Platão, que está em duas duplas, recebe +1 por dupla completa (com Sócrates e Aristóteles no grupo, +2). As cinco duplas são de colegas de escola, então cada membro recebe também o bônus de escola.
+- **Dupla clássica:** +1 para cada filósofo de uma dupla completa no grupo. As duplas são nove: Platão e Sócrates; Aristóteles e Platão; Marx e Hegel; Schopenhauer e Kant; Arendt e Heidegger; Tomás de Aquino e Agostinho; Descartes e Espinoza; Sartre e Camus; e Lacan e Freud, a única entre escolas diferentes. Os dois membros recebem +1. Platão, que está em duas duplas, recebe +1 por dupla completa (com Sócrates e Aristóteles no grupo, +2). Salvo Lacan e Freud, as duplas são de colegas de escola, e cada membro recebe também o bônus de escola. **Espinoza** conta como Teísta e como Materialista para o bônus de escola (seção 8).
 
 **Dogma:** os dois filósofos atingidos pela carta não recebem nada neste momento de Reflexão (seção 9).
 
@@ -250,7 +252,7 @@ Exemplo. Debate de valor 10. Você tem 12; Hipátia, 11; Sêneca, 4. No início 
 
 ---
 
-## 8. Os poderes dos 20 filósofos
+## 8. Os poderes dos 32 filósofos
 
 Os poderes valem enquanto o filósofo está no grupo. Os que agem "no momento de Reflexão" disparam uma vez por turno do dono, na ordem das cadeiras (seção 5.5). Quando o poder pede uma escolha (um alvo, um debate, um vizinho), **no digital quem escolhe é o computador**, pelo critério indicado; **no impresso, escolhe o dono do filósofo**. Em empates, o computador fica com o primeiro na ordem das cadeiras ou dos jogadores.
 
@@ -281,6 +283,24 @@ Os poderes valem enquanto o filósofo está no grupo. Os que agem "no momento de
 - **Freud — Ato Falho.** Freud recebe +1 ideia sempre que um adversário usa uma **falácia** (as sete da seção 2.3; as outras famílias não contam). Freud precisa estar em ação. O ganho acontece no turno do adversário.
 - **Arendt — A Condição Humana.** No momento de Reflexão, recebe +1 ideia se houver um debate de Ética / Política na Ágora.
 
+### Teístas e Racionalistas (desde 20/11/2026)
+
+- **Descartes — Gênio Maligno.** No momento de Reflexão, o filósofo adversário com mais ideias cai em dúvida: no próximo turno do dono, não vai a debates de Lógica nem de Metafísica (Ética e Psicologia continuam: a moral provisória). Diógenes e o Bibliotecário escapam.
+- **Tomás de Aquino — Fé e Razão.** Quando Tomás leva ideias a um debate de Lógica, +1 ideia sua num debate de Metafísica em que você já tem ideias (o de maior valor), e vice-versa.
+- **Agostinho — Graça.** No momento de Reflexão, se Agostinho estiver sem nenhuma ideia, recebe +3.
+- **Leibniz — Cálculo.** Toda vez que Leibniz entra num debate de Lógica / Ciência, +1 ideia sua nesse debate.
+- **Averróis — O Comentador.** No momento de Reflexão, se Aristóteles estiver na mesa, em qualquer grupo, Averróis recebe +2.
+- **Espinoza — Deus sive Natura.** Conta como Teísta e como Materialista para o bônus de escola, dele e dos colegas. (Para as cartas de escola, é só Teísta.)
+
+### Franceses (desde 20/11/2026)
+
+- **Sartre — A Existência Precede a Essência.** Leva a qualquer debate o seu maior valor (4), seja qual for a área.
+- **Foucault — Vigiar e Punir.** Enquanto Foucault estiver em ação no seu grupo, cada falácia usada por um adversário custa a ele 1 ponto a mais.
+- **Voltaire — Contra o Fanatismo.** Os Argumentos e a Práxis que você joga custam 1 ideia a menos (mínimo 1). As falácias, não. Voltaire precisa estar em ação.
+- **Derrida — Desconstrução.** Ao entrar num debate, cada adversário que tem ali mais ideias que você passa 1 delas para você.
+- **Camus — Sísifo.** No momento de Reflexão, se você não lidera nenhum debate, Camus recebe +1. E sempre que um adversário vence um debate em que você tinha ideias, Camus recebe +2.
+- **Lacan — O Grande Outro.** No momento de Reflexão, se algum adversário tiver mais pontos que você, Lacan recebe +1.
+
 ### Livres-Pensadores
 
 - **Maquiavel — O Príncipe.** No momento de Reflexão, o filósofo de maior custo do seu grupo, o soberano, recebe +1. Pode ser o próprio Maquiavel. Se o soberano for o Bibliotecário, ou já tiver 10 ideias, a ideia vai para a Biblioteca. Empate de custo: a primeira cadeira. (Até 19/11/2026, o +1 ia para o filósofo com mais ideias.)
@@ -288,7 +308,7 @@ Os poderes valem enquanto o filósofo está no grupo. Os que agem "no momento de
 
 ---
 
-## 9. As 16 cartas temporárias
+## 9. As 18 cartas temporárias
 
 Em todas, "debate do qual você participa" quer dizer: debate em que você tem pelo menos 1 ideia. Efeitos que tiram ideias nunca deixam ninguém abaixo de zero. Nenhuma carta age num debate trancado pelo Paradoxo Lógico (nem como origem, nem como destino). Cada carta tem dois textos: o **Jogo**, com a mecânica, e o **O que é**, um parágrafo curto que explica a ideia (referências a verificar).
 
@@ -320,6 +340,8 @@ Cada uma ataca uma escola e só entra no baralho quando essa escola está em jog
 
 - **Cicuta** (Gregos; custo 3, ou **1** se o alvo for Sócrates). Elimine um filósofo grego do grupo de um adversário. Ele vai para o descarte; as ideias que tinha se perdem (as que já levou a debates ficam). Diógenes é imune. O Bibliotecário não é alvo (confirmado pelo Flavio em 20/11/2026): a Cicuta não chega à Biblioteca.
 - **Dogma** (Materialistas; custo 4). Escolha um adversário: dois Materialistas e Empiristas do grupo dele não recebem ideias no próximo momento de Reflexão dele (nem da Reflexão, nem de bônus, nem de poderes de colegas). Os poderes deles continuam agindo. No digital, a carta atinge os dois de maior custo; no impresso, quem joga escolhe.
+- **"Deus está morto"** (Teístas; custo 4). Remova do jogo um filósofo Teísta de custo 1 ou 2 de um adversário (vai para o descarte com as ideias que tinha). O Bibliotecário não é alvo.
+- **Determinismo** (Franceses; custo 2). Escolha um adversário: cada filósofo Francês dele perde 2 ideias; se ele tiver Agostinho, Agostinho perde todas. O Bibliotecário e Diógenes não são atingidos.
 - **Niilismo** (Germânicos; custo 3). No próximo turno de um adversário, nenhum filósofo Germânico dele leva ideias a debates. Continuam recebendo ideias e usando poderes da Reflexão.
 - **No digital, alvos fora do alcance:** quando uma carta de escola é escolhida, a dica da mesa diz quem ficou de fora e por quê (Bibliotecário, Diógenes imune, adversário já sob o efeito, sem filósofos da escola, ideias insuficientes).
 
@@ -406,6 +428,8 @@ Ordem: Metafísica, Lógica, Ética, Psicologia.
 - Aristóteles 4, 5, 4, 4 · Platão 5, 3, 5, 3 · Sócrates 4, 4, 3, 2 · Epicuro 3, 1, 3, 3 · Pitágoras 1, 5, 1, 2 · Diógenes 2, 1, 3, 2
 - Marx 4, 3, 5, 2 · Hegel 4, 4, 3, 3 · Hobbes 3, 4, 4, 2 · Bacon 1, 4, 2, 2 · Locke 1, 4, 3, 1 · Rousseau 1, 1, 4, 2
 - Kant 3, 5, 5, 4 · Nietzsche 5, 1, 4, 5 · Schopenhauer 3, 2, 3, 4 · Heidegger 4, 2, 2, 2 · Freud 2, 1, 1, 5 · Arendt 1, 1, 4, 3
+- Descartes 5, 5, 2, 4 · Tomás de Aquino 5, 2, 4, 3 · Agostinho 5, 1, 3, 3 · Leibniz 4, 5, 1, 1 · Averróis 2, 1, 3, 1 · Espinoza 4, 1, 3, 1
+- Sartre 3, 2, 4, 4 · Foucault 2, 2, 4, 3 · Voltaire 2, 1, 3, 3 · Derrida 2, 4, 1, 2 · Camus 1, 1, 4, 2 · Lacan 1, 2, 1, 5
 - Maquiavel 1, 1, 5, 2 · Erasmo 2, 1, 3, 2
 
 ## Apêndice C — Pendências de regra registradas
