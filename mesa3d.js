@@ -769,7 +769,7 @@ function posicionar(reler) {
 }
 
 // ---------- realce de alvos: brilho no próprio objeto e halo de luz à frente dele ----------
-const COR_REALCE = [null, new THREE.Color('#4fc3ee'), new THREE.Color('#ffffff'), new THREE.Color('#f3c552')];
+const COR_REALCE = [null, new THREE.Color('#4fc3ee'), new THREE.Color('#ffffff'), new THREE.Color('#f3c552'), new THREE.Color('#f3c552')];   // 4: o que o assistente Φ cita
 function haloDe(chave) {
   if (R.halos[chave] !== undefined) return R.halos[chave];
   const a = chave.split(':'), pd = L.ped, P = L.placa, B = L.banda; let lista = [];
@@ -785,13 +785,13 @@ function haloDe(chave) {
 const realces = {};
 function atualizarRealces() {
   const quer = {};
-  proxies.forEach(p => { const c = p.el.classList, n = c.contains('sobre') ? 2 : c.contains('alvo') ? 1 : c.contains('selecionado') ? 3 : 0; if (n) quer[p.chave] = Math.max(quer[p.chave] || 0, n); });
+  proxies.forEach(p => { const c = p.el.classList, n = c.contains('sobre') ? 2 : c.contains('alvo') ? 1 : c.contains('selecionado') ? 3 : c.contains('phi-alvo') ? 4 : 0; if (n) quer[p.chave] = Math.max(quer[p.chave] || 0, n); });
   const pulso = .72 + .28 * Math.sin(relogio * .006);
   Object.keys(realces).forEach(k => { if (!quer[k]) { haloDe(k).forEach(m => m.visible = false); (R.emis[k] || []).forEach(m => m.emissiveIntensity = 0); delete realces[k]; } });
   Object.keys(quer).forEach(k => {
     const n = quer[k]; realces[k] = n;
     haloDe(k).forEach(m => { m.visible = true; m.material.color.copy(COR_REALCE[n]); m.material.opacity = (n === 2 ? 1 : .8) * pulso; });
-    (R.emis[k] || []).forEach(m => { m.emissive.copy(COR_REALCE[n]); m.emissiveIntensity = (n === 2 ? .34 : n === 3 ? .14 : .2) * pulso; });
+    (R.emis[k] || []).forEach(m => { m.emissive.copy(COR_REALCE[n]); m.emissiveIntensity = (n === 2 ? .34 : n === 3 ? .14 : n === 4 ? .26 : .2) * pulso; });
   });
 }
 

@@ -177,7 +177,7 @@ function renderMe(){
   h+='</div></div>';
   $('hud').innerHTML=h; bibChegou=false;
 }
-function redesenhar(){ renderOpps();renderAgora();renderMe();m3d(); }
+function redesenhar(){ renderOpps();renderAgora();renderMe();m3d(); if(window.PHI)PHI.pintar(); }
 var logN=0;
 function renderLog(){
   var el=$('log'), h='', ini=Math.max(0,S.log.length-180);
@@ -196,6 +196,7 @@ function render(){
   redesenhar();renderLog();
   if(sel)reaplicarSel();
   setTimeout(verAviso,0);
+  if(window.PHI)setTimeout(PHI.atualizar,0);
 }
 
 // ---------- balões (fila, um de cada vez) ----------
@@ -426,7 +427,7 @@ async function tocar(lista){
     var f=lista[k], pl=S.players[f.P];
     switch(f.k){
       case 'pop': if(bloq) await balao(f); else enfileirar(f); break;
-      case 'turno': if(!S.over){ som('turno'); await faixa(f.P===0?'Sua vez':pl.nome,'Rodada '+S.round+' · Momento de Reflexão',pl.cor,veloz?700:(f.P===0?1500:1200)); } break;
+      case 'turno': if(!S.over){ if(window.PHI) await PHI.momento('turno',f); som('turno'); await faixa(f.P===0?'Sua vez':pl.nome,'Rodada '+S.round+' · Momento de Reflexão',pl.cor,veloz?700:(f.P===0?1500:1200)); } break;
       case 'troca': await esperarBaloes(); await faixa((f.P===0?'Você troca ':pl.nome+' troca ')+C(f.a).nome+' por '+C(f.b).nome,'Os dois perdem as ideias e entram em ação no próximo turno',pl.cor,veloz?1500:3200); break;
       case 'bib': som('plim'); if(f.P===0){var b=$('bib'); if(b){b.classList.remove('chegou');void b.offsetWidth;b.classList.add('chegou');}} if(M3())M3().chegarEstante(f.P,f.n); break;
       case 'dar': som('plim'); if(M3())voo(M3().mundoEstante(f.P),M3().mundoPilha(f.P,f.id),f.n,f.P); if(bloq) await sleep(veloz?400:900); break;
@@ -440,13 +441,15 @@ async function tocar(lista){
           if(bloq) await balao(bal); else enfileirar(bal);
           if(f.rels&&f.rels.length){ await esperarBaloes(); await palcoRel(f); }
         }
+        if(window.PHI&&f.P!==0){ await esperarBaloes(); await PHI.momento('debate',f); }
         break;
       case 'segue': if(M3())voo(M3().mundoPilha(f.P,f.id),M3().topoTorre(f.did,f.P),1,f.P); await sleep(veloz?200:420); await revelar(f.did,f.P,1); break;
       case 'vit': await esperarBaloes(); await BFX.cena('vitoria',f);
         // só agora a pergunta nova entra: a placa gira e troca de texto e de cor
         if(M3()) await M3().virarPlaca(f.di,function(){ delete ocultos['placa:'+f.di]; m3d(); }); else { delete ocultos['placa:'+f.di]; m3d(); }
+        if(window.PHI) await PHI.momento('vit',f);
         break;
-      case 'praxis': await esperarBaloes(); await palcoCarta(f); await BFX.cena('falacia',f); break;
+      case 'praxis': await esperarBaloes(); await palcoCarta(f); await BFX.cena('falacia',f); if(window.PHI) await PHI.momento('praxis',f); break;
       case 'caveira':   // a falácia cobra: o placar cai e a caveira aparece ao lado dos troféus
         ocultos['pts:'+f.P]=(ocultos['pts:'+f.P]||0)+f.n; ocultos['cav:'+f.P]=Math.max(0,(ocultos['cav:'+f.P]||0)-f.n);
         redesenhar(); som('perda');
@@ -680,8 +683,9 @@ function regrasHTML(){
     +'<li><b>Fim:</b> ao completar a rodada em que alguém chega a 30 pontos, ou ao fim da 12ª rodada. Mão com no máximo 5 cartas ao encerrar o turno. Duplo clique (ou botão direito) numa carta mostra a carta ampliada.</li></ul>';
 }
 function escolherOponentes(){
-  modal('<h2>Batalha!</h2><p>Você joga contra Hipátia e Sêneca. Na pilha, três escolas (Grécia Clássica, Materialistas e Empiristas, Germânicos) e dois livres-pensadores.</p>'
+  modal('<h2>Batalha!</h2><p>Você joga contra Hipátia e Sêneca. Na pilha, seis escolas e dois livres-pensadores.</p>'
     +'<div class="lab" style="margin-top:12px">Oponentes</div><div class="sel"><label><input type="radio" name="niv" value="aprendiz" checked>Aprendizes<br><small style="color:var(--mute)">erram mais, usam menos falácias</small></label><label><input type="radio" name="niv" value="mestre">Mestres<br><small style="color:var(--mute)">calculam cada debate</small></label></div>'
+    +'<label class="phi-op"><input type="checkbox" name="phi"'+(window.PHI&&!PHI.jaJogou()?' checked':'')+'><span class="phi-mini" aria-hidden="true">Φ</span><span><b>Assistente Φ</b><br><small>explica as primeiras jogadas; dá para desligar a qualquer momento</small></span></label>'
     +'<div class="fecha"><button class="btn" data-a="fechar">Voltar</button><button class="btn pri" data-a="comecar">Começar</button></div>');
   var b=$('box').querySelector('[data-a=comecar]'); if(b)b.focus();
 }
@@ -776,7 +780,7 @@ function demoAcao(a){
   else if(a==='demo-fechar')fecharDemo();
   else if(a==='demo-jogar'){ fecharDemo(); escolherOponentes(); }
 }
-function nova(nivel){ S=BF.newGame({niveis:['mestre',nivel,nivel]});
+function nova(nivel,phi){ S=BF.newGame({niveis:['mestre',nivel,nivel]}); if(window.PHI)PHI.novaPartida(!!phi);
   var h=location.hash.slice(1).split('-'); ['diogenes','nietzsche'].forEach(function(id){ if(h.indexOf(id)>=0)comFilosofo(id); });
   logN=0; bibChegou=true; fechar(); esconderAbertura(); rodarIA(); }
 /* Entradas de teste: #diogenes ou #nietzsche no fim do endereço põem esse filósofo, já ativo e com 4 ideias, no seu grupo.
@@ -814,7 +818,7 @@ document.addEventListener('click',function(ev){
   if(a2.indexOf('ab-')===0){ abAcao(a2,id); return; }
   if(a2.indexOf('demo-')===0){ demoAcao(a2); return; }
   if(a2==='bio'){ var bt=$('box').querySelector('.bio-txt'); if(bt)bt.classList.toggle('on'); return; }   // biografias ainda por escrever
-  if(a2==='comecar'){var r=document.querySelector('input[name=niv]:checked'); nova(r?r.value:'aprendiz'); return;}
+  if(a2==='comecar'){var r=document.querySelector('input[name=niv]:checked'), ph=document.querySelector('input[name=phi]'); nova(r?r.value:'aprendiz',ph&&ph.checked); return;}
   if(a2==='inicio'){mostrarAbertura();return;}
   if(a2==='fechar'&&(!S||abertaAbertura())){ fechar(); return; }
   if(!S)return;
@@ -905,9 +909,12 @@ document.addEventListener('pointerup',soltar);
 document.addEventListener('pointercancel',soltar);
 document.addEventListener('dragstart',function(e){e.preventDefault();});
 
-$('bsom').textContent='Som: '+(window.SOM&&SOM.ligado()?'ligado':'desligado');
-$('bsom').onclick=function(){ if(!window.SOM)return; var l=SOM.ligado(!SOM.ligado()); this.textContent='Som: '+(l?'ligado':'desligado'); };
-$('bveloc').onclick=function(){veloz=!veloz;BFX.veloz=veloz;document.body.classList.toggle('veloz',veloz);this.textContent='Ritmo: '+(veloz?'rápido':'normal');};
+$('psom').checked=!!(window.SOM&&SOM.ligado());
+$('psom').onchange=function(){ if(!window.SOM)return; this.checked=SOM.ligado(this.checked); };
+$('pveloc').onchange=function(){veloz=this.checked;BFX.veloz=veloz;document.body.classList.toggle('veloz',veloz);};
+$('pphi').onchange=function(){ if(window.PHI)PHI.ligar(this.checked); };
+$('bprefs').onclick=function(ev){ ev.stopPropagation(); var p=$('prefs'), on=!p.classList.contains('on'); p.classList.toggle('on',on); this.setAttribute('aria-expanded',on); if(on)$('pphi').checked=!!(window.PHI&&PHI.ligado()); };
+document.addEventListener('click',function(ev){ if(!ev.target.closest('#prefs,#bprefs'))$('prefs').classList.remove('on'); },true);
 // carta com volume: inclina conforme o ponteiro
 var inclinada=null;
 document.addEventListener('pointermove',function(e){
