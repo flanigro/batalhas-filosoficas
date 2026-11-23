@@ -16,8 +16,8 @@ Você comanda um grupo de filósofos que disputam as grandes perguntas da filoso
 - **Sua Biblioteca.** O seu estoque de ideias.
 - **Seu grupo.** Quatro cadeiras para os seus filósofos.
 - **A Ágora.** O centro da mesa, com até três debates abertos.
-- **Cartas de filósofo (20).** Cada uma tem um **custo** (de 1 a 5), uma **escola**, um **valor em cada uma das quatro áreas** (Metafísica, Lógica, Ética, Psicologia) e um **poder**.
-- **Cartas temporárias (16).** Golpes de argumentação, de efeito único, em quatro famílias: falácias, argumentos, cartas de escola e Práxis.
+- **Cartas de filósofo (38).** Seis escolas de seis filósofos (Grécia Clássica, Materialistas e Empiristas, Germânicos, Teístas e Racionalistas, Franceses, Orientais) e dois livres-pensadores. Cada carta tem um **custo** (de 1 a 5), uma **escola**, um **valor em cada uma das quatro áreas** (Metafísica, Lógica, Ética, Psicologia) e um **poder**.
+- **Cartas temporárias (20).** Golpes de argumentação, de efeito único, em quatro famílias: falácias, argumentos, cartas de escola e Práxis.
 - **Cartas de debate (24).** Cada uma é uma pergunta de uma área, com um **valor** (5, 7, 9, 10, 12 ou 15). Esse valor é a meta para vencer e os pontos que você ganha.
 
 ---
@@ -41,7 +41,7 @@ Você comanda um grupo de filósofos que disputam as grandes perguntas da filoso
 4. **Reflexão:** cada filósofo do seu grupo ganha ideias:
    - custo 1 ou 2: **+1**; custo 3 ou 4: **+2**; custo 5: **+3**;
    - **+1** se tiver um colega da mesma escola no grupo;
-   - **+1** para cada um dos dois, se uma **dupla clássica** estiver completa no grupo: Platão e Sócrates · Aristóteles e Platão · Marx e Hegel · Schopenhauer e Kant · Arendt e Heidegger.
+   - **+1** para cada um dos dois, se uma **dupla clássica** estiver completa no grupo: Platão e Sócrates · Aristóteles e Platão · Marx e Hegel · Schopenhauer e Kant · Arendt e Heidegger · Tomás e Agostinho · Espinoza e Descartes · Camus e Sartre · Lacan e Freud · Confúcio e Lao-Tsé · Avicena e Aristóteles.
 5. Os **poderes** que agem na Reflexão disparam.
 
 **Teto:** nenhum filósofo passa de **10 ideias**. O que passar disso se perde.
@@ -68,7 +68,9 @@ O filósofo leva ao debate **exatamente** o valor que tem na área da pergunta. 
 
 > **Exemplo.** O debate é "Somos todos iguais?", de Ética. Rousseau tem 4 em Ética. Com 4 ideias ou mais, ele vai e leva 4. Com 3, fica em casa.
 
+- Com mais ideias que o valor, ele vai e leva só o valor; o resto fica com ele.
 - Cada filósofo vai a **um debate por turno**.
+- Exceções, escritas nos poderes: Hegel pode levar menos que o valor; Sartre leva o seu maior valor a qualquer debate; Lao-Tsé nunca vai a debates.
 - Quem acabou de chegar ao grupo ainda não vai.
 - Depois que chegam ao debate, as ideias são **suas**, e não mais do filósofo que as levou.
 
@@ -106,8 +108,8 @@ Quando alguém vence, **todas as ideias daquele debate se perdem** e uma nova pe
 São golpes de argumentação, de efeito único. Quase todas só valem num debate **do qual você participa**, isto é, em que você já tem pelo menos uma ideia. Cada carta traz o efeito (**Jogo**) e um parágrafo que explica a ideia por trás do nome (**O que é**).
 
 - **Falácias** (7): Argumento de Autoridade, Espantalho, Ad Hominem, Sofisma, Petitio Principii, Mutatio Controversiae, Non Sequitur. Borda vermelho-escura e caveira. São argumentos que parecem bons, mas não são, e cobram caro: depois de usadas, **saem do jogo** e tiram pontos de quem as usou (2 pelo Ad Hominem, pelo Espantalho e pela Petitio Principii, 1 pelas outras). O placar pode ficar negativo; as caveiras ao lado dos troféus mostram quanto as falácias já custaram. Freud ganha uma ideia sempre que um adversário usa uma delas. A Petitio Principii dá a conclusão por provada: se você ainda tiver mais ideias que cada adversário no seu próximo turno, vence o debate mesmo abaixo do valor; os outros têm uma volta da mesa para recusar.
-- **Argumentos** (5): Retorsio Argumenti, Reductio ad Absurdum, Falseabilidade, Tautologia, Paradoxo Lógico. Recursos legítimos de prova e refutação. O Paradoxo tranca um debate até o seu próximo turno: ninguém mexe nele, e ninguém o vence enquanto estiver trancado.
-- **Cartas de escola** (3): Cicuta (contra os Gregos), Dogma (contra os Materialistas e Empiristas), Niilismo (contra os Germânicos). Cada uma ataca uma escola.
+- **Argumentos** (6): Retorsio Argumenti, Reductio ad Absurdum, Falseabilidade, Tautologia, Paradoxo Lógico, O Fantasma na Máquina. Recursos legítimos de prova e refutação. O Paradoxo tranca um debate até o seu próximo turno: ninguém mexe nele, e ninguém o vence enquanto estiver trancado. O Fantasma na Máquina atinge os dualistas (Pitágoras, Sócrates, Platão, Agostinho, Descartes, Avicena): num seu, +3 ideias; num de adversário, ele não vai a debates no próximo turno do dono.
+- **Cartas de escola** (6): Cicuta (contra os Gregos), Dogma (contra os Materialistas e Empiristas), Niilismo (contra os Germânicos), “Deus está morto” (contra os Teístas), Determinismo (contra os Franceses), Orientalismo (contra os Orientais). Cada uma ataca uma escola.
 - **Práxis** (1): Ceticismo. Uma ideia filosófica que vira manobra.
 
 Argumentos, cartas de escola e Práxis voltam ao monte pelo descarte.

@@ -1,5 +1,5 @@
 /* Batalha dos Filósofos — assistente Φ (roteiro aprovado pelo Flavio em 23/11/2026)
- * Um balão por vez, no centro da tela (na faixa livre entre as placas e os pódios). Acompanha as três primeiras
+ * Um balão por vez, no centro da tela (na faixa livre entre os debates e os pódios). Acompanha as três primeiras
  * rodadas e dá cada dica uma vez por partida. O ponto central é o valor exato: o filósofo leva ao debate
  * exatamente o valor dele na área, e pode completar com ideias da Biblioteca.
  * Dois tipos de balão:
@@ -52,14 +52,16 @@
       if (g.lib || !BF.ativo(g) || g.acted || !BF.acumula(g)) return;
       s.debates.forEach(function (d, di) {
         if (!BF.livre(d)) return;
-        var area = DEB[d.id].area, v = C(g.id).vals[area], falta = v - g.ideas;
-        if (falta < 0 || falta > pl.library || v > s.cfg.teto) return;
+        var area = DEB[d.id].area, v = leva(g.id, area), falta = Math.max(0, v - g.ideas);
+        if (falta > pl.library) return;
         if (!melhor || falta < melhor.falta || (falta === melhor.falta && DEB[d.id].valor > DEB[melhor.did].valor))
           melhor = { gid: g.id, did: d.id, v: v, area: area, falta: falta };
       });
     });
     return melhor;
   }
+  // o que o filósofo leva a um debate da área: o valor dele nela (Sartre leva o maior valor a qualquer área)
+  function leva(id, area) { var v = C(id).vals; return id === 'sartre' ? Math.max(v.meta, v.logica, v.etica, v.psico) : v[area]; }
   // confere se o plano ainda vale (o debate pode ter sido vencido; o filósofo, trocado)
   function planoVivo() {
     var p = R.plano; if (!p) return null;
@@ -127,24 +129,23 @@
         var semAcao = !pl.group.some(function (g) { return !g.lib && BF.ativo(g) && BF.acumula(g); });
         L.push({ k: 'r2-sem', t: semAcao
           ? 'Nenhum filósofo seu pode debater agora: quem acabou de chegar só entra em ação no próximo turno, e Lao-Tsé nunca debate. Baixe um filósofo para debater na próxima rodada.'
-          : 'Para entrar num debate, o filósofo leva exatamente o valor dele na área da placa: nem mais, nem menos. Agora nenhum dos seus tem esse número, nem completando com a Biblioteca. Guarde ideias e tente no próximo turno.',
+          : 'Para entrar num debate, o filósofo leva exatamente o valor dele na área do debate: nem mais, nem menos. Agora nenhum dos seus tem esse número, nem completando com a Biblioteca. Guarde ideias e tente no próximo turno.',
           m: semAcao ? ['[data-anc="grupo"]'] : ['#bib'] });
         return L;
       }
-      var nome = C(p.g.id).nome, an = AREA[p.area].curto, hegel = p.g.id === 'hegel';
+      var nome = C(p.g.id).nome, an = AREA[p.area].curto, hegel = p.g.id === 'hegel', vArea = p.g.id === 'sartre' ? p.v : C(p.g.id).vals[p.area];
       L.push({ k: 'r2-valor', t: 'Cada debate é de uma área, pela cor. Para entrar, o filósofo leva exatamente o valor dele nessa área: nem mais, nem menos. '
-        + nome + ' tem ' + p.v + ' em ' + an + ', então entra em ' + q(p.d) + ' com ' + nI(p.v) + '. ' + (p.v > 1 ? 'Nem ' + (p.v - 1) + ', nem ' + (p.v + 1) + '.' : 'Nem 2.')
-        + (hegel ? ' (Hegel é a exceção: a Dialética deixa que ele leve menos.)' : ''),
+        + nome + ' tem ' + vArea + ' em ' + an + ', então entra em ' + q(p.d) + ' com ' + nI(p.v) + '. ' + (p.v > 1 ? 'Nem ' + (p.v - 1) + ', nem ' + (p.v + 1) + '.' : 'Nem 2.')
+        + (hegel ? ' (Hegel é exceção: a Dialética deixa que ele leve menos.)' : p.g.id === 'sartre' ? ' (Sartre é exceção: leva o seu maior valor a qualquer debate.)' : ''),
         m: ['[data-anc="seat:' + p.fi + '"]', '[data-anc="deb:' + p.di + '"]'] });
       if (p.g.ideas < p.v) {
         L.push({ k: 'r2-completar', t: nome + ' tem ' + p.g.ideas + '. ' + (p.v - p.g.ideas === 1 ? 'Falta 1' : 'Faltam ' + (p.v - p.g.ideas)) + ': clique no + do pódio para passar ideias da Biblioteca a ' + nome + ', uma por clique. Pense antes: o que você gasta agora pode fazer falta para baixar um filósofo mais caro depois.',
           m: ['[data-anc="pilha:0:' + p.fi + '"]', '#bib'] });
-      } else if (p.g.ideas === p.v) {
-        marca('r2-completar');
-        L.push({ k: 'r2-levar', t: 'Agora arraste ' + nome + ' até a placa, ou clique em ' + nome + ' e depois na placa. Só acendem os debates em que dá para entrar.',
-          m: ['[data-anc="seat:' + p.fi + '"]', '[data-anc="deb:' + p.di + '"]'] });
       } else {
-        L.push({ k: 'r2-demais', t: nome + ' tem ideias demais para esse debate: espere outro debate de ' + an + ' ou de outra área em que o valor dê certo.', m: ['[data-anc="seat:' + p.fi + '"]'] });
+        marca('r2-completar');
+        L.push({ k: 'r2-levar', t: 'Agora arraste ' + nome + ' até o debate, ou clique em ' + nome + ' e depois no debate. Só acendem os debates em que dá para entrar.'
+          + (p.g.ideas > p.v ? ' ' + nome + ' leva só ' + p.v + '; ' + (p.g.ideas - p.v === 1 ? 'a outra ideia fica' : 'as outras ' + (p.g.ideas - p.v) + ' ficam') + ' no pódio.' : ''),
+          m: ['[data-anc="seat:' + p.fi + '"]', '[data-anc="deb:' + p.di + '"]'] });
       }
       return L;
     }
@@ -185,7 +186,7 @@
   function momentos(tipo, f) {
     var s = S(), L = [], nm = function (P) { return s.players[P].nome; };
     if (tipo === 'turno' && s.round === 1 && f.P === 0) {
-      L.push({ k: 'm-ola', t: 'Olá! Eu sou o Φ e vou acompanhar suas primeiras jogadas. Seu objetivo é vencer debates usando ideias. Cada debate vencido dá os pontos da placa. Vence quem chegar a 30 pontos, ou quem tiver mais ao fim de 12 rodadas.', m: ['[data-anc="deb:0"]', '[data-anc="deb:1"]'] });
+      L.push({ k: 'm-ola', t: 'Olá! Eu sou o Φ e vou acompanhar suas primeiras jogadas. Seu objetivo é vencer debates usando ideias. Cada debate vencido dá os pontos que ele vale. Vence quem chegar a 30 pontos, ou quem tiver mais ao fim de 12 rodadas.', m: ['[data-anc="deb:0"]', '[data-anc="deb:1"]'] });
       L.push({ k: 'm-reflexao1', t: 'Todo turno começa com o momento de Reflexão. Você compra uma carta, e sua Biblioteca recebe 3 ideias. As ideias são a moeda do jogo: cada livro na estante é uma ideia.', m: ['#bib'] });
     }
     if (tipo === 'turno' && s.round === 1 && f.P === 1)
@@ -194,7 +195,7 @@
       L.push({ k: 'm-reflexao2', t: 'Momento de Reflexão: seus filósofos pensam e ganham ideias. Quem custa 1 ou 2 ganha 1; quem custa 3 ou 4 ganha 2; quem custa 5 ganha 3. Colegas da mesma escola ganham mais 1. Cada ganho aparece num balão de pensamento.', m: ['[data-anc="grupo"]'] });
     if (tipo === 'debate' && f.P !== 0) {
       var di = s.debates.findIndex(function (d) { return d.id === f.did; });
-      L.push({ k: 'm-debate-op', t: nm(f.P) + ' levou ' + nI(f.amt) + ' a «' + DEB[f.did].q + '». Na placa, cada jogador tem a sua prateleira de livros: a de ' + nm(f.P) + ' é a ' + COR_NOME[f.P] + '.',
+      L.push({ k: 'm-debate-op', t: nm(f.P) + ' levou ' + nI(f.amt) + ' a «' + DEB[f.did].q + '». Em cada debate, cada jogador tem a sua prateleira de livros: a de ' + nm(f.P) + ' é a ' + COR_NOME[f.P] + '.',
         m: di >= 0 ? ['[data-anc="est:' + di + ':' + f.P + '"]'] : [] });
     }
     if (tipo === 'vit' && f.P === 0)

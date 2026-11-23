@@ -34,7 +34,7 @@ As ideias ficam em três lugares:
 
 As ideias só andam num sentido: Biblioteca → filósofo → debate. Ideias da Biblioteca nunca vão direto a um debate, salvo quando uma carta diz o contrário.
 
-**As ideias num debate pertencem ao jogador, e não ao filósofo que as levou.** Depois que chegam ao debate, ninguém sabe mais de quem vieram. Por isso, um efeito que tira ideias de um debate atinge o jogador, nunca um filósofo em particular. (No digital, as ideias de cada jogador num debate aparecem numa prateleira da placa; o nome serve só para descrever a tela.)
+**As ideias num debate pertencem ao jogador, e não ao filósofo que as levou.** Depois que chegam ao debate, ninguém sabe mais de quem vieram. Por isso, um efeito que tira ideias de um debate atinge o jogador, nunca um filósofo em particular. (No digital, as ideias de cada jogador num debate aparecem numa prateleira do debate; o nome serve só para descrever a tela.)
 
 A Biblioteca não tem teto. **Cada filósofo pode ter no máximo 10 ideias**: o que passaria disso se perde, venha de onde vier (Reflexão, escola, duplas, poderes, Tautologia), e a Biblioteca não pode dar ideias a quem já tem 10.
 
