@@ -683,16 +683,21 @@ function aplicarCamera() {
 /* Céu de fundo com a imagem da arena (scene.background é uma imagem do tamanho da tela). Só a faixa entre o topo
    da janela e o fim do terraço aparece: a imagem cobre a largura, e a linha FUNDO.linha dela (o alto do Partenon)
    fica logo abaixo da barra do topo; as cortinas e as colunas caem nos cantos. Sem a imagem, fica o degradê. */
-const FUNDO = { img: null, linha: 185, canvas: null, tex: null };
+const FUNDO = { img: null, linha: 185, tex: null, w: 0, h: 0 };
 function desenharFundo() {
   const im = FUNDO.img; if (!im || !renderer) return;
-  const W = Math.round(innerWidth / 2), H = Math.round(innerHeight / 2), s = W / im.width;
-  const c = FUNDO.canvas || (FUNDO.canvas = document.createElement('canvas')); c.width = W; c.height = H;
-  const x = c.getContext('2d'), hd = document.querySelector('header'), topo = (hd ? hd.offsetHeight : 30) / 2;
+  const W = Math.round(innerWidth / 2), H = Math.round(innerHeight / 2);
+  if (FUNDO.tex && FUNDO.w === W && FUNDO.h === H) return;
+  // a imagem cobre a largura, centrada (o ponto de fuga dela fica no eixo da mesa); a linha FUNDO.linha cai logo abaixo da barra
+  const s = W / im.width, hd = document.querySelector('header'), topo = (hd ? hd.offsetHeight : 30) / 2;
+  const c = document.createElement('canvas'); c.width = W; c.height = H;
+  const x = c.getContext('2d');
   x.fillStyle = '#efe4d3'; x.fillRect(0, 0, W, H);
-  x.drawImage(im, 0, topo - FUNDO.linha * s, W, im.height * s);
-  if (!FUNDO.tex) { FUNDO.tex = new THREE.CanvasTexture(c); FUNDO.tex.colorSpace = THREE.SRGBColorSpace; scene.background = FUNDO.tex; }
-  else FUNDO.tex.needsUpdate = true;
+  x.drawImage(im, (W - im.width * s) / 2, topo - FUNDO.linha * s, im.width * s, im.height * s);
+  // textura nova a cada tamanho: reaproveitar a antiga deixava o resto do tamanho anterior na tela
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace;
+  const velha = FUNDO.tex; FUNDO.tex = t; FUNDO.w = W; FUNDO.h = H; scene.background = t;
+  if (velha) velha.dispose();
 }
 function enquadrar() {
   const W = innerWidth, H = innerHeight; renderer.setSize(W, H, false); camera.aspect = W / H; camera.clearViewOffset(); camera.updateProjectionMatrix(); desenharFundo();
