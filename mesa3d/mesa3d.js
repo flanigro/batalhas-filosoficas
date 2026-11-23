@@ -680,8 +680,22 @@ function aplicarCamera() {
   camera.position.set(cam.alvo.x + t, cam.alvo.y + Math.sin(p) * cam.dist + t2, cam.alvo.z + Math.cos(p) * cam.dist);
   camera.lookAt(cam.alvo); camera.updateMatrixWorld();
 }
+/* Céu de fundo com a imagem da arena (scene.background é uma imagem do tamanho da tela). Só a faixa entre o topo
+   da janela e o fim do terraço aparece: a imagem cobre a largura, e a linha FUNDO.linha dela (o alto do Partenon)
+   fica logo abaixo da barra do topo; as cortinas e as colunas caem nos cantos. Sem a imagem, fica o degradê. */
+const FUNDO = { img: null, linha: 185, canvas: null, tex: null };
+function desenharFundo() {
+  const im = FUNDO.img; if (!im || !renderer) return;
+  const W = Math.round(innerWidth / 2), H = Math.round(innerHeight / 2), s = W / im.width;
+  const c = FUNDO.canvas || (FUNDO.canvas = document.createElement('canvas')); c.width = W; c.height = H;
+  const x = c.getContext('2d'), hd = document.querySelector('header'), topo = (hd ? hd.offsetHeight : 30) / 2;
+  x.fillStyle = '#efe4d3'; x.fillRect(0, 0, W, H);
+  x.drawImage(im, 0, topo - FUNDO.linha * s, W, im.height * s);
+  if (!FUNDO.tex) { FUNDO.tex = new THREE.CanvasTexture(c); FUNDO.tex.colorSpace = THREE.SRGBColorSpace; scene.background = FUNDO.tex; }
+  else FUNDO.tex.needsUpdate = true;
+}
 function enquadrar() {
-  const W = innerWidth, H = innerHeight; renderer.setSize(W, H, false); camera.aspect = W / H; camera.clearViewOffset(); camera.updateProjectionMatrix();
+  const W = innerWidth, H = innerHeight; renderer.setSize(W, H, false); camera.aspect = W / H; camera.clearViewOffset(); camera.updateProjectionMatrix(); desenharFundo();
   cam.rod = alturaRodape();
   const mao = cam.rod + 6, topo = 36, At = 1 - 2 * topo / H, Ab = -1 + 2 * mao / H, pd = L.ped, B = L.banda, wb = larguraBanda() / 2;
   R.banda.updateMatrixWorld(true);
@@ -769,7 +783,7 @@ function posicionar(reler) {
 }
 
 // ---------- realce de alvos: brilho no próprio objeto e halo de luz à frente dele ----------
-const COR_REALCE = [null, new THREE.Color('#4fc3ee'), new THREE.Color('#ffffff'), new THREE.Color('#f3c552')];
+const COR_REALCE = [null, new THREE.Color('#4fc3ee'), new THREE.Color('#ffffff'), new THREE.Color('#f3c552'), new THREE.Color('#f3c552')];   // 4: o que o assistente Φ cita
 function haloDe(chave) {
   if (R.halos[chave] !== undefined) return R.halos[chave];
   const a = chave.split(':'), pd = L.ped, P = L.placa, B = L.banda; let lista = [];
@@ -785,13 +799,13 @@ function haloDe(chave) {
 const realces = {};
 function atualizarRealces() {
   const quer = {};
-  proxies.forEach(p => { const c = p.el.classList, n = c.contains('sobre') ? 2 : c.contains('alvo') ? 1 : c.contains('selecionado') ? 3 : 0; if (n) quer[p.chave] = Math.max(quer[p.chave] || 0, n); });
+  proxies.forEach(p => { const c = p.el.classList, n = c.contains('sobre') ? 2 : c.contains('alvo') ? 1 : c.contains('selecionado') ? 3 : c.contains('phi-alvo') ? 4 : 0; if (n) quer[p.chave] = Math.max(quer[p.chave] || 0, n); });
   const pulso = .72 + .28 * Math.sin(relogio * .006);
   Object.keys(realces).forEach(k => { if (!quer[k]) { haloDe(k).forEach(m => m.visible = false); (R.emis[k] || []).forEach(m => m.emissiveIntensity = 0); delete realces[k]; } });
   Object.keys(quer).forEach(k => {
     const n = quer[k]; realces[k] = n;
     haloDe(k).forEach(m => { m.visible = true; m.material.color.copy(COR_REALCE[n]); m.material.opacity = (n === 2 ? 1 : .8) * pulso; });
-    (R.emis[k] || []).forEach(m => { m.emissive.copy(COR_REALCE[n]); m.emissiveIntensity = (n === 2 ? .34 : n === 3 ? .14 : .2) * pulso; });
+    (R.emis[k] || []).forEach(m => { m.emissive.copy(COR_REALCE[n]); m.emissiveIntensity = (n === 2 ? .34 : n === 3 ? .14 : n === 4 ? .26 : .2) * pulso; });
   });
 }
 
@@ -997,6 +1011,8 @@ function iniciar() {
   { const c = tela(4, 256), x = c.getContext('2d'), gr = x.createLinearGradient(0, 0, 0, 256);
     gr.addColorStop(0, '#cfd6e2'); gr.addColorStop(.55, '#ece6dc'); gr.addColorStop(1, '#f3e7d4'); x.fillStyle = gr; x.fillRect(0, 0, 4, 256);
     const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; scene.background = t; }
+  // cenário provisório do Flavio (23/11/2026): a imagem da arena, com a Acrópole, faz o céu atrás dos adversários
+  { const im = new Image(); im.onload = () => { FUNDO.img = im; desenharFundo(); }; im.src = 'cenario/arena.webp'; }
   scene.environment = criarAmbiente();
   camera = new THREE.PerspectiveCamera(L.cam.fov, innerWidth / innerHeight, .5, 600);
   cam.alvo0.set(L.cam.alvo[0], L.cam.alvo[1], L.cam.alvo[2]); cam.alvo.copy(cam.alvo0);

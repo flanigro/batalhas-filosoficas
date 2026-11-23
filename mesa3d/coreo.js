@@ -30,7 +30,7 @@ function M3(){return window.M3D&&M3D.pronto?M3D:null;}
 var CURVA={saida:'cubic-bezier(.16,1,.3,1)',tranco:'cubic-bezier(.3,1.6,.5,1)',queda:'cubic-bezier(.6,0,.9,.3)'};
 
 // ---------- textos (provisórios; a lista completa fica para a próxima rodada) ----------
-var TOM={contido:['kant','socrates','arendt','hegel','schopenhauer'],escrachado:['diogenes','nietzsche','erasmo','maquiavel','rousseau']};
+var TOM={contido:['kant','socrates','arendt','hegel','schopenhauer','jesus','buda','confucio'],escrachado:['diogenes','nietzsche','erasmo','maquiavel','rousseau']};
 var INTERJ={
   contido:['Ergo!','Objeção!','Distinguo!','Nego a premissa.','Quod erat demonstrandum.'],
   medio:['Eureka!','Vejamos!','Ora, ora!','Ponto para mim!'],
@@ -46,7 +46,12 @@ var LINGUA={
   alemao:['Also!|Pois bem!','Genau!|Exatamente!','Ach so!|Ah, então é isso!','Achtung!|Atenção!'],
   frances:['Voilà!|Eis aí!','Mon Dieu!|Meu Deus!','Touché!|Acertou!','Bien sûr!|Claro!'],
   italiano:['Ecco!|Eis!','Basta!|Chega!'],
-  arabe:['Al-ḥaqq!|A verdade!','Yallah!|Vamos!']
+  arabe:['Al-ḥaqq!|A verdade!','Yallah!|Vamos!'],
+  aramaico:['Effatá!|Abre-te!','Shlama!|Paz!'],
+  pali:['Sādhu!|Muito bem!','Anicca!|Tudo é impermanente'],
+  chines:['Hǎo!|Bom!','Dào!|O Caminho!'],
+  persa:['Āfarin!|Bravo!','Bale!|Sim!'],
+  avestico:['Ushtā!|Felicidade!','Asha!|A verdade, a ordem do mundo']
 };
 var BORDAO={
   socrates:{p:['Só sei que nada sei!','Posso fazer uma perguntinha?','Conhece-te a ti mesmo!'],l:['grego']},
@@ -80,7 +85,13 @@ var BORDAO={
   voltaire:{p:['Écrasez l’infâme!|Esmagai a infâmia!','Il faut cultiver notre jardin!|É preciso cultivar nosso jardim','Tudo vai pelo melhor! (Será?)'],l:['frances']},
   derrida:{p:['Différance!|Com a, mesmo','Desconstrução!','Il n’y a pas de hors-texte!|Não há fora-do-texto'],l:['frances']},
   camus:{p:['Imaginemos Sísifo feliz!','Absurdo!','Eu me revolto, logo existimos!'],l:['frances']},
-  lacan:{p:['O inconsciente é uma linguagem!','Retorno a Freud!','Estádio do espelho!'],l:['frances']}
+  lacan:{p:['O inconsciente é uma linguagem!','Retorno a Freud!','Estádio do espelho!'],l:['frances']},
+  jesus:{p:['Quem tem ouvidos, ouça!','Venham ver!','Talitá cumi!|Menina, levanta-te!'],l:['aramaico']},
+  buda:{p:['Ehipassiko!|Venha e veja!','O caminho do meio!','Tudo passa!'],l:['pali']},
+  confucio:{p:['Pelos ritos!','Estudar e praticar!','O nobre não se zanga!'],l:['chines']},
+  avicena:{p:['Pelo Cânone!','Eu existo, mesmo voando!','Diagnóstico!'],l:['persa','arabe']},
+  zoroastro:{p:['Bons pensamentos!','Fora, mentira!','Ahura Mazda!|O Senhor Sábio'],l:['avestico','persa']},
+  laotse:{p:['Wu wei!|Agir sem forçar','Seja como a água!','O Tao que se diz não é o Tao!'],l:['chines']}
 };
 // dois em cada três vezes, um bordão próprio; na outra, um da língua dele
 function bordao(id){
