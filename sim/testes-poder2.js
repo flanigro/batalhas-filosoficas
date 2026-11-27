@@ -14,7 +14,7 @@ confere('debates de teste', BF.DEB[LOG].area === 'logica' && BF.DEB[MET].area ==
 
 { const s = jogo(); zera(s, [LOG, MET]); s.players[0].group = [G('aristoteles', 3)]; s.debates[0].stakes = [1, 7, 0];
   confere('Aristóteles: usa', usa(s, 0, 0)); confere('Termo Médio: −5', s.debates[0].stakes[1] === 2, s.debates[0].stakes); confere('custo 3 pago', s.players[0].group[0].ideas === 0);
-  confere('Aristóteles: só uma ação', !BF.podeP2(s, 0, 0)); }
+  confere('Poder 2: uma vez por turno', !BF.podeP2(s, 0, 0)); }
 { const s = jogo(); zera(s, [MET, LOG]); s.players[0].group = [G('aristoteles', 3)]; s.debates[0].stakes = [1, 7, 0];
   confere('Termo Médio fora da Lógica: sem opção', BF.poder2Options(s, 0, 0).length === 0); }
 { const s = jogo(); zera(s, [LOG, MET]); s.players[0].group = [G('aristoteles', 2)]; s.debates[0].stakes = [1, 7, 0];
@@ -75,25 +75,26 @@ confere('debates de teste', BF.DEB[LOG].area === 'logica' && BF.DEB[MET].area ==
 { const s = jogo(); zera(s, [LOG, MET]); s.players[0].group = [G('bacon', 3), G('kant', 0), G('locke', 10)];
   usa(s, 0, 0); confere('Ídolos: +1 para cada um, inclusive Bacon; teto respeitado', s.players[0].group.map(g => g.ideas).join() === '1,1,10', s.players[0].group.map(g => g.ideas)); }
 
-{ const s = jogo(); zera(s, [LOG, MET]); s.players[0].group = [G('locke', 3)]; s.debates[0].stakes = [12, 5, 0];
+{ const s = jogo(); zera(s, [ET, MET]); s.players[0].group = [G('locke', 3)]; s.debates[0].stakes = [15, 5, 0];
   usa(s, 0, 0, o => o.prm.d === 0);
   passa(s); s.players[1].group = [G('kant', 9)];
   confere('Propriedade: o adversário não leva ideias ao debate cercado', !BF.moveOptions(s, 1, 0).some(o => o.di === 0));
-  s.debates[0].stakes[1] = 13; confere('Propriedade: o adversário não vence ali mesmo liderando', !BF.lidera(s, 0, 1));
+  s.debates[0].stakes[1] = 16; confere('Propriedade: o adversário não vence ali mesmo liderando', !BF.lidera(s, 0, 1));
   s.debates[0].stakes[1] = 5;
-  s.players[1].hand.push('falseabilidade#1'); s.players[1].library = 10; s.debates[0].stakes[1] = 5;
-  const op = BF.praxisOptions(s, 1, 'falseabilidade').find(o => o.prm.d === 0);
-  confere('Propriedade: tirar ideias continua possível', op && BF.playPraxis(s, 1, 'falseabilidade#1', op.prm) && s.debates[0].stakes[0] === 7, s.debates[0].stakes); }
-{ const s = jogo(); zera(s, [LOG, MET]); s.players[0].group = [G('locke', 3)]; s.debates[0].stakes = [12, 5, 0];
+  s.players[1].hand.push('reductio#1'); s.players[1].library = 10; s.debates[0].stakes[1] = 5;
+  const op = BF.praxisOptions(s, 1, 'reductio').find(o => o.prm.d === 0);
+  confere('Propriedade: tirar ideias continua possível', op && BF.playPraxis(s, 1, 'reductio#1', op.prm) && s.debates[0].stakes[0] === 8, s.debates[0].stakes); }
+{ const s = jogo(); zera(s, [ET, MET]); s.players[0].group = [G('locke', 3)]; s.debates[0].stakes = [15, 5, 0];
   usa(s, 0, 0, o => o.prm.d === 0); passa(s); passa(s); passa(s);
-  confere('Propriedade: o dono vence no próprio turno se liderar', s.players[0].points === 12, s.players[0].points);
-  confere('Propriedade: cerca desfeita no turno do dono', !s.debates.some(d => d.prop)); }
-{ const s = jogo(); zera(s, [LOG, MET]); s.players[0].group = [G('locke', 3)];
-  confere('Propriedade: só em debate em que você tem ideias', BF.poder2Options(s, 0, 0).length === 0); }
-
+  confere('Propriedade: a cerca chega ainda fechada ao turno do dono, que não vence nesse momento', s.players[0].points === 0, s.players[0].points);
+  confere('Propriedade: cerca desfeita depois da sustentação do dono', !s.debates.some(d => d.prop)); }
+{ const s = jogo(); zera(s, [LOG, ET]); s.players[0].group = [G('locke', 3)]; s.debates[0].stakes[0] = 2;
+  confere('Propriedade: só em debate de Ética / Política em que você tem ideias', BF.poder2Options(s, 0, 0).length === 0); }
+{ const s = jogo(); zera(s, [LOG, MET]); s.players[0].group = [G('aristoteles', 8)]; s.debates[0].stakes = [1, 7, 0];
+  usa(s, 0, 0); confere('Poder 2 não gasta a ação: o filósofo ainda vai a um debate', BF.moveToDebate(s, 0, 0, 0), s.players[0].group[0]); }
 { const s = jogo(); zera(s, [LOG, MET]); s.players[0].group = [G('kant', 3)]; s.players[1].group = [G('descartes', 7), G('marx', 7)];
   usa(s, 0, 0, o => o.prm.fi2 === 0); confere('Coisa em si: Teísta/Racionalista perde 5', s.players[1].group[0].ideas === 2);
-  s.players[0].group[0].acted = false; s.players[0].group[0].ideas = 3; usa(s, 0, 0, o => o.prm.fi2 === 1); confere('Coisa em si: outro perde 3', s.players[1].group[1].ideas === 4); }
+  delete s.players[0].group[0].p2usado; s.players[0].group[0].ideas = 3; usa(s, 0, 0, o => o.prm.fi2 === 1); confere('Coisa em si: outro perde 3', s.players[1].group[1].ideas === 4); }
 
 { const s = jogo(); zera(s, [LOG, MET, ET]); s.players[0].group = [G('nietzsche', 3)]; usa(s, 0, 0);
   confere('Além-do-homem: entra', s.players[0].alem && s.players[0].alem.novo);

@@ -554,7 +554,7 @@
   ].forEach(function (r) { RELACOES.push(r); });
 
   // ---------- preparação ----------
-  var PADRAO = { pontos: 30, rodadas: 12, debInicial: 2, novoDebate: [4], copiasPraxis: 1, bibPorTurno: 3, custoTroca: 5, teto: 10, maoInicial: 3, poder2: false, custoP2: 3, varLocke: 1 };
+  var PADRAO = { pontos: 30, rodadas: 12, debInicial: 2, novoDebate: [4], copiasPraxis: 1, bibPorTurno: 3, custoTroca: 5, teto: 10, maoInicial: 3, poder2: false, custoP2: 3, varLocke: 2, iaSat: 7, iaBibRod: 6, iaSatBib: 9, p2Acao: false };
   var REFLEXAO = [0, 1, 1, 2, 2, 3];
 
   function fx(s, e) { if (!s.mudo) s.fx.push(e); }
@@ -1468,7 +1468,7 @@
     if (s.over) return false;
     if (descartes) descartes.forEach(function (id) { var i = pl.hand.indexOf(id); if (i >= 0) s.discard.push(pl.hand.splice(i, 1)[0]); });
     autoDiscard(s, P);
-    pl.group.forEach(function (g) { g.foiAnt = !!g.foi; g.foi = false; g.acted = false; g.given = 0; delete g.duvida; delete g.semPiloto; delete g.parado; });
+    pl.group.forEach(function (g) { g.foiAnt = !!g.foi; g.foi = false; g.acted = false; g.given = 0; delete g.duvida; delete g.semPiloto; delete g.parado; delete g.p2usado; });
     if (pl.alem) pl.alem.acted = false;
     if (pl.niil === 2) pl.niil = 0;
     if (pl.orient === 2) pl.orient = 0;
@@ -1516,7 +1516,7 @@
     hegel: ['Superação', 'Mova até 4 ideias suas de um debate para outro.'],
     hobbes: ['Leviatã', 'Baixe o Legado Leviatã: cada carta temporária jogada por um adversário dá +1 ideia à sua Biblioteca.'],
     bacon: ['Ídolos', 'Cada filósofo do seu grupo, inclusive Bacon, recebe +1 ideia.'],
-    locke: ['Propriedade', 'Num debate em que você já tem ideias: até o seu próximo turno, ninguém mais põe ideias ali e nenhum adversário o vence.'],
+    locke: ['Propriedade', 'Num debate de Ética / Política em que você já tem ideias: até o início do seu próximo turno, ninguém mais põe ideias ali (tirar pode) e ninguém o vence, nem você.'],
     rousseau: ['Estado de natureza', 'Baixe o Legado: na Reflexão, cada filósofo de custo 1 e 2 do seu grupo recebe +1.'],
     kant: ['Coisa em si', 'Um filósofo adversário perde 3 ideias, ou 5 se for Teísta ou Racionalista.'],
     nietzsche: ['Além-do-homem', 'Baixe o Legado: um filósofo extra, 2-2-2-2, que só recebe ideias da Biblioteca e é imune. Sai com Nietzsche.'],
@@ -1576,7 +1576,7 @@
   }
   function podeP2(s, P, fi) {
     var pl = s.players[P], g = pl.group[fi];
-    return !!(s.cfg.poder2 && !s.over && s.turn === P && g && PODER2[g.id] && !g.lib && ativo(g) && !g.acted && !g.parado && !g.semPiloto);
+    return !!(s.cfg.poder2 && !s.over && s.turn === P && g && PODER2[g.id] && !g.lib && ativo(g) && !g.p2usado && !(s.cfg.p2Acao && g.acted) && !g.parado && !g.semPiloto);
   }
   function alvosP2(s, P, o, f) { var out = []; s.players[o].group.forEach(function (h, k) { if (!h.lib && !imune(h) && f(h)) out.push(k); }); return out; }
   function poder2Options(s, P, fi) {
@@ -1610,7 +1610,7 @@
         }
         break;
       case 'locke':
-        s.debates.forEach(function (d, i) { if (livre(d) && !d.prop && d.stakes[P] > 0) out.push({ label: 'Cercar ' + dlab(i), prm: { d: i } }); });
+        s.debates.forEach(function (d, i) { if (livre(d) && !d.prop && d.stakes[P] > 0 && DEB[d.id].area === 'etica') out.push({ label: 'Cercar ' + dlab(i), prm: { d: i } }); });
         break;
       case 'kant':
         for (o = 0; o < s.players.length; o++) if (o !== P) alvosP2(s, P, o, function (h) { return h.ideas > 0; }).forEach(function (k) {
@@ -1639,7 +1639,7 @@
     var ok = poder2Options(s, P, fi).some(function (x) { return JSON.stringify(x.prm) === JSON.stringify(prm); });
     if (!ok) return false;
     var nome = PODER2[g.id][0], txt = '';
-    g.ideas -= custo; g.acted = true;
+    g.ideas -= custo; g.p2usado = true; if (s.cfg.p2Acao) g.acted = true;
     s.p2 = s.p2 || {}; s.p2[g.id] = (s.p2[g.id] || 0) + 1;
     if (LEGADO[g.id]) {
       g.legado = true; (s.rodLeg = s.rodLeg || {})[g.id] = ((s.rodLeg || {})[g.id] || []).concat([s.round]);
@@ -1768,7 +1768,7 @@
         else if (d.tranca.P !== P) v -= 0.1 * val;
       }
       if (d.prop) {   // Propriedade (Locke): o dono vence se liderar; os outros não entram nem vencem ali
-        if (d.prop.P === P && mine >= val && mine > om) v += 0.7 * val;
+        if (d.prop.P === P && mine >= val && mine > om) v += (s.cfg.varLocke === 2 ? 0.2 : 0.7) * val;
         else if (d.prop.P === P && om >= val && om > mine) v += 0.4 * val;
         else if (d.prop.P !== P) v -= 0.1 * val;
       }
@@ -1814,8 +1814,16 @@
   function aiStep(s) {
     if (s.over) return false;
     var P = s.turn, pl = s.players[P], mestre = pl.nivel === 'mestre', i, j, c;
+    // Saturação (27/11/2026): com a Biblioteca cheia, o gargalo são as ações. O Bibliotecário só aumenta a sobra;
+    // a IA o troca por um debatedor, compra cartas para ter o que fazer e aceita trocas e temporárias que rendem menos.
+    var sat = s.cfg.iaSat && pl.library >= s.cfg.iaSat && horizonte(s) > 0.15;
+    if (sat && s.cfg.iaSatBib && s.round >= s.cfg.iaSatBib && libIdx(pl) >= 0) {
+      var li0 = libIdx(pl), bh = -1, bhv = -1;
+      for (i = 0; i < pl.hand.length; i++) { c = C(pl.hand[i]); if (c.tipo === 'F' && c.custo <= pl.library && c.custo > bhv) { bhv = c.custo; bh = i; } }
+      if (bh >= 0) { playPhilosopher(s, P, pl.hand[bh], li0); return true; }
+    }
     // 0) Bibliotecário e troca
-    if (libIdx(pl) < 0 && pl.group.length < 4 && pl.group.length >= 1 && s.round <= 6) {
+    if (libIdx(pl) < 0 && pl.group.length < 4 && pl.group.length >= 1 && s.round <= (s.cfg.iaSat ? s.cfg.iaBibRod : 6)) {
       var bl = -1, bc = 2;
       for (i = 0; i < pl.hand.length; i++) { c = C(pl.hand[i]); if (c.tipo === 'F' && c.custo <= pl.library && c.custo > bc) { bc = c.custo; bl = i; } }
       if (bl >= 0) { playPhilosopher(s, P, pl.hand[bl], undefined, true); return true; }
@@ -1826,7 +1834,7 @@
       for (var oo = 0; oo < s.players.length; oo++) if (oo !== P) s.players[oo].group.forEach(function (g, k) {
         if (!trocavel(g)) return; var v = C(g.id).custo; pl.group.forEach(function (x) { if (C(x.id).escola === C(g.id).escola) v += 0.8; });
         if (v > bvv) { bvv = v; bo = oo; bi = k; } });
-      if (meu >= 0 && bo >= 0 && bvv - mv >= 3) { trocar(s, P, meu, bo, bi); return true; }
+      if (meu >= 0 && bo >= 0 && bvv - mv >= (sat ? 2 : 3)) { trocar(s, P, meu, bo, bi); return true; }
     }
     // 1) baixar filósofo
     var cand = -1, cv = -1;
@@ -1869,7 +1877,7 @@
     // 2) práxis
     var base = evalState(s, P);
     if (mestre || rnd(s) < 0.35) {
-      var bestP = null, bpv = pl.library >= 8 ? 0.3 : 0.6;   // com ideias sobrando, a carta temporária precisa render menos
+      var bestP = null, bpv = sat ? 0.15 : pl.library >= 8 ? 0.3 : 0.6;   // com ideias sobrando, a carta temporária precisa render menos
       for (i = 0; i < pl.hand.length; i++) {
         c = C(pl.hand[i]);
         if (c.tipo !== 'P' || custoMin(c.id, s, P) > pl.library) continue;
@@ -1949,7 +1957,7 @@
     }
     // 4) carta extra
     // Com ideias sobrando, compra mais opções (antes só com a mão quase vazia, e a Biblioteca acumulava).
-    if (!pl.boughtExtra && pl.library >= 4 && (pl.hand.length <= 2 || (pl.library >= 7 && pl.hand.length <= 4 && horizonte(s) > 0.15))) { buyExtra(s, P); return true; }
+    if (!pl.boughtExtra && pl.library >= 4 && (pl.hand.length <= 2 || sat || (pl.library >= 7 && pl.hand.length <= 4 && horizonte(s) > 0.15))) { buyExtra(s, P); return true; }
     endTurn(s);
     return true;
   }
