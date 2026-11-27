@@ -554,7 +554,7 @@
   ].forEach(function (r) { RELACOES.push(r); });
 
   // ---------- preparação ----------
-  var PADRAO = { pontos: 30, rodadas: 12, debInicial: 2, novoDebate: [4], copiasPraxis: 1, bibPorTurno: 3, custoTroca: 5, teto: 10, maoInicial: 3 };
+  var PADRAO = { pontos: 30, rodadas: 12, debInicial: 2, novoDebate: [4], copiasPraxis: 1, bibPorTurno: 3, custoTroca: 5, teto: 10, maoInicial: 3, poder2: false, custoP2: 3, varLocke: 1 };
   var REFLEXAO = [0, 1, 1, 2, 2, 3];
 
   function fx(s, e) { if (!s.mudo) s.fx.push(e); }
@@ -625,10 +625,10 @@
   // ---------- consultas ----------
   function inGroup(pl, id) { for (var i = 0; i < pl.group.length; i++) if (pl.group[i].id === id) return pl.group[i]; return null; }
   function oppMax(d, P) { var m = 0; for (var i = 0; i < d.stakes.length; i++) if (i !== P && d.stakes[i] > m) m = d.stakes[i]; return m; }
-  function lidera(s, di, P) { var d = s.debates[di]; var req = d.petitio && d.petitio.P === P ? 1 : DEB[d.id].valor; return d.stakes[P] >= req && d.stakes[P] > oppMax(d, P); }
+  function lidera(s, di, P) { var d = s.debates[di]; if (d.prop && (d.prop.P !== P || s.cfg.varLocke === 2)) return false; var req = d.petitio && d.petitio.P === P ? 1 : DEB[d.id].valor; return d.stakes[P] >= req && d.stakes[P] > oppMax(d, P); }
   function ativo(g) { return !g.novo; }
   // Diógenes: nenhum adversário o escolhe como alvo nem tira ideias dele; não pode ser trocado (nem pelo dono).
-  function imune(g) { return g.id === 'diogenes'; }
+  function imune(g) { return g.id === 'diogenes' || !!g.cav; }   // g.cav: Caverna de Platão (Poder 2, em teste)
   function trocavel(g) { return !g.lib && !imune(g); }
   // Espinoza (Deus sive Natura) conta como Teísta e como Materialista para o bônus de escola
   function escolasDe(id) { return id === 'espinoza' ? ['teista', 'mat'] : [C(id).escola]; }
@@ -648,6 +648,8 @@
     pl.boughtExtra = false;
     // recém-baixados (por baixa ou por troca) entram em ação no início do próximo turno do dono
     pl.group.forEach(function (g) { g.novo = false; });
+    if (pl.alem) pl.alem.novo = false;
+    limpa(s);
     if (pl.niil === 1) pl.niil = 2;   // Niilismo: vale durante este turno
     if (pl.orient === 1) pl.orient = 2;   // Orientalismo: vale durante este turno
     log(s, 'Rodada ' + s.round + ' — turno de ' + pl.nome + '.', 'turno', P);
@@ -658,6 +660,7 @@
     for (var i = s.debates.length - 1; i >= 0; i--) {
       if (livre(s.debates[i]) && lidera(s, i, P)) win(s, P, i, s.debates[i].petitio && s.debates[i].petitio.P === P && s.debates[i].stakes[P] < DEB[s.debates[i].id].valor ? 'deu a conclusão por provada, e ninguém a recusou' : 'sustentou a liderança até seu turno');
     }
+    s.debates.forEach(function (d, di) { if (d.prop && d.prop.P === P) { delete d.prop; log(s, 'A Propriedade de ' + pl.nome + ' em «' + DEB[d.id].q + '» volta a ser de todos.', 'sis', P); fx(s, { k: 'semProp', di: di, did: d.id }); } });
     s.debates.forEach(function (d) { if (d.petitio && d.petitio.P === P) { delete d.petitio; log(s, 'A Petitio de ' + pl.nome + ' em «' + DEB[d.id].q + '» foi recusada pelos adversários.', 'sis', P); } });
     draw(s, P, 1);
     pl.library += s.cfg.bibPorTurno;
@@ -689,6 +692,7 @@
   function checkInstant(s, P) {
     for (var i = s.debates.length - 1; i >= 0; i--) {
       var d = s.debates[i];
+      if (d.prop && (d.prop.P !== P || s.cfg.varLocke === 2)) continue;   // Propriedade (Locke): só o dono vence ali
       if (d.stakes[P] >= 2 * DEB[d.id].valor) win(s, P, i, 'vitória instantânea, com o dobro do valor');
     }
   }
@@ -775,6 +779,10 @@
         continue;
       }
       if (!acumula(g)) continue;   // Lao-Tsé: wu wei, não recebe ideias
+      if (g.parado) {
+        pop(s, P, g.id, C(g.id).nome + ' · Luta de Classes', 'Parado: não recebe ideias neste turno.', 'neg');
+        continue;
+      }
       if (g.bloq) {
         pop(s, P, g.id, C(g.id).nome + ' · Dogma', 'Não recebe ideias neste momento de Reflexão.', 'neg');
         log(s, 'Dogma: ' + C(g.id).nome + ' não recebe ideias neste momento de Reflexão.', 'neg', P);
@@ -796,7 +804,12 @@
         log(s, 'Dupla clássica: ' + C(g.id).nome + ' com ' + C(x.par).nome + ' (+' + BONUS_DUPLA + ' para cada um; o Bibliotecário não recebe).', 'con', P);
       });
     }
-    for (i = 0; i < pl.group.length; i++) conceitoReflexao(s, P, pl.group[i], i);
+    if (pl.banal) {   // Banalidade do Mal (Arendt, Poder 2 em teste): os poderes automáticos não funcionam neste momento de Reflexão
+      delete pl.banal;
+      log(s, 'Banalidade do Mal: os poderes automáticos de ' + pl.nome + ' não funcionam neste momento de Reflexão.', 'neg', P);
+      fx(s, { k: 'banal', P: P });
+    } else for (i = 0; i < pl.group.length; i++) if (!pl.group[i].parado) conceitoReflexao(s, P, pl.group[i], i);
+    if (s.cfg.poder2) legadosReflexao(s, P);
     pl.group.forEach(function (x) { delete x.ferido; });   // Avicena olha só o que aconteceu desde o último turno
     checkInstant(s, P);
   }
@@ -876,6 +889,11 @@
         if (t) { poe(s, t, 1); diz('+1 ideia para ' + C(t.id).nome + '.'); }
         break;
       case 'epicuro':
+        if (s.cfg.poder2) {   // regra nova (26/11/2026): o vizinho é sempre o da direita; com o Jardim, +2 para cada um
+          var vd = pl.group[idx + 1], ne = g.legado ? 2 : 1;
+          if (vd && !vd.lib && acumula(vd)) { var r1 = poe(s, vd, ne); ganha(s, P, g, ne); if (g.legado) { s.rend = s.rend || {}; s.rend.epicuro = (s.rend.epicuro || 0) + r1 + 1; } diz('+' + nI(ne) + ' para ' + C(vd.id).nome + ' e para Epicuro' + (g.legado ? ' (Jardim).' : '.')); }
+          break;
+        }
         var viz = [];
         if (idx > 0 && !pl.group[idx - 1].lib && acumula(pl.group[idx - 1])) viz.push(pl.group[idx - 1]);
         if (idx < pl.group.length - 1 && !pl.group[idx + 1].lib && acumula(pl.group[idx + 1])) viz.push(pl.group[idx + 1]);
@@ -974,8 +992,10 @@
     if (pl.niil === 2 && c.escola === 'germ') return out;   // Niilismo
     if (g.id === 'laotse') return out;   // Wu wei: Lao-Tsé não vai a debates
     if (g.semPiloto) return out;   // O Fantasma na Máquina
+    if (g.parado) return out;   // Luta de Classes (Marx, Poder 2)
     for (var i = 0; i < s.debates.length; i++) {
       if (!livre(s.debates[i])) continue;
+      if (s.debates[i].prop && s.debates[i].prop.P !== P && s.cfg.varLocke !== 3) continue;   // Propriedade (Locke)
       if (pl.orient === 2 && c.escola === 'orient' && DEB[s.debates[i].id].area !== 'meta') continue;   // Orientalismo
       if (g.duvida && (DEB[s.debates[i].id].area === 'logica' || DEB[s.debates[i].id].area === 'meta')) continue;   // Gênio Maligno: dúvida sobre o conhecimento
       var cap = g.id === 'sartre' ? Math.max(c.vals.meta, c.vals.logica, c.vals.etica, c.vals.psico) : c.vals[DEB[s.debates[i].id].area];
@@ -1100,12 +1120,13 @@
     pl.hand.splice(hi, 1);
     fx(s, { k: 'baixa', P: P, id: c.id, lib: !!comoLib });
     gatilhoLocke(s, P, c.id);
+    limpa(s);
     return true;
   }
 
   function canGive(s, P, fi) {
     var pl = s.players[P], g = pl.group[fi];
-    return !(s.over || s.turn !== P || !g || g.lib || !acumula(g) || pl.library < 1 || !ativo(g) || g.ideas >= s.cfg.teto);
+    return !(s.over || s.turn !== P || !g || g.lib || g.parado || !acumula(g) || pl.library < 1 || !ativo(g) || g.ideas >= s.cfg.teto);
   }
   function giveIdea(s, P, fi, quieto) {
     if (!canGive(s, P, fi)) return false;
@@ -1124,6 +1145,7 @@
     op.group[oi] = { id: a.id, ideas: 0, novo: true, acted: false, given: 0, foi: false, foiAnt: false };
     log(s, pl.nome + ' troca ' + C(a.id).nome + ' por ' + C(b.id).nome + ', de ' + op.nome + '. Os dois perdem as ideias e entram em ação no próximo turno de seus donos.', 'praxis', P);
     fx(s, { k: 'troca', P: P, o: o, a: a.id, b: b.id });
+    limpa(s);
     return true;
   }
   function buyExtra(s, P) {
@@ -1139,6 +1161,7 @@
   function temAtivo(pl, id) { var g = inGroup(pl, id); return g && ativo(g) ? g : null; }
   function custoPraxis(s, P, cardId, prm) {
     var c = C(cardId);
+    if (c.falacia && s && s.cfg.poder2 && temLegado(s, 'diogenes')) return c.custo + 1;   // Lanterna de Diógenes: falácias custam 1 a mais
     if ((c.fam === 'argumento' || c.fam === 'praxis') && s && temAtivo(s.players[P], 'voltaire')) return Math.max(1, c.custo - 1);   // Contra o Fanatismo
     if (c.id === 'cicuta' && prm && prm.o !== undefined) {
       var g = s.players[prm.o] && s.players[prm.o].group[prm.fi];
@@ -1148,6 +1171,7 @@
   }
   function custoMin(cardId, s, P) {
     var c = C(cardId);
+    if (c.falacia && s && s.cfg.poder2 && temLegado(s, 'diogenes')) return c.custo + 1;
     if (s && (c.fam === 'argumento' || c.fam === 'praxis') && temAtivo(s.players[P], 'voltaire')) return Math.max(1, c.custo - 1);
     return c.id === 'cicuta' ? 1 : c.custo;
   }
@@ -1390,7 +1414,9 @@
       fx(s, { k: 'caveira', P: P, id: c.id, n: c.pen, total: pl.caveiras, pontos: pl.points });
     }
     if (c.falacia) pl.mentiu = true;   // Zoroastro: a partir daqui, sem o bônus da verdade
+    if (s.cfg.poder2) legadosPraxis(s, P, c);
     gatilhoLocke(s, P, c.id);
+    limpa(s);
     for (var o = 0; c.falacia && o < s.players.length; o++) {
       if (o === P) continue;
       var f = inGroup(s.players[o], 'freud');
@@ -1442,7 +1468,8 @@
     if (s.over) return false;
     if (descartes) descartes.forEach(function (id) { var i = pl.hand.indexOf(id); if (i >= 0) s.discard.push(pl.hand.splice(i, 1)[0]); });
     autoDiscard(s, P);
-    pl.group.forEach(function (g) { g.foiAnt = !!g.foi; g.foi = false; g.acted = false; g.given = 0; delete g.duvida; delete g.semPiloto; });
+    pl.group.forEach(function (g) { g.foiAnt = !!g.foi; g.foi = false; g.acted = false; g.given = 0; delete g.duvida; delete g.semPiloto; delete g.parado; });
+    if (pl.alem) pl.alem.acted = false;
     if (pl.niil === 2) pl.niil = 0;
     if (pl.orient === 2) pl.orient = 0;
     s.turn = (P + 1) % s.players.length;
@@ -1468,6 +1495,252 @@
     log(s, emp > 1 ? 'Fim da partida: empate.' : 'Fim da partida: ' + s.players[best].nome + ' vence com ' + s.players[best].points + ' pontos.', 'vit');
   }
 
+
+  // ---------- Poder 2 (nível 2 com poderes pagos; em teste desde 27/11/2026, chave cfg.poder2) ----------
+  // Decisões do Flavio (26 e 27/11/2026): custo único de 3 ideias, pagas pelo próprio filósofo (pode receber da
+  // Biblioteca antes); usar o Poder 2 é a ação do filósofo no turno; Legado ligado ao filósofo (se ele sai, o Legado sai);
+  // um Legado de cada tipo por jogador; o vizinho é sempre o da direita. Por ora só as três escolas originais.
+  var LEGADO = {
+    platao: { nome: 'Caverna', tipo: 'grupo' }, epicuro: { nome: 'Jardim', tipo: 'grupo' }, rousseau: { nome: 'Estado de natureza', tipo: 'grupo' },
+    diogenes: { nome: 'Lanterna', tipo: 'universal' }, hobbes: { nome: 'Leviatã', tipo: 'universal' },
+    freud: { nome: 'Divã', tipo: 'pessoal' }, nietzsche: { nome: 'Além-do-homem', tipo: 'pessoal' }
+  };
+  var PODER2 = {
+    aristoteles: ['Termo Médio', 'Num debate de Lógica em que você já tem ideias, um adversário perde 5.'],
+    platao: ['Caverna', 'Baixe o Legado Caverna: todos os Gregos da mesa ficam imunes a efeitos de adversários.'],
+    socrates: ['Ironia socrática', 'Os filósofos adversários com mais ideias perdem, juntos, até 5 (uma de cada vez, sempre do mais rico).'],
+    epicuro: ['Ataraxia', 'Baixe o Legado Jardim: o Laço de Amizade passa a dar +2 a Epicuro e ao vizinho da direita.'],
+    pitagoras: ['Metempsicose', 'Pitágoras troca de grupo com um filósofo de custo até 3 de um adversário; os dois chegam sem ideias.'],
+    diogenes: ['Cinismo', 'Baixe o Legado Lanterna: as falácias custam 1 ideia a mais; cada falácia de adversário dá +1 a Diógenes. Se você usar falácia, perde a Lanterna.'],
+    marx: ['Luta de Classes', 'O filósofo de maior custo de um adversário fica parado no próximo turno do dono; as ideias dele são repartidas entre os filósofos mais pobres da mesa.'],
+    hegel: ['Superação', 'Mova até 4 ideias suas de um debate para outro.'],
+    hobbes: ['Leviatã', 'Baixe o Legado Leviatã: cada carta temporária jogada por um adversário dá +1 ideia à sua Biblioteca.'],
+    bacon: ['Ídolos', 'Cada filósofo do seu grupo, inclusive Bacon, recebe +1 ideia.'],
+    locke: ['Propriedade', 'Num debate em que você já tem ideias: até o seu próximo turno, ninguém mais põe ideias ali e nenhum adversário o vence.'],
+    rousseau: ['Estado de natureza', 'Baixe o Legado: na Reflexão, cada filósofo de custo 1 e 2 do seu grupo recebe +1.'],
+    kant: ['Coisa em si', 'Um filósofo adversário perde 3 ideias, ou 5 se for Teísta ou Racionalista.'],
+    nietzsche: ['Além-do-homem', 'Baixe o Legado: um filósofo extra, 2-2-2-2, que só recebe ideias da Biblioteca e é imune. Sai com Nietzsche.'],
+    schopenhauer: ['Vontade', '+2 ideias em cada debate em que você já tem ideias.'],
+    heidegger: ['Ser-para-a-morte', 'Heidegger sai do jogo e leva todas as ideias que lhe restam a um debate, sem o limite do valor.'],
+    freud: ['Psicanálise', 'Baixe o Legado Divã: na Reflexão, o vizinho da direita de Freud recebe +1.'],
+    arendt: ['Banalidade do Mal', 'No próximo momento de Reflexão dos adversários, os poderes automáticos dos filósofos deles não funcionam.']
+  };
+  function temLegado(s, id) {
+    for (var o = 0; o < s.players.length; o++) { var g = inGroup(s.players[o], id); if (g && g.legado) return { o: o, g: g }; }
+    return null;
+  }
+  function tipoLivre(pl, id) {
+    var t = LEGADO[id].tipo;
+    return !pl.group.some(function (x) { return x.legado && LEGADO[x.id] && LEGADO[x.id].tipo === t; });
+  }
+  // depois de cada mudança: Caverna (imunidade dos Gregos), Além-do-homem sem Nietzsche, cercas da Propriedade
+  function limpa(s) {
+    if (!s.cfg || !s.cfg.poder2) return;
+    var cav = !!temLegado(s, 'platao');
+    s.players.forEach(function (pl) {
+      pl.group.forEach(function (g) { if (cav && C(g.id).escola === 'grega' && !g.lib) g.cav = true; else delete g.cav; });
+      if (pl.alem && !inGroup(pl, 'nietzsche')) { delete pl.alem; log(s, 'Sem Nietzsche, o Além-do-homem sai da mesa.', 'sis'); }
+    });
+    s.debates.forEach(function (d) {
+      if (!d.prop || s.cfg.varLocke === 3) return;
+      for (var o = 0; o < d.stakes.length; o++) {
+        if (o === d.prop.P) continue;
+        if (d.stakes[o] > d.prop.cap[o]) d.stakes[o] = d.prop.cap[o]; else d.prop.cap[o] = d.stakes[o];
+      }
+    });
+  }
+  function legadosReflexao(s, P) {
+    var pl = s.players[P];
+    pl.group.forEach(function (g, idx) {
+      if (!g.legado || g.lib) return;
+      if (g.id === 'rousseau') {
+        var n = 0; semLib(pl).forEach(function (x) { if (C(x.id).custo <= 2 && ativo(x) && !x.parado) n += poe(s, x, 1); });
+        s.rend = s.rend || {}; s.rend.rousseau = (s.rend.rousseau || 0) + n;
+        if (n) pop(s, P, 'rousseau', 'Estado de natureza', '+1 para cada filósofo de custo 1 e 2 do grupo.', 'con');
+      }
+      if (g.id === 'freud') {
+        var vd = pl.group[idx + 1];
+        if (vd && !vd.lib && !vd.parado && poe(s, vd, 1) && ((s.rend = s.rend || {}).freud = (s.rend.freud || 0) + 1)) pop(s, P, 'freud', 'Divã', '+1 ideia para ' + C(vd.id).nome + ', em análise.', 'con');
+      }
+    });
+  }
+  function legadosPraxis(s, P, c) {
+    var o, lt;
+    if (c.falacia) {
+      lt = temLegado(s, 'diogenes');
+      if (lt && lt.o === P) { delete lt.g.legado; log(s, s.players[P].nome + ' usou uma falácia e perde a Lanterna de Diógenes.', 'neg', P); fx(s, { k: 'semLegado', P: P, id: 'diogenes' }); }
+      else if (lt && poe(s, lt.g, 1) && ((s.rend = s.rend || {}).diogenes = (s.rend.diogenes || 0) + 1)) pop(s, lt.o, 'diogenes', 'Lanterna', '+1 ideia: ' + s.players[P].nome + ' usou uma falácia.', 'con');
+    }
+    lt = temLegado(s, 'hobbes');
+    if (lt && lt.o !== P) { s.players[lt.o].library += 1; (s.rend = s.rend || {}).hobbes = (s.rend.hobbes || 0) + 1; pop(s, lt.o, 'hobbes', 'Leviatã', '+1 ideia na Biblioteca: imposto sobre a carta de ' + s.players[P].nome + '.', 'con'); }
+  }
+  function podeP2(s, P, fi) {
+    var pl = s.players[P], g = pl.group[fi];
+    return !!(s.cfg.poder2 && !s.over && s.turn === P && g && PODER2[g.id] && !g.lib && ativo(g) && !g.acted && !g.parado && !g.semPiloto);
+  }
+  function alvosP2(s, P, o, f) { var out = []; s.players[o].group.forEach(function (h, k) { if (!h.lib && !imune(h) && f(h)) out.push(k); }); return out; }
+  function poder2Options(s, P, fi) {
+    var out = [], pl = s.players[P], g = pl.group[fi], o, i, j;
+    if (!podeP2(s, P, fi)) return out;
+    function dlab(i) { return '«' + DEB[s.debates[i].id].q + '»'; }
+    if (LEGADO[g.id]) { if (!g.legado && tipoLivre(pl, g.id)) out.push({ label: 'Baixar ' + LEGADO[g.id].nome, prm: {} }); return out; }
+    switch (g.id) {
+      case 'aristoteles':
+        s.debates.forEach(function (d, i) {
+          if (!livre(d) || DEB[d.id].area !== 'logica' || d.stakes[P] <= 0) return;
+          for (o = 0; o < s.players.length; o++) if (o !== P && d.stakes[o] > 0) out.push({ label: dlab(i) + ': ' + nomeJ(s, o) + ' perde ' + Math.min(5, d.stakes[o]), prm: { d: i, o: o } });
+        });
+        break;
+      case 'socrates': case 'bacon': case 'schopenhauer': case 'arendt':
+        out.push({ label: PODER2[g.id][0], prm: {} });
+        break;
+      case 'pitagoras':
+        for (o = 0; o < s.players.length; o++) if (o !== P) alvosP2(s, P, o, function (h) { return trocavel(h) && C(h.id).custo <= 3; }).forEach(function (k) {
+          out.push({ label: 'Trocar por ' + C(s.players[o].group[k].id).nome + ' (' + nomeJ(s, o) + ')', prm: { o: o, fi2: k } });
+        });
+        break;
+      case 'marx':
+        for (o = 0; o < s.players.length; o++) if (o !== P && alvoMarx(s, o) >= 0) out.push({ label: 'Contra ' + nomeJ(s, o), prm: { o: o } });
+        break;
+      case 'hegel':
+        for (i = 0; i < s.debates.length; i++) {
+          if (!livre(s.debates[i]) || s.debates[i].stakes[P] <= 0) continue;
+          for (j = 0; j < s.debates.length; j++) if (j !== i && livre(s.debates[j]) && !(s.debates[j].prop && s.debates[j].prop.P !== P))
+            out.push({ label: Math.min(4, s.debates[i].stakes[P]) + ' de ' + dlab(i) + ' para ' + dlab(j), prm: { d: i, d2: j } });
+        }
+        break;
+      case 'locke':
+        s.debates.forEach(function (d, i) { if (livre(d) && !d.prop && d.stakes[P] > 0) out.push({ label: 'Cercar ' + dlab(i), prm: { d: i } }); });
+        break;
+      case 'kant':
+        for (o = 0; o < s.players.length; o++) if (o !== P) alvosP2(s, P, o, function (h) { return h.ideas > 0; }).forEach(function (k) {
+          var h = s.players[o].group[k];
+          out.push({ label: C(h.id).nome + ' (' + nomeJ(s, o) + ') perde ' + Math.min(C(h.id).escola === 'teista' ? 5 : 3, h.ideas), prm: { o: o, fi2: k } });
+        });
+        break;
+      case 'heidegger':
+        s.debates.forEach(function (d, i) { if (livre(d) && !(d.prop && d.prop.P !== P)) out.push({ label: 'Último ato em ' + dlab(i), prm: { d: i } }); });
+        break;
+    }
+    return out;
+  }
+  function alvoMarx(s, o) {
+    var best = -1, gs = s.players[o].group;
+    gs.forEach(function (h, k) {
+      if (h.lib || imune(h)) return;
+      if (best < 0 || C(h.id).custo > C(gs[best].id).custo || (C(h.id).custo === C(gs[best].id).custo && h.ideas > gs[best].ideas)) best = k;
+    });
+    return best;
+  }
+  function usaPoder2(s, P, fi, prm) {
+    var pl = s.players[P], g = pl.group[fi], custo = s.cfg.custoP2, o, d, n, h, k;
+    prm = prm || {};
+    if (!podeP2(s, P, fi) || g.ideas < custo) return false;
+    var ok = poder2Options(s, P, fi).some(function (x) { return JSON.stringify(x.prm) === JSON.stringify(prm); });
+    if (!ok) return false;
+    var nome = PODER2[g.id][0], txt = '';
+    g.ideas -= custo; g.acted = true;
+    s.p2 = s.p2 || {}; s.p2[g.id] = (s.p2[g.id] || 0) + 1;
+    if (LEGADO[g.id]) {
+      g.legado = true; (s.rodLeg = s.rodLeg || {})[g.id] = ((s.rodLeg || {})[g.id] || []).concat([s.round]);
+      if (g.id === 'nietzsche') pl.alem = { ideas: 0, acted: false, novo: true };
+      txt = 'baixa o Legado ' + LEGADO[g.id].nome + '.';
+    } else switch (g.id) {
+      case 'aristoteles':
+        d = s.debates[prm.d]; n = Math.min(5, d.stakes[prm.o]); d.stakes[prm.o] -= n;
+        txt = nomeJ(s, prm.o) + ' perde ' + nI(n) + ' em «' + DEB[d.id].q + '».'; break;
+      case 'socrates':
+        var tirou = 0;
+        for (k = 0; k < 5; k++) {
+          h = null;
+          for (o = 0; o < s.players.length; o++) if (o !== P) s.players[o].group.forEach(function (x) { if (!x.lib && !imune(x) && x.ideas > 0 && (!h || x.ideas > h.ideas)) h = x; });
+          if (!h) break;
+          h.ideas -= 1; h.ferido = (h.ferido || 0) + 1; tirou++;
+        }
+        txt = 'os adversários mais ricos perdem ' + nI(tirou) + '.'; break;
+      case 'pitagoras':
+        var op = s.players[prm.o], b = op.group[prm.fi2];
+        pl.group[fi] = { id: b.id, ideas: 0, novo: true, acted: false, given: 0, foi: false, foiAnt: false };
+        op.group[prm.fi2] = { id: 'pitagoras', ideas: 0, novo: true, acted: true, given: 0, foi: false, foiAnt: false };
+        txt = 'a alma de Pitágoras migra para o grupo de ' + op.nome + ', e ' + C(b.id).nome + ' vem para o seu.'; break;
+      case 'marx':
+        k = alvoMarx(s, prm.o); h = s.players[prm.o].group[k];
+        var monte = h.ideas; h.ideas = 0; h.parado = true; h.ferido = (h.ferido || 0) + monte;
+        var rep = 0;
+        while (monte > 0) {
+          var alvo = null;
+          for (var q = 0; q < s.players.length; q++) {
+            var oq = (P + q) % s.players.length;
+            s.players[oq].group.forEach(function (x) { if (x !== h && !x.lib && acumula(x) && x.ideas < s.cfg.teto && (!alvo || x.ideas < alvo.ideas)) alvo = x; });
+          }
+          if (!alvo) { pl.library += monte; break; }
+          alvo.ideas += 1; monte--; rep++;
+        }
+        txt = C(h.id).nome + ' (' + nomeJ(s, prm.o) + ') fica parado no próximo turno; ' + nI(rep) + ' repartidas entre os mais pobres da mesa.'; break;
+      case 'hegel':
+        d = s.debates[prm.d]; n = Math.min(4, d.stakes[P]); d.stakes[P] -= n; s.debates[prm.d2].stakes[P] += n; marcaPart(s, prm.d2, P, 'hegel');
+        txt = nI(n) + ' passam de «' + DEB[d.id].q + '» para «' + DEB[s.debates[prm.d2].id].q + '».'; break;
+      case 'bacon':
+        n = 0; semLib(pl).forEach(function (x) { n += poe(s, x, 1); });
+        txt = '+1 ideia para cada filósofo do grupo (' + n + ').'; break;
+      case 'locke':
+        d = s.debates[prm.d]; d.prop = { P: P, cap: d.stakes.slice() };
+        txt = '«' + DEB[d.id].q + '» é propriedade sua até o seu próximo turno.'; break;
+      case 'kant':
+        h = s.players[prm.o].group[prm.fi2]; n = Math.min(C(h.id).escola === 'teista' ? 5 : 3, h.ideas); h.ideas -= n; h.ferido = (h.ferido || 0) + n;
+        txt = C(h.id).nome + ' (' + nomeJ(s, prm.o) + ') perde ' + nI(n) + '.'; break;
+      case 'schopenhauer':
+        n = 0; s.debates.forEach(function (x, i) { if (livre(x) && x.stakes[P] > 0 && !(x.prop && x.prop.P !== P)) { x.stakes[P] += 2; n++; } });
+        txt = '+2 ideias em ' + n + ' debate(s).'; break;
+      case 'heidegger':
+        d = s.debates[prm.d]; n = g.ideas; d.stakes[P] += n; marcaPart(s, prm.d, P, 'heidegger');
+        pl.group.splice(fi, 1); s.discard.push('heidegger');
+        txt = 'Heidegger sai do jogo e leva ' + nI(n) + ' a «' + DEB[d.id].q + '».'; break;
+      case 'arendt':
+        for (o = 0; o < s.players.length; o++) if (o !== P) s.players[o].banal = true;
+        txt = 'na próxima Reflexão dos adversários, os poderes automáticos não funcionam.'; break;
+    }
+    log(s, nome + ' (' + C(g.id).nome + '): ' + txt, 'con', P);
+    fx(s, { k: 'poder2', P: P, id: g.id, nome: nome, txt: txt });
+    limpa(s);
+    checkInstant(s, P);
+    return true;
+  }
+  // Além-do-homem: filósofo extra 2-2-2-2, fora das cadeiras; só recebe ideias da Biblioteca; imune (não é alvo)
+  function alemOptions(s, P) {
+    var a = s.players[P].alem, out = [];
+    if (!a || a.novo || a.acted || a.ideas < 2 || s.turn !== P || s.over) return out;
+    s.debates.forEach(function (d, i) { if (livre(d) && !(d.prop && d.prop.P !== P)) out.push(i); });
+    return out;
+  }
+  function moveAlem(s, P, di) {
+    if (alemOptions(s, P).indexOf(di) < 0) return false;
+    var a = s.players[P].alem, d = s.debates[di];
+    a.ideas -= 2; a.acted = true; d.stakes[P] += 2;
+    log(s, 'O Além-do-homem leva 2 ideias a «' + DEB[d.id].q + '».', 'mov', P);
+    fx(s, { k: 'alem', P: P, di: di, did: d.id });
+    checkInstant(s, P);
+    return true;
+  }
+  function giveAlem(s, P) {
+    var pl = s.players[P], a = pl.alem;
+    if (!a || a.novo || pl.library < 1 || a.ideas >= s.cfg.teto || s.turn !== P || s.over) return false;
+    pl.library -= 1; a.ideas += 1; return true;
+  }
+  // valor futuro de um Legado por turno (para a IA), em ideias
+  function rendaLegado(s, pl, g) {
+    switch (g.id) {
+      case 'epicuro': return 2;
+      case 'rousseau': return semLib(pl).filter(function (x) { return C(x.id).custo <= 2; }).length;
+      case 'freud': return 1;
+      case 'diogenes': return 0.7;
+      case 'hobbes': return 0.9;
+      case 'platao': return 0.6 + 0.3 * semLib(pl).filter(function (x) { return C(x.id).escola === 'grega'; }).length;
+      case 'nietzsche': return 1.3;
+    }
+    return 0;
+  }
+
   // ---------- IA ----------
   function horizonte(s) {   // 1 com a partida em curso; cai na penúltima e na última rodada
     var top = Math.max.apply(null, s.players.map(function (x) { return x.points; }));
@@ -1482,7 +1755,7 @@
       var pv = d.petitio ? d.petitio.P : -1, req = pv === P ? 1 : val, reqO = pv >= 0 && pv !== P ? 1 : val;   // Petitio: o limiar cai para 1
       // Debate perdido: um adversário já vence no turno dele e você não o alcança. As suas ideias ali vão se perder,
       // então não valem nada (antes valiam, e a IA despejava ideias em debates que o próximo jogador levaria).
-      var perdido = om >= reqO && om > mine && !(d.tranca && d.tranca.P === P);
+      var perdido = om >= reqO && om > mine && !(d.tranca && d.tranca.P === P) && !(d.prop && d.prop.P === P);
       if (!perdido) {
         v += 0.6 * Math.min(mine, val);
         v += 0.25 * Math.max(-val, Math.min(val, mine - om));
@@ -1494,6 +1767,11 @@
         else if (d.tranca.P === P && om >= val && om > mine) v += 0.3 * val;
         else if (d.tranca.P !== P) v -= 0.1 * val;
       }
+      if (d.prop) {   // Propriedade (Locke): o dono vence se liderar; os outros não entram nem vencem ali
+        if (d.prop.P === P && mine >= val && mine > om) v += 0.7 * val;
+        else if (d.prop.P === P && om >= val && om > mine) v += 0.4 * val;
+        else if (d.prop.P !== P) v -= 0.1 * val;
+      }
     }
     var maxOpp = 0;
     for (o = 0; o < s.players.length; o++) {
@@ -1504,17 +1782,29 @@
         var h = horizonte(s);
         v += pl.points * 3 + h * (0.4 * Math.min(pl.library, 8) + 0.15 * Math.max(0, pl.library - 8));
         pl.group.forEach(function (g) { v += h * 0.45 * g.ideas; });
+        if (s.cfg.poder2) {
+          var fut = Math.min(4, Math.max(0, s.cfg.rodadas - s.round));
+          pl.group.forEach(function (g) {
+            if (!g.lib) v += 0.9 * C(g.id).custo;   // perder um filósofo seu também pesa (Heidegger, Metempsicose)
+            if (g.legado) v += h * 0.45 * rendaLegado(s, pl, g) * fut;
+          });
+          if (pl.alem) v += h * 0.45 * pl.alem.ideas;
+        }
       }
       else {
         maxOpp = Math.max(maxOpp, pl.points);
         pl.group.forEach(function (g) {
-          v -= 0.15 * g.ideas;
+          v -= (s.cfg.poder2 ? 0.3 : 0.15) * g.ideas;   // com o Poder 2, tirar ideias de filósofos adversários pesa mais (eles pagam poderes)
           if (!g.lib) v -= 0.9 * C(g.id).custo;                       // perder um filósofo pesa (Cicuta)
           if (g.dogma) v += 0.5 * (REFLEXAO[C(g.id).custo] + 1);      // Dogma: Reflexão perdida
           if (pl.niil === 1 && C(g.id).escola === 'germ' && !g.lib) v += 0.12 * g.ideas + 0.4;   // Niilismo
           if (pl.orient === 1 && C(g.id).escola === 'orient' && !g.lib && g.id !== 'laotse') v += 0.05 * g.ideas + 0.15;   // Orientalismo
           if (g.semPiloto) v += 0.12 * g.ideas + 0.3;   // O Fantasma na Máquina
+          if (g.parado) v += 0.5 * (REFLEXAO[C(g.id).custo] + 1) + 0.3;   // Luta de Classes
+          if (g.legado) v -= 0.25 * rendaLegado(s, pl, g) * Math.min(4, Math.max(0, s.cfg.rodadas - s.round));
         });
+        if (pl.banal) v += 0.4 * semLib(pl).length;   // Banalidade do Mal
+        if (pl.alem) v -= 0.15 * pl.alem.ideas + 1;
         v -= 1.2 * pl.hand.filter(temporariaNaMao).length;            // Non Sequitur
       }
     }
@@ -1611,9 +1901,46 @@
         if (sc > pv) { pv = sc; plano = lista[lista.length - 1]; }
       }
     }
+    if (s.cfg.poder2) {   // Poder 2: completa as 3 ideias se faltar e compara com ir a um debate
+      for (i = 0; i < pl.group.length; i++) {
+        var po2 = poder2Options(s, P, i);
+        if (!po2.length) continue;
+        var falta2 = Math.max(0, s.cfg.custoP2 - pl.group[i].ideas);
+        if (falta2 > pl.library) continue;
+        for (j = 0; j < po2.length; j++) {
+          var t3 = clone(s); t3.mudo = true;
+          for (var k3 = 0; k3 < falta2; k3++) giveIdea(t3, P, i, true);
+          if (!usaPoder2(t3, P, i, po2[j].prm)) continue;
+          var sc3 = evalState(t3, P) - base;
+          lista.push({ fi: i, falta: falta2, sc: sc3, p2: po2[j].prm });
+          if (sc3 > pv) { pv = sc3; plano = lista[lista.length - 1]; }
+        }
+      }
+      if (pl.alem && !pl.alem.novo && !pl.alem.acted) {
+        var faltaA = Math.max(0, 2 - pl.alem.ideas);
+        if (faltaA <= pl.library) s.debates.forEach(function (d, di) {
+          var t4 = clone(s); t4.mudo = true;
+          for (var k4 = 0; k4 < faltaA; k4++) giveAlem(t4, P);
+          if (!moveAlem(t4, P, di)) return;
+          var sc4 = evalState(t4, P) - base;
+          lista.push({ alem: true, di: di, falta: faltaA, sc: sc4 });
+          if (sc4 > pv) { pv = sc4; plano = lista[lista.length - 1]; }
+        });
+      }
+    }
     // Nível básico: às vezes escolhe uma jogada qualquer, mas só entre as que ajudam (antes podia despejar ideias num debate já perdido).
     var boas = lista.filter(function (x) { return x.sc > 0; });
     if (!mestre && boas.length && rnd(s) < 0.45) plano = boas[Math.floor(rnd(s) * boas.length)];
+    if (plano && plano.alem) {
+      for (i = 0; i < plano.falta; i++) giveAlem(s, P);
+      moveAlem(s, P, plano.di);
+      return true;
+    }
+    if (plano && plano.p2) {
+      for (i = 0; i < plano.falta; i++) giveIdea(s, P, plano.fi, true);
+      usaPoder2(s, P, plano.fi, plano.p2);
+      return true;
+    }
     if (plano) {
       for (i = 0; i < plano.falta; i++) giveIdea(s, P, plano.fi, true);
       if (plano.falta) fx(s, { k: 'dar', P: P, id: pl.group[plano.fi].id, n: plano.falta });
@@ -1632,7 +1959,8 @@
     DUPLAS: DUPLAS, BONUS_DUPLA: BONUS_DUPLA, duplasDe: duplasDe, imune: imune, trocavel: trocavel, REFLEXAO: REFLEXAO, FALAS: FALAS,
     C: C, newGame: newGame, temColega: temColega, moveOptions: moveOptions, porqueNao: porqueNao, moveToDebate: moveToDebate,
     playPhilosopher: playPhilosopher, trocar: trocar, podeTrocar: podeTrocar, libIdx: libIdx, nI: nI, canGive: canGive, giveIdea: giveIdea, buyExtra: buyExtra,
-    praxisOptions: praxisOptions, playPraxis: playPraxis, nascimento: nascimento, acumula: acumula, endTurn: endTurn, aiStep: aiStep,
+    praxisOptions: praxisOptions, playPraxis: playPraxis, PODER2: PODER2, LEGADO: LEGADO, poder2Options: poder2Options, usaPoder2: usaPoder2, podeP2: podeP2,
+    alemOptions: alemOptions, moveAlem: moveAlem, giveAlem: giveAlem, temLegado: temLegado, nascimento: nascimento, acumula: acumula, endTurn: endTurn, aiStep: aiStep,
     oppMax: oppMax, lidera: lidera, ativo: ativo, evalState: evalState, livre: livre, custoPraxis: custoPraxis, custoMin: custoMin, foraDoAlcance: foraDoAlcance
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = API;
