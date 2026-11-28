@@ -429,7 +429,7 @@
   var C1 = {
     platao: ['A República', 'No momento de Reflexão, o filósofo de maior custo do seu grupo — o Rei Filósofo — recebe +1 ideia.'],
     socrates: ['Maiêutica', 'No momento de Reflexão, o colega de grupo com menos ideias recebe +1. Sócrates ajuda os outros a dar à luz ideias.'],
-    epicuro: ['Laço de Amizade', 'No momento de Reflexão, um filósofo vizinho recebe +1 ideia, e Epicuro também: a amizade é recíproca.'],
+    epicuro: ['Laço de Amizade', 'No momento de Reflexão, o filósofo à direita de Epicuro recebe +1 ideia, e Epicuro também: a amizade é recíproca.'],
     diogenes: ['Barrica de Diógenes', 'Nenhum adversário pode escolher Diógenes como alvo nem tirar ideias dele. Não pode ser trocado. No momento de Reflexão, se tiver 2 ideias ou menos, recebe +1: vive com o mínimo.'],
     marx: ['Mais-Valia', 'No momento de Reflexão, o filósofo adversário com mais ideias perde 1.'],
     hegel: ['Dialética', 'Hegel é o único que pode levar a um debate menos que o valor da área: leva o que tiver, até o valor. Síntese: ao entrar num debate em que um adversário tem mais ideias que você, +1 ideia sua.'],
@@ -554,7 +554,7 @@
   ].forEach(function (r) { RELACOES.push(r); });
 
   // ---------- preparação ----------
-  var PADRAO = { pontos: 30, rodadas: 12, debInicial: 2, novoDebate: [4], copiasPraxis: 1, bibPorTurno: 3, custoTroca: 5, teto: 10, maoInicial: 3 };
+  var PADRAO = { pontos: 30, rodadas: 12, debInicial: 2, novoDebate: [4], copiasPraxis: 1, bibPorTurno: 3, custoTroca: 5, teto: 10, maoInicial: 3, iaSat: 7, iaSatBib: 9, vizDireita: true };
   var REFLEXAO = [0, 1, 1, 2, 2, 3];
 
   function fx(s, e) { if (!s.mudo) s.fx.push(e); }
@@ -876,6 +876,11 @@
         if (t) { poe(s, t, 1); diz('+1 ideia para ' + C(t.id).nome + '.'); }
         break;
       case 'epicuro':
+        if (s.cfg.vizDireita) {   // decisão do Flavio (26/11/2026): o vizinho é sempre o da direita; o jogador escolhe quem fica ali reordenando as cadeiras
+          var vd = pl.group[idx + 1];
+          if (vd && !vd.lib && acumula(vd)) { poe(s, vd, 1); ganha(s, P, g, 1); diz('+1 ideia para ' + C(vd.id).nome + ' e para Epicuro.'); }
+          break;
+        }
         var viz = [];
         if (idx > 0 && !pl.group[idx - 1].lib && acumula(pl.group[idx - 1])) viz.push(pl.group[idx - 1]);
         if (idx < pl.group.length - 1 && !pl.group[idx + 1].lib && acumula(pl.group[idx + 1])) viz.push(pl.group[idx + 1]);
@@ -1443,6 +1448,7 @@
     if (descartes) descartes.forEach(function (id) { var i = pl.hand.indexOf(id); if (i >= 0) s.discard.push(pl.hand.splice(i, 1)[0]); });
     autoDiscard(s, P);
     pl.group.forEach(function (g) { g.foiAnt = !!g.foi; g.foi = false; g.acted = false; g.given = 0; delete g.duvida; delete g.semPiloto; });
+    delete pl.arrumou;
     if (pl.niil === 2) pl.niil = 0;
     if (pl.orient === 2) pl.orient = 0;
     s.turn = (P + 1) % s.players.length;
@@ -1466,6 +1472,29 @@
     var emp = s.players.filter(function (x) { return x.points === s.players[best].points && x.won.length === s.players[best].won.length; }).length;
     s.vencedor = emp > 1 ? -1 : best;
     log(s, emp > 1 ? 'Fim da partida: empate.' : 'Fim da partida: ' + s.players[best].nome + ' vence com ' + s.players[best].points + ' pontos.', 'vit');
+  }
+
+  // ---------- Cadeiras (27/11/2026): o jogador reordena o grupo na horizontal, de graça, no próprio turno ----------
+  // O vizinho de um poder é sempre o da direita (Epicuro).
+  function reordena(s, P, de, para) {
+    var pl = s.players[P];
+    if (s.over || s.turn !== P || de === para || de < 0 || para < 0 || de >= pl.group.length || para >= pl.group.length) return false;
+    var g = pl.group.splice(de, 1)[0]; pl.group.splice(para, 0, g);
+    fx(s, { k: 'cadeiras', P: P });
+    return true;
+  }
+  // IA: põe à direita do Epicuro o filósofo que mais precisa de ideias (o de maior custo)
+  function arrumaCadeiras(s, P) {
+    var pl = s.players[P], gs = pl.group.slice(), ordem = [];
+    var k = gs.findIndex(function (x) { return x.id === 'epicuro' && !x.lib; });
+    if (k < 0) return false;
+    ordem.push(gs.splice(k, 1)[0]);
+    var b = -1; gs.forEach(function (x, j) { if (x.lib || !acumula(x)) return; if (b < 0 || C(x.id).custo > C(gs[b].id).custo) b = j; });
+    if (b >= 0) ordem.push(gs.splice(b, 1)[0]);
+    var nova = ordem.concat(gs);
+    if (nova.every(function (x, j) { return x === pl.group[j]; })) return false;
+    pl.group = nova; fx(s, { k: 'cadeiras', P: P });
+    return true;
   }
 
   // ---------- IA ----------
@@ -1524,6 +1553,16 @@
   function aiStep(s) {
     if (s.over) return false;
     var P = s.turn, pl = s.players[P], mestre = pl.nivel === 'mestre', i, j, c;
+    if (!pl.arrumou) { pl.arrumou = true; arrumaCadeiras(s, P); }
+    // Saturação (27/11/2026): com a Biblioteca cheia, o gargalo são as ações, não as ideias. A IA compra cartas para ter o que
+    // fazer, aceita trocas e temporárias que rendem menos e, a partir da rodada 9, troca o Bibliotecário por um debatedor da mão.
+    // Medido: Biblioteca no fim da partida de 14 para 5; uma IA com a correção contra duas sem ela vence 38% (33% seria igual).
+    var sat = s.cfg.iaSat && pl.library >= s.cfg.iaSat && horizonte(s) > 0.15;
+    if (sat && s.cfg.iaSatBib && s.round >= s.cfg.iaSatBib && libIdx(pl) >= 0) {
+      var li0 = libIdx(pl), bh = -1, bhv = -1;
+      for (i = 0; i < pl.hand.length; i++) { c = C(pl.hand[i]); if (c.tipo === 'F' && c.custo <= pl.library && c.custo > bhv) { bhv = c.custo; bh = i; } }
+      if (bh >= 0) { playPhilosopher(s, P, pl.hand[bh], li0); return true; }
+    }
     // 0) Bibliotecário e troca
     if (libIdx(pl) < 0 && pl.group.length < 4 && pl.group.length >= 1 && s.round <= 6) {
       var bl = -1, bc = 2;
@@ -1536,7 +1575,7 @@
       for (var oo = 0; oo < s.players.length; oo++) if (oo !== P) s.players[oo].group.forEach(function (g, k) {
         if (!trocavel(g)) return; var v = C(g.id).custo; pl.group.forEach(function (x) { if (C(x.id).escola === C(g.id).escola) v += 0.8; });
         if (v > bvv) { bvv = v; bo = oo; bi = k; } });
-      if (meu >= 0 && bo >= 0 && bvv - mv >= 3) { trocar(s, P, meu, bo, bi); return true; }
+      if (meu >= 0 && bo >= 0 && bvv - mv >= (sat ? 2 : 3)) { trocar(s, P, meu, bo, bi); return true; }
     }
     // 1) baixar filósofo
     var cand = -1, cv = -1;
@@ -1579,7 +1618,7 @@
     // 2) práxis
     var base = evalState(s, P);
     if (mestre || rnd(s) < 0.35) {
-      var bestP = null, bpv = pl.library >= 8 ? 0.3 : 0.6;   // com ideias sobrando, a carta temporária precisa render menos
+      var bestP = null, bpv = sat ? 0.15 : pl.library >= 8 ? 0.3 : 0.6;   // com ideias sobrando, a carta temporária precisa render menos
       for (i = 0; i < pl.hand.length; i++) {
         c = C(pl.hand[i]);
         if (c.tipo !== 'P' || custoMin(c.id, s, P) > pl.library) continue;
@@ -1622,7 +1661,7 @@
     }
     // 4) carta extra
     // Com ideias sobrando, compra mais opções (antes só com a mão quase vazia, e a Biblioteca acumulava).
-    if (!pl.boughtExtra && pl.library >= 4 && (pl.hand.length <= 2 || (pl.library >= 7 && pl.hand.length <= 4 && horizonte(s) > 0.15))) { buyExtra(s, P); return true; }
+    if (!pl.boughtExtra && pl.library >= 4 && (pl.hand.length <= 2 || sat || (pl.library >= 7 && pl.hand.length <= 4 && horizonte(s) > 0.15))) { buyExtra(s, P); return true; }
     endTurn(s);
     return true;
   }
@@ -1632,7 +1671,7 @@
     DUPLAS: DUPLAS, BONUS_DUPLA: BONUS_DUPLA, duplasDe: duplasDe, imune: imune, trocavel: trocavel, REFLEXAO: REFLEXAO, FALAS: FALAS,
     C: C, newGame: newGame, temColega: temColega, moveOptions: moveOptions, porqueNao: porqueNao, moveToDebate: moveToDebate,
     playPhilosopher: playPhilosopher, trocar: trocar, podeTrocar: podeTrocar, libIdx: libIdx, nI: nI, canGive: canGive, giveIdea: giveIdea, buyExtra: buyExtra,
-    praxisOptions: praxisOptions, playPraxis: playPraxis, nascimento: nascimento, acumula: acumula, endTurn: endTurn, aiStep: aiStep,
+    praxisOptions: praxisOptions, playPraxis: playPraxis, reordena: reordena, nascimento: nascimento, acumula: acumula, endTurn: endTurn, aiStep: aiStep,
     oppMax: oppMax, lidera: lidera, ativo: ativo, evalState: evalState, livre: livre, custoPraxis: custoPraxis, custoMin: custoMin, foraDoAlcance: foraDoAlcance
   };
   if (typeof module !== 'undefined' && module.exports) module.exports = API;

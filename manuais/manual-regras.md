@@ -75,7 +75,7 @@ Cada debate é uma pergunta de uma das quatro áreas, com um **valor**: 15, 12, 
 ### 2.5 A mesa
 
 - **Ágora:** onde ficam os debates abertos (no máximo três).
-- **Grupo:** quatro cadeiras por jogador. Todo filósofo baixado ocupa uma cadeira. A ordem das cadeiras importa para alguns poderes (vizinhos de Epicuro, ordem em que os poderes disparam).
+- **Grupo:** quatro cadeiras por jogador. Todo filósofo baixado ocupa uma cadeira. A ordem das cadeiras importa para alguns poderes (o vizinho da direita do Epicuro, a ordem em que os poderes disparam). **No seu turno, você pode reordenar as cadeiras à vontade, de graça e sem gastar ação** (no digital, arraste o filósofo para outra cadeira; no impresso, troque as cartas de lugar). Regra de 27/11/2026: quando um poder fala em vizinho, é sempre o da direita.
 - **Biblioteca:** o estoque de ideias do jogador.
 - **Pilha e descarte:** uma pilha comum, com filósofos e cartas temporárias misturados. As falácias usadas não vão para o descarte: saem do jogo. Quando a pilha acaba, o descarte é embaralhado e vira pilha nova.
 
@@ -261,7 +261,7 @@ Os poderes valem enquanto o filósofo está no grupo. Os que agem "no momento de
 - **Aristóteles — Silogismo – Premissa.** No momento de Reflexão, põe +1 ideia sua num debate de Lógica, mesmo que você ainda não participe dele. Computador: o debate de Lógica em que você tem mais ideias (empate: o de maior valor). Sem debate de Lógica na Ágora, nada acontece. Essa ideia entra depois da conferência de sustentação: só conta no turno seguinte (seção 5).
 - **Platão — A República.** No momento de Reflexão, o filósofo de maior custo do seu grupo, o Rei Filósofo, recebe +1 ideia. Pode ser o próprio Platão. O Bibliotecário não entra na escolha.
 - **Sócrates — Maiêutica.** No momento de Reflexão, o colega com menos ideias recebe +1. Não vale para o próprio Sócrates nem para o Bibliotecário.
-- **Epicuro — Laço de Amizade.** No momento de Reflexão, um vizinho de cadeira recebe +1 ideia, e Epicuro também: a amizade é recíproca. Sem vizinho, nada acontece. Computador: o vizinho com menos ideias (empate: o da cadeira anterior). O Bibliotecário não recebe.
+- **Epicuro — Laço de Amizade.** No momento de Reflexão, o filósofo à direita de Epicuro recebe +1 ideia, e Epicuro também: a amizade é recíproca. Sem vizinho à direita (ou se ele for o Bibliotecário), nada acontece. Quem fica à direita é escolha do jogador, reordenando as cadeiras.
 - **Pitágoras — Harmonia das Esferas.** No momento de Reflexão, põe +1 ideia sua num debate cujo valor seja número primo (5 ou 7). Computador: o debate de valor primo em que você tem mais ideias (empate: o de maior valor). Só conta para a sustentação no turno seguinte.
 - **Diógenes — Barrica de Diógenes.** Nenhum adversário pode escolher Diógenes como alvo nem tirar ideias dele. Não pode ser trocado: nem tomado por um adversário, nem dado pelo dono. Continua recebendo efeitos favoráveis gerais (como o Contrato Social de Rousseau) e os efeitos do próprio grupo (Sócrates e Platão podem lhe dar ideias; Kant pode puxar uma ideia dele). A proteção vale para Diógenes e para as ideias **que estão nele**; as que ele já levou a um debate pertencem ao jogador e não são protegidas. Hoje a proteção afasta a Mais-Valia de Marx, a falácia Ad Hominem e a troca; vale também para as cartas que vierem. **Vive com o mínimo:** no momento de Reflexão, se tiver 2 ideias ou menos (já contada a Reflexão), recebe +1.
 

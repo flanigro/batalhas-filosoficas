@@ -19,6 +19,11 @@ function passaPara1(s) { s.players[0].hand = s.players[0].hand.slice(0, 5); BF.e
 { const s = jogo(2); zera(s); s.debates.forEach((d, i) => d.id = ['d01', 'd02', 'd03'][i]); s.players[1].group = [G('epicuro'), G('arendt')]; passaPara1(s);
   const g = s.players[1].group; confere('Epicuro: vizinho recebe 1 (Reflexão) + 1', g[1].ideas === 2, g[1].ideas);
   confere('Epicuro: ele mesmo recebe 1 (Reflexão) + 1', g[0].ideas === 2, g[0].ideas); }
+{ const s = jogo(2); zera(s); s.debates.forEach((d, i) => d.id = ['d01', 'd02', 'd03'][i]); s.players[1].group = [G('arendt'), G('epicuro')]; passaPara1(s);
+  const g = s.players[1].group; confere('Epicuro: o vizinho da esquerda não recebe (só o da direita)', g[0].ideas === 1 && g[1].ideas === 1, g.map(x => x.ideas)); }
+{ const s = jogo(2); zera(s); s.players[0].group = [G('kant'), G('epicuro'), G('locke')];
+  confere('Cadeiras: reordenar no próprio turno, de graça', BF.reordena(s, 0, 0, 2) && s.players[0].group.map(g => g.id).join() === 'epicuro,locke,kant');
+  confere('Cadeiras: não no turno dos outros', !BF.reordena(s, 1, 0, 1)); }
 { const s = jogo(2); zera(s); s.players[1].group = [G('epicuro')]; passaPara1(s);
   confere('Epicuro sem vizinho: só a Reflexão', s.players[1].group[0].ideas === 1, s.players[1].group[0].ideas); }
 

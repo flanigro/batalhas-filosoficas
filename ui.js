@@ -506,11 +506,13 @@ function modal(html,cls){ cancelarSel(); aberto=null; $('box').className='box'+(
 
 // ---------- alvos (mesmo cálculo para clique e arrasto) ----------
 function q$(s){return document.querySelector(s);}
-function alvosDe(tipo,ref){
+function alvosDe(tipo,ref,arrasto){
   var out=[], pl=S.players[0], c;
   if(tipo==='fil'){
     var i=ref;
     BF.moveOptions(S,0,i).forEach(function(o){var d=q$('.deb[data-di="'+o.di+'"]'); if(d)out.push({el:d,fn:function(){BF.moveToDebate(S,0,i,o.di);}});});
+    // arrastando, as outras cadeiras do grupo também acendem: soltar ali troca o filósofo de lugar (27/11/2026)
+    if(arrasto) pl.group.forEach(function(g,k){ if(k===i)return; var s2=q$('[data-seat="'+k+'"] .mini'); if(s2)out.push({el:s2,cad:true,fn:function(){BF.reordena(S,0,i,k);}}); });
   } else if(tipo==='livro'){
     pl.group.forEach(function(g,k){ if(BF.canGive(S,0,k)){var s=q$('[data-seat="'+k+'"] .mini'); if(s)out.push({el:s,dar:k});} });
   } else if(tipo==='troca'){
@@ -571,7 +573,7 @@ var SEM_ALVO={
   ceticismo:'Sem alvo: precisa de um debate de Metafísica / Religião em que você e um oponente tenham ideias.'
 };
 var DICAS={
-  fil:function(r){var c=C(S.players[0].group[r].id);return '<b>'+esc(c.nome)+'</b>: escolha um debate aceso.';},
+  fil:function(r){var c=C(S.players[0].group[r].id);return '<b>'+esc(c.nome)+'</b>: '+(sel&&sel.arrasto?'solte num debate aceso, ou noutra cadeira para trocar de lugar.':'escolha um debate aceso. Para mudar de cadeira, arraste o filósofo para o lado.');},
   livro:function(){return '<b>Biblioteca</b>: clique num filósofo para dar 1 ideia ('+S.players[0].library+' restantes).';},
   mao:function(r){var c=C(r);return '<b>'+esc(c.nome)+'</b> (custo '+BF.nI(c.custo)+'): '+(c.tipo==='F'?'escolha uma cadeira, ou a Biblioteca para nomeá-lo Bibliotecário.':'escolha um alvo aceso.');},
   troca:function(){return '<b>Troca</b> ('+BF.nI(S.cfg.custoTroca)+', uma vez por partida): escolha o seu filósofo que sai.';}
@@ -603,7 +605,7 @@ function reaplicarSel(){
   if(!sel||!pode()){ if(sel)cancelarSel(); return; }
   var o=origemEl(sel.tipo,sel.ref);
   if(!o&&sel.tipo!=='livro'&&sel.tipo!=='troca'){cancelarSel();return;}
-  sel.alvos=sel.passo?sel.passo():alvosDe(sel.tipo,sel.ref);
+  sel.alvos=sel.passo?sel.passo():alvosDe(sel.tipo,sel.ref,sel.arrasto);
   if(sel.tipo==='livro'&&!sel.alvos.length&&sel.dadas){cancelarSel();return;}
   if(o)o.classList.add('selecionado');
   sel.alvos.forEach(function(a){a.el.classList.add('alvo');});
@@ -880,7 +882,7 @@ document.addEventListener('pointermove',function(e){
   if(!arr.on){
     if(Math.hypot(e.clientX-arr.x,e.clientY-arr.y)<8)return;
     cancelarSel();
-    sel={tipo:arr.tipo,ref:arr.ref,passo:null}; reaplicarSel(); arr.alvos=sel.alvos;
+    sel={tipo:arr.tipo,ref:arr.ref,passo:null,arrasto:true}; reaplicarSel(); arr.alvos=sel.alvos;
     arr.on=true; document.body.classList.add('arrastando');
     var g;
     if(arr.tipo==='livro'){g=document.createElement('div');g.innerHTML='<i class="liv" style="--pc:#e9b93f;width:12px;height:34px"></i>';arr.dx=6;arr.dy=17;}

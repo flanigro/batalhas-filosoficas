@@ -14,7 +14,7 @@ Você comanda um grupo de filósofos que disputam as grandes perguntas da filoso
 
 - **Ideias.** São a única moeda do jogo. Pagam cartas e vão para os debates.
 - **Sua Biblioteca.** O seu estoque de ideias.
-- **Seu grupo.** Quatro cadeiras para os seus filósofos.
+- **Seu grupo.** Quatro cadeiras para os seus filósofos. No seu turno, você pode trocá-los de lugar à vontade (arraste para o lado). Quando um poder fala em vizinho, é sempre o da direita.
 - **A Ágora.** O centro da mesa, com até três debates abertos.
 - **Cartas de filósofo (38).** Seis escolas de seis filósofos (Grécia Clássica, Materialistas e Empiristas, Germânicos, Teístas e Racionalistas, Franceses, Orientais) e dois livres-pensadores. Cada carta tem um **custo** (de 1 a 5), uma **escola**, um **valor em cada uma das quatro áreas** (Metafísica, Lógica, Ética, Psicologia) e um **poder**.
 - **Cartas temporárias (20).** Golpes de argumentação, de efeito único, em quatro famílias: falácias, argumentos, cartas de escola e Práxis.
