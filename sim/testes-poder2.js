@@ -89,7 +89,7 @@ confere('debates de teste', BF.DEB[LOG].area === 'logica' && BF.DEB[MET].area ==
   confere('Propriedade: a cerca chega ainda fechada ao turno do dono, que não vence nesse momento', s.players[0].points === 0, s.players[0].points);
   confere('Propriedade: cerca desfeita depois da sustentação do dono', !s.debates.some(d => d.prop)); }
 { const s = jogo(); zera(s, [LOG, ET]); s.players[0].group = [G('locke', 3)]; s.debates[0].stakes[0] = 2;
-  confere('Propriedade: só em debate de Ética / Política em que você tem ideias', BF.poder2Options(s, 0, 0).length === 0); }
+  confere('Propriedade: qualquer debate em que você tem ideias (só esse)', BF.poder2Options(s, 0, 0).length === 1); }
 { const s = jogo(); zera(s, [LOG, MET]); s.players[0].group = [G('aristoteles', 8)]; s.debates[0].stakes = [1, 7, 0];
   usa(s, 0, 0); confere('Poder 2 não gasta a ação: o filósofo ainda vai a um debate', BF.moveToDebate(s, 0, 0, 0), s.players[0].group[0]); }
 { const s = jogo(); zera(s, [LOG, MET]); s.players[0].group = [G('kant', 3)]; s.players[1].group = [G('descartes', 7), G('marx', 7)];
@@ -105,7 +105,7 @@ confere('debates de teste', BF.DEB[LOG].area === 'logica' && BF.DEB[MET].area ==
   confere('Além-do-homem: sai sem Nietzsche', !s.players[0].alem); }
 
 { const s = jogo(); zera(s, [LOG, MET, ET]); s.players[0].group = [G('schopenhauer', 3)]; s.debates[0].stakes[0] = 1; s.debates[2].stakes[0] = 2;
-  usa(s, 0, 0); confere('Vontade: +2 em cada debate seu', s.debates.map(d => d.stakes[0]).join() === '3,0,4'); }
+  usa(s, 0, 0); confere('Vontade: +1 em cada debate seu', s.debates.map(d => d.stakes[0]).join() === '2,0,3'); }
 
 { const s = jogo(); zera(s, [LOG, MET]); s.players[0].group = [G('heidegger', 9), G('kant', 0)];
   usa(s, 0, 0, o => o.prm.d === 1); confere('Ser-para-a-morte: leva o que resta (6), sem limite', s.debates[1].stakes[0] === 6, s.debates[1].stakes);
@@ -128,6 +128,12 @@ confere('debates de teste', BF.DEB[LOG].area === 'logica' && BF.DEB[MET].area ==
 { const s = jogo(); zera(s, [LOG, MET]); s.players[0].group = [G('epicuro', 3), G('rousseau', 3)];
   confere('Um Legado de cada tipo: com o Jardim, o Estado de natureza (também do grupo) não entra', usa(s, 0, 0) && BF.poder2Options(s, 0, 1).length === 0); }
 
+{ const s = jogo(); zera(s, [LOG, MET]); s.players[0].group = [G('pitagoras', 3)]; s.players[1].group = [G('hobbes', 4)];
+  usa(s, 0, 0); passa(s); s.players[1].group[0].novo = false; s.players[1].group[0].ideas = 3;
+  confere('Metempsicose: a alma não volta ao corpo de onde veio (Hobbes)', BF.poder2Options(s, 1, 0).length === 0); }
+{ const s = jogo(); zera(s, [LOG, MET]); s.players[0].group = [G('kant', 0), G('epicuro', 0), G('locke', 0)];
+  confere('Cadeiras: reordenar no próprio turno', BF.reordena(s, 0, 0, 2) && s.players[0].group.map(g => g.id).join() === 'epicuro,locke,kant');
+  confere('Cadeiras: não no turno dos outros', !BF.reordena(s, 1, 0, 1)); }
 // partidas só de IA com o Poder 2
 { let erro = null; try { for (let g = 0; g < 60; g++) { const s = BF.newGame({ seed: 300 + g, humans: [false, false, false], mudo: true, poder2: true }); let n = 0; while (!s.over && n < 8000) { if (!BF.aiStep(s)) BF.endTurn(s, []); n++; } if (!s.over) throw new Error('partida sem fim ' + g); } } catch (e) { erro = e.stack; }
   confere('60 partidas só de IA com o Poder 2, sem erro', !erro, erro); }

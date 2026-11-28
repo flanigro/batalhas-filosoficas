@@ -554,7 +554,7 @@
   ].forEach(function (r) { RELACOES.push(r); });
 
   // ---------- preparação ----------
-  var PADRAO = { pontos: 30, rodadas: 12, debInicial: 2, novoDebate: [4], copiasPraxis: 1, bibPorTurno: 3, custoTroca: 5, teto: 10, maoInicial: 3, poder2: false, custoP2: 3, varLocke: 2, iaSat: 7, iaBibRod: 6, iaSatBib: 9, p2Acao: false };
+  var PADRAO = { pontos: 30, rodadas: 12, debInicial: 2, novoDebate: [4], copiasPraxis: 1, bibPorTurno: 3, custoTroca: 5, teto: 10, maoInicial: 3, poder2: false, custoP2: 3, varLocke: 2, iaSat: 7, iaBibRod: 6, iaSatBib: 9, p2Acao: false, lockeEtica: false, schop: 1, socBib: false, vizDireita: true };
   var REFLEXAO = [0, 1, 1, 2, 2, 3];
 
   function fx(s, e) { if (!s.mudo) s.fx.push(e); }
@@ -889,7 +889,7 @@
         if (t) { poe(s, t, 1); diz('+1 ideia para ' + C(t.id).nome + '.'); }
         break;
       case 'epicuro':
-        if (s.cfg.poder2) {   // regra nova (26/11/2026): o vizinho é sempre o da direita; com o Jardim, +2 para cada um
+        if (s.cfg.poder2 || s.cfg.vizDireita) {   // regra nova (26/11/2026): o vizinho é sempre o da direita; com o Jardim, +2 para cada um
           var vd = pl.group[idx + 1], ne = g.legado ? 2 : 1;
           if (vd && !vd.lib && acumula(vd)) { var r1 = poe(s, vd, ne); ganha(s, P, g, ne); if (g.legado) { s.rend = s.rend || {}; s.rend.epicuro = (s.rend.epicuro || 0) + r1 + 1; } diz('+' + nI(ne) + ' para ' + C(vd.id).nome + ' e para Epicuro' + (g.legado ? ' (Jardim).' : '.')); }
           break;
@@ -1470,6 +1470,7 @@
     autoDiscard(s, P);
     pl.group.forEach(function (g) { g.foiAnt = !!g.foi; g.foi = false; g.acted = false; g.given = 0; delete g.duvida; delete g.semPiloto; delete g.parado; delete g.p2usado; });
     if (pl.alem) pl.alem.acted = false;
+    delete pl.arrumou;
     if (pl.niil === 2) pl.niil = 0;
     if (pl.orient === 2) pl.orient = 0;
     s.turn = (P + 1) % s.players.length;
@@ -1495,6 +1496,34 @@
     log(s, emp > 1 ? 'Fim da partida: empate.' : 'Fim da partida: ' + s.players[best].nome + ' vence com ' + s.players[best].points + ' pontos.', 'vit');
   }
 
+
+  // ---------- Cadeiras (27/11/2026): o jogador reordena o grupo na horizontal, de graça, no próprio turno ----------
+  // O vizinho de um poder é sempre o da direita (Epicuro; Divã de Freud).
+  function reordena(s, P, de, para) {
+    var pl = s.players[P];
+    if (s.over || s.turn !== P || de === para || de < 0 || para < 0 || de >= pl.group.length || para >= pl.group.length) return false;
+    var g = pl.group.splice(de, 1)[0]; pl.group.splice(para, 0, g);
+    fx(s, { k: 'cadeiras', P: P });
+    return true;
+  }
+  // IA: põe à direita de quem dá ao vizinho (Epicuro; Freud com o Divã) o filósofo que mais precisa de ideias (o de maior custo)
+  function arrumaCadeiras(s, P) {
+    var pl = s.players[P], gs = pl.group.slice(), ordem = [];
+    function tira(f) { var k = gs.findIndex(f); return k < 0 ? null : gs.splice(k, 1)[0]; }
+    function melhor() { var b = -1; gs.forEach(function (x, k) { if (x.lib || !acumula(x)) return; if (b < 0 || C(x.id).custo > C(gs[b].id).custo) b = k; }); return b < 0 ? null : gs.splice(b, 1)[0]; }
+    var doadores = ['epicuro'];
+    if (s.cfg.poder2) doadores.push('freud');
+    doadores.forEach(function (id) {
+      var d = tira(function (x) { return x.id === id && !x.lib && (id !== 'freud' || x.legado); });
+      if (!d) return;
+      ordem.push(d); var v = melhor(); if (v) ordem.push(v);
+    });
+    if (!ordem.length) return false;
+    var nova = ordem.concat(gs);
+    if (nova.every(function (x, k) { return x === pl.group[k]; })) return false;
+    pl.group = nova; fx(s, { k: 'cadeiras', P: P });
+    return true;
+  }
 
   // ---------- Poder 2 (nível 2 com poderes pagos; em teste desde 27/11/2026, chave cfg.poder2) ----------
   // Decisões do Flavio (26 e 27/11/2026): custo único de 3 ideias, pagas pelo próprio filósofo (pode receber da
@@ -1595,7 +1624,7 @@
         out.push({ label: PODER2[g.id][0], prm: {} });
         break;
       case 'pitagoras':
-        for (o = 0; o < s.players.length; o++) if (o !== P) alvosP2(s, P, o, function (h) { return trocavel(h) && C(h.id).custo <= 3; }).forEach(function (k) {
+        for (o = 0; o < s.players.length; o++) if (o !== P) alvosP2(s, P, o, function (h) { return trocavel(h) && C(h.id).custo <= 3 && (g.ex || []).indexOf(h.id) < 0; }).forEach(function (k) {
           out.push({ label: 'Trocar por ' + C(s.players[o].group[k].id).nome + ' (' + nomeJ(s, o) + ')', prm: { o: o, fi2: k } });
         });
         break;
@@ -1610,7 +1639,7 @@
         }
         break;
       case 'locke':
-        s.debates.forEach(function (d, i) { if (livre(d) && !d.prop && d.stakes[P] > 0 && DEB[d.id].area === 'etica') out.push({ label: 'Cercar ' + dlab(i), prm: { d: i } }); });
+        s.debates.forEach(function (d, i) { if (livre(d) && !d.prop && d.stakes[P] > 0 && (!s.cfg.lockeEtica || DEB[d.id].area === 'etica')) out.push({ label: 'Cercar ' + dlab(i), prm: { d: i } }); });
         break;
       case 'kant':
         for (o = 0; o < s.players.length; o++) if (o !== P) alvosP2(s, P, o, function (h) { return h.ideas > 0; }).forEach(function (k) {
@@ -1651,6 +1680,10 @@
         txt = nomeJ(s, prm.o) + ' perde ' + nI(n) + ' em «' + DEB[d.id].q + '».'; break;
       case 'socrates':
         var tirou = 0;
+        if (s.cfg.socBib) {   // variante: a Ironia tira das Bibliotecas dos adversários, sempre da mais cheia
+          for (k = 0; k < 5; k++) { var bo = -1; for (o = 0; o < s.players.length; o++) if (o !== P && s.players[o].library > 0 && (bo < 0 || s.players[o].library > s.players[bo].library)) bo = o; if (bo < 0) break; s.players[bo].library--; tirou++; }
+          txt = 'as Bibliotecas dos adversários perdem ' + nI(tirou) + '.'; break;
+        }
         for (k = 0; k < 5; k++) {
           h = null;
           for (o = 0; o < s.players.length; o++) if (o !== P) s.players[o].group.forEach(function (x) { if (!x.lib && !imune(x) && x.ideas > 0 && (!h || x.ideas > h.ideas)) h = x; });
@@ -1661,7 +1694,7 @@
       case 'pitagoras':
         var op = s.players[prm.o], b = op.group[prm.fi2];
         pl.group[fi] = { id: b.id, ideas: 0, novo: true, acted: false, given: 0, foi: false, foiAnt: false };
-        op.group[prm.fi2] = { id: 'pitagoras', ideas: 0, novo: true, acted: true, given: 0, foi: false, foiAnt: false };
+        op.group[prm.fi2] = { id: 'pitagoras', ideas: 0, novo: true, acted: true, given: 0, foi: false, foiAnt: false, ex: (g.ex || []).concat([b.id]) };   // a alma não volta a um corpo onde já esteve
         txt = 'a alma de Pitágoras migra para o grupo de ' + op.nome + ', e ' + C(b.id).nome + ' vem para o seu.'; break;
       case 'marx':
         k = alvoMarx(s, prm.o); h = s.players[prm.o].group[k];
@@ -1690,8 +1723,8 @@
         h = s.players[prm.o].group[prm.fi2]; n = Math.min(C(h.id).escola === 'teista' ? 5 : 3, h.ideas); h.ideas -= n; h.ferido = (h.ferido || 0) + n;
         txt = C(h.id).nome + ' (' + nomeJ(s, prm.o) + ') perde ' + nI(n) + '.'; break;
       case 'schopenhauer':
-        n = 0; s.debates.forEach(function (x, i) { if (livre(x) && x.stakes[P] > 0 && !(x.prop && x.prop.P !== P)) { x.stakes[P] += 2; n++; } });
-        txt = '+2 ideias em ' + n + ' debate(s).'; break;
+        n = 0; s.debates.forEach(function (x, i) { if (livre(x) && x.stakes[P] > 0 && !(x.prop && x.prop.P !== P)) { x.stakes[P] += s.cfg.schop; n++; } });
+        txt = '+' + s.cfg.schop + ' ideia(s) em ' + n + ' debate(s).'; break;
       case 'heidegger':
         d = s.debates[prm.d]; n = g.ideas; d.stakes[P] += n; marcaPart(s, prm.d, P, 'heidegger');
         pl.group.splice(fi, 1); s.discard.push('heidegger');
@@ -1804,6 +1837,7 @@
           if (g.legado) v -= 0.25 * rendaLegado(s, pl, g) * Math.min(4, Math.max(0, s.cfg.rodadas - s.round));
         });
         if (pl.banal) v += 0.4 * semLib(pl).length;   // Banalidade do Mal
+        if (s.cfg.poder2) v -= 0.25 * Math.min(pl.library, 8);   // a Biblioteca do adversário também é recurso dele
         if (pl.alem) v -= 0.15 * pl.alem.ideas + 1;
         v -= 1.2 * pl.hand.filter(temporariaNaMao).length;            // Non Sequitur
       }
@@ -1816,6 +1850,7 @@
     var P = s.turn, pl = s.players[P], mestre = pl.nivel === 'mestre', i, j, c;
     // Saturação (27/11/2026): com a Biblioteca cheia, o gargalo são as ações. O Bibliotecário só aumenta a sobra;
     // a IA o troca por um debatedor, compra cartas para ter o que fazer e aceita trocas e temporárias que rendem menos.
+    if (!pl.arrumou) { pl.arrumou = true; arrumaCadeiras(s, P); }
     var sat = s.cfg.iaSat && pl.library >= s.cfg.iaSat && horizonte(s) > 0.15;
     if (sat && s.cfg.iaSatBib && s.round >= s.cfg.iaSatBib && libIdx(pl) >= 0) {
       var li0 = libIdx(pl), bh = -1, bhv = -1;
@@ -1967,7 +2002,7 @@
     DUPLAS: DUPLAS, BONUS_DUPLA: BONUS_DUPLA, duplasDe: duplasDe, imune: imune, trocavel: trocavel, REFLEXAO: REFLEXAO, FALAS: FALAS,
     C: C, newGame: newGame, temColega: temColega, moveOptions: moveOptions, porqueNao: porqueNao, moveToDebate: moveToDebate,
     playPhilosopher: playPhilosopher, trocar: trocar, podeTrocar: podeTrocar, libIdx: libIdx, nI: nI, canGive: canGive, giveIdea: giveIdea, buyExtra: buyExtra,
-    praxisOptions: praxisOptions, playPraxis: playPraxis, PODER2: PODER2, LEGADO: LEGADO, poder2Options: poder2Options, usaPoder2: usaPoder2, podeP2: podeP2,
+    praxisOptions: praxisOptions, playPraxis: playPraxis, reordena: reordena, PODER2: PODER2, LEGADO: LEGADO, poder2Options: poder2Options, usaPoder2: usaPoder2, podeP2: podeP2,
     alemOptions: alemOptions, moveAlem: moveAlem, giveAlem: giveAlem, temLegado: temLegado, nascimento: nascimento, acumula: acumula, endTurn: endTurn, aiStep: aiStep,
     oppMax: oppMax, lidera: lidera, ativo: ativo, evalState: evalState, livre: livre, custoPraxis: custoPraxis, custoMin: custoMin, foraDoAlcance: foraDoAlcance
   };
